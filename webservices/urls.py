@@ -18,10 +18,10 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
 
-import report_protocols
+from report_protocols import views
 
 urlpatterns = [
-    url(r'^$', report_protocols.views.index, name='index'),
+    url(r'^$', views.index, name='index'),
     url(r'^report_protocols/', include('report_protocols.urls')),
     url(r'^ask_version/', include('ask_version.urls')),
     url(r'^admin/', admin.site.urls),
