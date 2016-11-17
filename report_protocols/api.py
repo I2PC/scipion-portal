@@ -23,8 +23,8 @@ class WorkflowResource(ModelResource):
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
         """curl -i -d "hash=hh&json=kk" http://localhost:8000/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
         """
-        hash = request.POST['hash']
-        json = request.POST['json']
+        project_uuid = request.POST['project_uuid']
+        project_workflow = request.POST['project_workflow']
         workflow, error = Workflow.objects.get_or_create(hash=hash)
         workflow.json = json
         workflow.save()
