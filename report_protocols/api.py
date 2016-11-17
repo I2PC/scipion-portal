@@ -31,6 +31,7 @@ class WorkflowResource(ModelResource):
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
         """curl -i -d "hash=hh&json=kk" http://localhost:8000/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
+           curl -i  http://secret-reaches-65198.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
         """
         project_uuid = request.POST['project_uuid']
         project_workflow = request.POST['project_workflow']
