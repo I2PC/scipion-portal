@@ -10,6 +10,7 @@ class WorkflowResource(ModelResource):
         queryset = Workflow.objects.all()
         resource_name = 'workflow'
         filtering = {'project_uuid': ALL}
+        allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
 
     #agnade al mapeo de urls los webservices que desarrolleis
     def prepend_urls(self):
@@ -37,6 +38,17 @@ class WorkflowResource(ModelResource):
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
         workflow.save()
+        #TODO: parse project_workflow and fill protocols table
+        #if workflow already exists substract before adding
+        statsDict = {}
+        statsDict['error'] = False
+        return self.create_response(request, statsDict)
+
+    def deleteObject(self, request):
+        project_uuid = request.POST['project_uuid']
+        workflows = Workflow.objects.all()
+        if workflows.exists():
+            workflows[0].delete()
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
