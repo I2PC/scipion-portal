@@ -16,5 +16,7 @@ class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
     project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
+    client_ip = models.IPAddressField(null=True)
+
     def __str__(self):  # For Python 2, use __unicode__ too
         return "workflow=%s, json=%s"%(self.hash[:8],self.json)
