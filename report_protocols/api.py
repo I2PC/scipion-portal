@@ -25,6 +25,8 @@ class WorkflowResource(ModelResource):
         """
         project_uuid = request.POST['project_uuid']
         project_workflow = request.POST['project_workflow']
+        print "project_uuid",project_uuid
+        print "project_workflow",project_workflow
         workflow, error = Workflow.objects.get_or_create(project_uuid=project_uuid)
         workflow.project_workflow = project_workflow
         workflow.save()
