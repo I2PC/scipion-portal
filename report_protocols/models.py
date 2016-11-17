@@ -14,7 +14,7 @@ class Protocol(models.Model):
 
 class Workflow(models.Model):
     hash = models.CharField(max_length=44)
-    json = models.TextField()
+    json = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "workflow=%s, json=%s"%(self.hash[:8],self.json)
