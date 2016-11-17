@@ -16,6 +16,8 @@ class WorkflowResource(ModelResource):
         return [
             url(r"^(%s)/addOrUpdateWorkflow%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('addOrUpdateWorkflow'), name="api_add_useraddOrUpdateWorkflow"),
+            url(r"^(%s)/reportProtocolUsage%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
         ]
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
@@ -23,11 +25,13 @@ class WorkflowResource(ModelResource):
         """
         hash = request.POST['hash']
         json = request.POST['json']
-        print "hash,json", hash, json
         workflow, error = Workflow.objects.get_or_create(hash=hash)
-        print "workflow, error",workflow, error
         workflow.json = json
         workflow.save()
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
+
+    def reportProtocolUsage(self, request, * args, **kwargs):
+        """ask for a protocol histogram"""
+        pass

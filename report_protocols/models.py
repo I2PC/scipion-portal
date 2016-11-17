@@ -13,8 +13,8 @@ class Protocol(models.Model):
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
 class Workflow(models.Model):
-    hash = models.CharField(max_length=44)
-    json = models.TextField(null=True)
+    project_uuid = models.CharField(max_length=44)
+    project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "workflow=%s, json=%s"%(self.hash[:8],self.json)
