@@ -8,7 +8,8 @@ def connect():
     #check if there is a saved uuid
     #if not generate one with uuid.uuid4()
     #export workflow
-    
+    #export DATABASE_URL='postgres://alumnodb:alumnodb@localhost/scipion'
+
     #then connect to webserver a send json
     url='https://secret-reaches-65198.herokuapp.com/'
     webserver = 'report_protocols/api/workflow/workflow/addOrUpdateWorkflow/'
