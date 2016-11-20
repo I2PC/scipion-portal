@@ -7,10 +7,9 @@ from api import WorkflowResource
 
 user_api = Api(api_name='workflow')
 user_api.register(WorkflowResource())
+user_api.register(ProtocolResource())
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^whoami$', views.whoami, name='whoami'),
     url(r'^api/',include(user_api.urls)),
-
 ]
