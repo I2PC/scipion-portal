@@ -2,15 +2,25 @@ from tastypie.resources import ModelResource
 from tastypie.constants import ALL
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
+import json
 
-from report_protocols.models import Workflow
+from report_protocols.models import Workflow, Protocol
+
+class ProtocolResource(ModelResource):
+    """allow search in protocol table"""
+    class Meta:
+        queryset = Workflow.objects.all()
+        resource_name = 'protocol'
+        filtering = {'name': ALL}
+        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
 
 class WorkflowResource(ModelResource):
+    """allow search in workflow table"""
     class Meta:
         queryset = Workflow.objects.all()
         resource_name = 'workflow'
         filtering = {'project_uuid': ALL}
-        allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
+        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
 
     #agnade al mapeo de urls los webservices que desarrolleis
     def prepend_urls(self):
@@ -30,9 +40,16 @@ class WorkflowResource(ModelResource):
         return ip
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
-        """curl -i -d "hash=hh&json=kk" http://localhost:8000/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
-           curl -i  http://secret-reaches-65198.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
-        """
+        """receive a json dictionary with protocols
+           store the dictionary in workflow table
+           increase the number of times attribute
+           parse dictionary and updates protocol usage in protocol table
+           #should you need to debug the following commands may come handy
+           curl -i -d "project_uuid=hh&project_workflow=kk" http://localhost:8000/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
+           #curl -i  http://secret-reaches-65198.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
+           curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
+           curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
+                   """
         project_uuid = request.POST['project_uuid']
         project_workflow = request.POST['project_workflow']
         workflow, error = Workflow.objects.get_or_create(project_uuid=project_uuid)
@@ -41,6 +58,14 @@ class WorkflowResource(ModelResource):
         workflow.timesModified += 1
         workflow.save()
         #TODO: parse project_workflow and fill protocols table
+        project_workflowList = json.loads(project_workflow)
+        for protocolName in project_workflowList:
+            if Protocol.objects.filter(name=protocolName).exists():
+                protocolObj = Protocol.objects.get(name=protocolName)
+            else:
+                protocolObj = Protocol(name=protocolName)
+            protocolObj.timesUsed += 1
+            protocolObj.save()
         #if workflow already exists substract before adding
         statsDict = {}
         statsDict['error'] = False

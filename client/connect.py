@@ -10,12 +10,13 @@ def connect():
     #export workflow
     #export DATABASE_URL='postgres://alumnodb:alumnodb@localhost/scipion'
 
+
     #then connect to webserver a send json
-    url='https://secret-reaches-65198.herokuapp.com/'
+    url='http://calm-shelf-73264.herokuapp.com/'
     webserver = 'report_protocols/api/workflow/workflow/addOrUpdateWorkflow/'
     opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=1))
-    data = urllib.urlencode({'hash':"myhash",
-                             'json':"myjson"})
+    data = urllib.urlencode({'project_uuid':"myproject_uuid",
+                             'project_workflow':"myproject_workflow"})
     content = opener.open(url+ webserver, data=data).read()
     print content
 

@@ -6,11 +6,14 @@ import datetime
 # project assumes hash computed with hashlib.sha256()
 
 class Protocol(models.Model):
-    name = models.CharField(max_length=44)
+    name = models.CharField(max_length=128)
     package = models.CharField(max_length=44, null=True)
     timesUsed = models.IntegerField(default=0)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
+
+    class Meta(object):
+        ordering = ('-timesUsed',"name")
 
 class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
