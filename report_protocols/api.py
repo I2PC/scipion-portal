@@ -38,6 +38,7 @@ class WorkflowResource(ModelResource):
         workflow, error = Workflow.objects.get_or_create(project_uuid=project_uuid)
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
+        workflow.timesModified += 1
         workflow.save()
         #TODO: parse project_workflow and fill protocols table
         #if workflow already exists substract before adding
