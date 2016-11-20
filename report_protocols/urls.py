@@ -3,7 +3,7 @@ from report_protocols import views
 from django.contrib import admin
 admin.autodiscover()
 from tastypie.api import Api
-from api import WorkflowResource
+from api import WorkflowResource, ProtocolResource
 
 user_api = Api(api_name='workflow')
 user_api.register(WorkflowResource())
