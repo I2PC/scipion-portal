@@ -10,7 +10,7 @@ from report_protocols.models import Workflow, Protocol
 class ProtocolResource(ModelResource):
     """allow search in protocol table"""
     class Meta:
-        queryset = Workflow.objects.all()
+        queryset = Protocol.objects.all()
         resource_name = 'protocol'
         filtering = {'name': ALL}
         #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
