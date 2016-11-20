@@ -3,6 +3,7 @@ from tastypie.constants import ALL
 from django.conf.urls import url
 from tastypie.utils import trailing_slash
 import json
+from collections import Counter
 
 from report_protocols.models import Workflow, Protocol
 
@@ -52,21 +53,36 @@ class WorkflowResource(ModelResource):
                    """
         project_uuid = request.POST['project_uuid']
         project_workflow = request.POST['project_workflow']
-        workflow, error = Workflow.objects.get_or_create(project_uuid=project_uuid)
+        project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+
+        workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
+        if not created:
+            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
+        else:
+            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
         workflow.timesModified += 1
         workflow.save()
-        #TODO: parse project_workflow and fill protocols table
-        project_workflowList = json.loads(project_workflow)
-        for protocolName in project_workflowList:
+
+        print "project_workflowList", project_workflowCounter
+        print "workflow.project_workflow", dabase_workflowCounter
+        #if workflow already exists substract before adding
+        if not created:
+            print "not created"
+            project_workflowDict =  project_workflowCounter - dabase_workflowCounter
+        else:
+            print "created"
+            project_workflowDict =project_workflowCounter
+
+        print "project_workflowDict_2", project_workflowDict
+        for protocolName, numberTimes in project_workflowDict.iteritems():
             if Protocol.objects.filter(name=protocolName).exists():
                 protocolObj = Protocol.objects.get(name=protocolName)
             else:
                 protocolObj = Protocol(name=protocolName)
-            protocolObj.timesUsed += 1
+            protocolObj.timesUsed += numberTimes
             protocolObj.save()
-        #if workflow already exists substract before adding
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
