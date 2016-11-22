@@ -12,8 +12,8 @@ class Protocol(models.Model):
     def __str__(self):  # For Python 2, use __unicode__ too
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
-    class Meta(object):
-        ordering = ('-timesUsed',"name")
+#    class Meta(object):
+#        ordering = ('-timesUsed',"name")
 
 class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
