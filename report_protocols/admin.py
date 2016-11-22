@@ -1,7 +1,7 @@
 from django.contrib import admin
 from report_protocols.models import Protocol, Workflow
 
-class WorkflowAdmin(admin.ModelAdmin):
+class WorkflowAdmin(admin.Model,admin.ModelAdmin):
     list_display = ('project_uuid', 'date','client_ip','timesModified')
     ordering = ("-date")
 
