@@ -1,0 +1,16 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static "css/table.css" %}"/>
+
+<table>
+    <tr>
+    <th>ProtolName</th>
+    <th>timesUsed</th>
+  </tr>
+{% for protocol in protocols %}
+        <tr>
+            <th>{{ protocol.name }}</th>
+            <td>{{ protocol.timesUsed }}</td>
+        </tr>
+{% endfor %}
+</table>

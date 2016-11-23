@@ -1,0 +1,17 @@
+table {
+    border-collapse: collapse;
+    /*width: 100%;*/
+}
+
+tr {
+    border-bottom: 1px solid #ccc;
+}
+
+th {
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    border-bottom: 1px solid #ccc;
+    background-color: #eeeeee;
+}
