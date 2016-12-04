@@ -16,4 +16,4 @@
 
 ##Admin interface (requires password)
 
-> http://calm-shelf-73264.herokuapp.com/admin/report_protocols/workflow/
+> http://calm-shelf-73264.herokuapp.com/admin/
