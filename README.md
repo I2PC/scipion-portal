@@ -2,7 +2,7 @@
 > http://calm-shelf-73264.herokuapp.com/report_protocols/protocolTable/
 
 ## Activate
- Add this to Config (.config/scipion/scipion.conf), section VARIABLES:
+ Add this to Config ($HOME/.config/scipion/scipion.conf), section VARIABLES:
 
 > SCIPION_NOTIFY = True<br>
 > SCIPION_NOTIFY_URL = http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
