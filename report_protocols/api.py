@@ -4,8 +4,10 @@ from django.conf.urls import url
 from tastypie.utils import trailing_slash
 import json
 from collections import Counter
+import datetime
 
-from report_protocols.models import Workflow, Protocol
+
+from models import Workflow, Protocol
 
 class ProtocolResource(ModelResource):
     """allow search in protocol table"""
@@ -60,22 +62,24 @@ class WorkflowResource(ModelResource):
             dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
         else:
             dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
         workflow.timesModified += 1
+        workflow.lastModificationDate = datetime.datetime.now()
         workflow.save()
 
-        print "project_workflowList", project_workflowCounter
-        print "workflow.project_workflow", dabase_workflowCounter
+        #print "project_workflowList", project_workflowCounter
+        #print "workflow.project_workflow", dabase_workflowCounter
         #if workflow already exists substract before adding
         if not created:
-            print "not created"
+            #print "not created"
             project_workflowDict =  project_workflowCounter - dabase_workflowCounter
         else:
-            print "created"
+            #print "created"
             project_workflowDict =project_workflowCounter
 
-        print "project_workflowDict_2", project_workflowDict
+        #print "project_workflowDict_2", project_workflowDict
         for protocolName, numberTimes in project_workflowDict.iteritems():
             if Protocol.objects.filter(name=protocolName).exists():
                 protocolObj = Protocol.objects.get(name=protocolName)
