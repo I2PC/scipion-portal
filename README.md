@@ -1,3 +1,6 @@
+## Short cit to this page
+ > http://tinyurl.com/scipion-readme
+
 ## See Protocol Usage Summary
 > http://calm-shelf-73264.herokuapp.com/report_protocols/protocolTable/
 > ( http://tinyurl.com/scipion-protocols )
