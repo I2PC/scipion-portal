@@ -19,6 +19,7 @@ class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
     project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
+    lastModificationDate = models.DateTimeField(default=datetime.datetime.now)
     client_ip = models.GenericIPAddressField(null=True)
     timesModified = models.IntegerField(default=0)
 
