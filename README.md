@@ -9,10 +9,11 @@
  Add the following two lines to Config ($HOME/.config/scipion/scipion.conf), section VARIABLES:
 
 > SCIPION_NOTIFY = True<br>
-> SCIPION_NOTIFY_URL = http://tinyurl.com/scipion-collect-potocols
+> SCIPION_NOTIFY_URL = http://tinyurl.com/scipion-collect-potocols<br>
+
 -------------------------------------------------------------------------------------------------
-\#http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
-\#SCIPION_NOTIFY_SECONDS = [Default to 3600*24 seconds= 1 day]
+http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
+SCIPION_NOTIFY_SECONDS = [Default to 3600*24 seconds= 1 day]
 
 
 ## Test: Query from command line:
