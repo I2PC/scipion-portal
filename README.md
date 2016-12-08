@@ -1,4 +1,4 @@
-## Short cit to this page
+## Shortcut to this page
  > http://tinyurl.com/scipion-readme
 
 ## See Protocol Usage Summary
