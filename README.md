@@ -1,6 +1,3 @@
-## Shortcut to this page
- > http://tinyurl.com/scipion-readme
-
 ## See Protocol Usage Summary
 > http://calm-shelf-73264.herokuapp.com/report_protocols/protocolTable/
 > ( http://tinyurl.com/scipion-protocols )
@@ -12,6 +9,8 @@
 > SCIPION_NOTIFY_URL = http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
 SCIPION_NOTIFY_SECONDS = 3600*24 \#seconds
 
+## Shortcut to this page
+ > http://tinyurl.com/scipion-readme
 
 ## Test: Query from command line:
 
