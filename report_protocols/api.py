@@ -6,6 +6,8 @@ import json
 from collections import Counter
 import datetime
 import socket
+from urllib2 import urlopen
+from contextlib import closing
 
 
 from models import Workflow, Protocol
@@ -43,6 +45,22 @@ class WorkflowResource(ModelResource):
             ip = request.META.get('REMOTE_ADDR')
         return ip
 
+    def get_geographical_information(self, ip):
+        location_country = "N/A"
+        location_city = "N/A"
+        # Automatically geolocate the connecting IP
+        url = 'http://freegeoip.net/json/%s',ip
+        print "url", url
+        try:
+            with closing(urlopen(url)) as response:
+                location = json.loads(response.read())
+                print(location)
+                location_city = location['city']
+                location_country = location['country_name']
+        except:
+            print("Location could not be determined automatically")
+        return (location_country, location_city)
+
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
         """receive a json dictionary with protocols
            store the dictionary in workflow table
@@ -67,6 +85,8 @@ class WorkflowResource(ModelResource):
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
         workflow.client_address = socket.getfqdn(workflow.client_ip)
+        workflow.client_country, workflow.client_city = \
+            self.get_geographical_information(workflow.client_ip)
         workflow.timesModified += 1
         workflow.lastModificationDate = datetime.datetime.now()
         workflow.save()

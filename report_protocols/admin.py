@@ -2,7 +2,13 @@ from django.contrib import admin
 from models import Protocol, Workflow
 
 class WorkflowAdmin(admin.ModelAdmin):
-    list_display = ('project_uuid', 'date', 'lastModificationDate','client_address','timesModified')
+    list_display = ('project_uuid',
+                    'date',
+                    'lastModificationDate',
+                    'client_address',
+                    'client_country',
+                    'client_city',
+                    'timesModified')
     ordering = ("-date",)
 
 class ProtocolAdmin(admin.ModelAdmin):

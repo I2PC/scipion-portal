@@ -20,6 +20,8 @@ class Workflow(models.Model):
     lastModificationDate = models.DateTimeField(default=datetime.datetime.now)
     client_ip = models.GenericIPAddressField(null=True)
     client_address = models.CharField(max_length=256, null=True)
+    client_country = models.CharField(max_length=256, null=True)
+    client_city = models.CharField(max_length=256, null=True)
     timesModified = models.IntegerField(default=0)
 
     def __str__(self):  # For Python 2, use __unicode__ too
