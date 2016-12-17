@@ -5,6 +5,7 @@ from tastypie.utils import trailing_slash
 import json
 from collections import Counter
 import datetime
+import socket
 
 
 from models import Workflow, Protocol
@@ -65,6 +66,7 @@ class WorkflowResource(ModelResource):
 
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
+        workflow.client_address = socket.getfqdn(workflow.client_ip)
         workflow.timesModified += 1
         workflow.lastModificationDate = datetime.datetime.now()
         workflow.save()
