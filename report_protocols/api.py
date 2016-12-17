@@ -49,7 +49,7 @@ class WorkflowResource(ModelResource):
         location_country = "N/A"
         location_city = "N/A"
         # Automatically geolocate the connecting IP
-        url = 'http://freegeoip.net/json/%s',ip
+        url = 'http://freegeoip.net/json/%s'%ip
         print "url", url
         try:
             with closing(urlopen(url)) as response:
