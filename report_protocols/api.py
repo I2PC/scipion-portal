@@ -54,7 +54,6 @@ class WorkflowResource(ModelResource):
         try:
             with closing(urlopen(url)) as response:
                 location = json.loads(response.read())
-                print(location)
                 location_city = location['city']
                 location_country = location['country_name']
         except:
