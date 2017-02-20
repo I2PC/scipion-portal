@@ -6,8 +6,6 @@
  Add the following two lines to Config ($HOME/.config/scipion/scipion.conf), section VARIABLES:
 
 > SCIPION_NOTIFY = True<br>
-> SCIPION_NOTIFY_URL = http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
-SCIPION_NOTIFY_SECONDS = 3600*24 \#seconds
 
 ## Shortcut to this page
  > http://tinyurl.com/scipion-readme
