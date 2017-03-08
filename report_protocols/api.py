@@ -67,6 +67,7 @@ class WorkflowResource(ModelResource):
 
     def scipionByCountry(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
+        # curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/
         scipion_by_country = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
 
         from django.core.serializers.json import DjangoJSONEncoder
