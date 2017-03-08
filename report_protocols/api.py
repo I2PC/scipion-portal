@@ -67,7 +67,8 @@ class WorkflowResource(ModelResource):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
         scipionByCountry = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
 
-        return self.create_response(request, scipionByCountry)
+        from django.http import JsonResponse
+        return JsonResponse(scipionByCountry)
 
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
