@@ -69,8 +69,9 @@ class WorkflowResource(ModelResource):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
         scipion_by_country = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
 
-        scipion_by_country = serializers.serialize('json', scipion_by_country)
-        return HttpResponse(scipion_by_country, content_type='application/json')
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
 
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
