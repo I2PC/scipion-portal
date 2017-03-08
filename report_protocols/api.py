@@ -1,3 +1,4 @@
+from django.core import serializers
 from django.db.models import Count
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
@@ -65,10 +66,11 @@ class WorkflowResource(ModelResource):
 
     def scipionByCountry(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
-        scipionByCountry = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
+        scipion_by_country = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
 
         from django.http import JsonResponse
-        return JsonResponse(scipionByCountry, safe=False)
+        scipion_by_country = serializers.serialize('json', scipion_by_country)
+        return JsonResponse(scipion_by_country, safe=False)
 
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
