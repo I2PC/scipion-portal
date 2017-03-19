@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+
+      google.charts.load('current', {'packages':['geochart']});
+      google.charts.setOnLoadCallback(drawRegionsMap);
+
+      function drawRegionsMap() {
+          getScipionUsageRAW();
+
+      }
+
+      function getScipionUsage(rawData){
+
+          //rawData =  [{"client_country": "Netherlands", "total": 2}, {"client_country": "United Kingdom", "total": 9}, {"client_country": "Germany", "total": 5}, {"client_country": "United States", "total": 1}, {"client_country": "Sweden", "total": 9}, {"client_country": "Spain", "total": 549}, {"client_country": "Czechia", "total": 8}];
+
+
+        // Adapt to google chart data
+        var chartData = [['Country', 'Users']];
+        for (var i = 0; i < rawData.length; i++){
+          var countryStat = rawData[i];
+					var country = countryStat.client_country;
+					var users = countryStat.total;
+          if (country !='Spain'){
+            var chartLine = [];
+            chartLine.push(country);
+            chartLine.push(users);
+
+            chartData.push(chartLine);
+          }
+
+      	}
+
+        return chartData;
+      };
+
+      function getScipionUsageRAW(){
+      // Form: http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/?
+
+        var scipionUsageDataURL = "http://127.0.0.1:8000/report_protocols/api/workflow/workflow/scipionByCountry/?";
+        $.getJSON( scipionUsageDataURL)
+        .done(function( data ) {
+            var scipionUsage = getScipionUsage(data);
+
+            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+            var chartData = google.visualization.arrayToDataTable(scipionUsage);
+
+            var options = {
+                colorAxis: {colors: ['#D8BFD8', '#b22222']}
+            };
+
+            chart.draw(chartData, options);
+      	})
+        .fail(function( jqxhr, textStatus, error ) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+        })
+        .always(function() {
+            console.log( "complete" );
+        });
+      };
+
+
+</script>
+    <h2>Scipion usage map</h2>
+    <p>Map showing where scipion is installed.</p>
+    <div class="alert alert-success" role="alert">A big, big "thank you" to all of those that have allowed scipion to send usage statistics.
+    You should see you country in the map!.</div>
+   <div class="row">
+       <div id="regions_div" style="width: 900px; height: 500px;"></div>
+   </div>
+{% endblock %}
