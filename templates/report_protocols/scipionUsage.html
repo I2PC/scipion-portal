@@ -23,15 +23,12 @@
         var chartData = [['Country', 'Users']];
         for (var i = 0; i < rawData.length; i++){
           var countryStat = rawData[i];
-					var country = countryStat.client_country;
-					var users = countryStat.total;
-          if (country !='Spain'){
-            var chartLine = [];
-            chartLine.push(country);
-            chartLine.push(users);
-
-            chartData.push(chartLine);
-          }
+          var country = countryStat.client_country;
+          var users = countryStat.total;
+          var chartLine = [];
+          chartLine.push(country);
+          chartLine.push(users);
+          chartData.push(chartLine);
 
       	}
 
@@ -41,7 +38,7 @@
       function getScipionUsageRAW(){
       // Form: http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/?
 
-        var scipionUsageDataURL = "http://127.0.0.1:8000/report_protocols/api/workflow/workflow/scipionByCountry/?";
+        var scipionUsageDataURL = "/report_protocols/api/workflow/workflow/scipionByCountry/?";
         $.getJSON( scipionUsageDataURL)
         .done(function( data ) {
             var scipionUsage = getScipionUsage(data);
@@ -68,7 +65,8 @@
 
 </script>
     <h2>Scipion usage map</h2>
-    <p>Map showing where scipion is installed.</p>
+    <p>Map showing where scipion it's being used. We inform our users and only those that have accepted to
+    send usage statistics are shown.</p>
     <div class="alert alert-success" role="alert">A big, big "thank you" to all of those that have allowed scipion to send usage statistics.
     You should see you country in the map!.</div>
    <div class="row">
