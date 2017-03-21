@@ -1,6 +1,5 @@
-## See Protocol Usage Summary
-> http://calm-shelf-73264.herokuapp.com/report_protocols/protocolTable/
-> ( http://tinyurl.com/scipion-protocols )
+## See Scipion Usage site
+> http://calm-shelf-73264.herokuapp.com
 
 ## Activate
  Add the following two lines to Config ($HOME/.config/scipion/scipion.conf), section VARIABLES:
