@@ -18,3 +18,6 @@
 ##Admin interface (requires password)
 
 > http://calm-shelf-73264.herokuapp.com/admin/
+
+## Details of usage data collection
+You can find them here https://github.com/I2PC/scipion/wiki/Collecting-Usage-Statistics-for-Scipion
