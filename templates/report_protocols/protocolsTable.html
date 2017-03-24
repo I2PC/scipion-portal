@@ -11,12 +11,14 @@
 
             <table class="table table-striped">
                 <thead>
+                    <th>Rank</th>
                     <th>Protocol Name</th>
                     <th>Times used</th>
                 </thead>
                 <tbody>
                 {% for protocol in protocols %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ protocol.name }}</td>
                     <td>{{ protocol.timesUsed }}</td>
                 </tr>
