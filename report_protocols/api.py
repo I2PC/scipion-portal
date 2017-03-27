@@ -1,3 +1,6 @@
+from django.core import serializers
+from django.db.models import Count
+from django.http import HttpResponse
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
 from django.conf.urls import url
@@ -35,6 +38,8 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('addOrUpdateWorkflow'), name="api_add_useraddOrUpdateWorkflow"),
             url(r"^(%s)/reportProtocolUsage%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
+            url(r"^(%s)/scipionByCountry%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('scipionByCountry'), name="scipionByCountry"),
         ]
 
     def get_client_ip(self, request):
@@ -59,6 +64,16 @@ class WorkflowResource(ModelResource):
         except:
             print("Location could not be determined automatically")
         return (location_country, location_city)
+
+    def scipionByCountry(self, request, *args, **kwargs):
+        # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
+        # curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/
+        scipion_by_country = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
+
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
+
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
         """receive a json dictionary with protocols

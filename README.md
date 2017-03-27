@@ -1,13 +1,10 @@
-## See Protocol Usage Summary
-> http://calm-shelf-73264.herokuapp.com/report_protocols/protocolTable/
-> ( http://tinyurl.com/scipion-protocols )
+## See Scipion Usage site
+> http://calm-shelf-73264.herokuapp.com
 
 ## Activate
  Add the following two lines to Config ($HOME/.config/scipion/scipion.conf), section VARIABLES:
 
 > SCIPION_NOTIFY = True<br>
-> SCIPION_NOTIFY_URL = http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/<br>
-SCIPION_NOTIFY_SECONDS = 3600*24 \#seconds
 
 ## Shortcut to this page
  > http://tinyurl.com/scipion-readme
@@ -20,3 +17,6 @@ SCIPION_NOTIFY_SECONDS = 3600*24 \#seconds
 ##Admin interface (requires password)
 
 > http://calm-shelf-73264.herokuapp.com/admin/
+
+## Details of usage data collection
+You can find them here https://github.com/I2PC/scipion/wiki/Collecting-Usage-Statistics-for-Scipion
