@@ -9,7 +9,7 @@ class WorkflowAdmin(admin.ModelAdmin):
                     'client_country',
                     'client_city',
                     'timesModified')
-    ordering = ("-date",)
+    ordering = ("-lastModificationDate",)
 
 class ProtocolAdmin(admin.ModelAdmin):
     list_display = ('name', 'timesUsed')
