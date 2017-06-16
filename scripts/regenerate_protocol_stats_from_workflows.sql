@@ -1,4 +1,7 @@
-﻿select protocol, count(*) from (
+﻿delete from report_protocols_protocol;
+
+INSERT INTO report_protocols_protocol (name, "timesUsed")
+select protocol, count(*) from (
 select unnest(
 	string_to_array(
 	 replace(
@@ -11,4 +14,4 @@ select unnest(
         ,',')
         ) as protocol
 from report_protocols_workflow) prot_list
-group by protocol
+group by protocol;
