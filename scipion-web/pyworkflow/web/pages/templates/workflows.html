@@ -1,0 +1,63 @@
+{% extends 'base_grid.html'%}
+
+{% block title %} - {{Workflows}}{% endblock %}
+
+{% block content_head %}
+<!-- CSS -->
+<link href="{{projects_css}}" rel="stylesheet" type="text/css">
+
+<!-- JS -->
+<script src="{{project_utils_js}}" type="text/javascript"></script>
+<script type="text/javascript">
+
+	jQuery(function($) {
+		// Just call the inner layout once to initialize it. This
+		// must happen before the outer layout is initialized. It
+		// will be automatically resized when the outer layout is
+		// resized.
+	/* 	var outerContainer = $('.layout-outer');
+
+		function layout() {
+			outerContainer.layout({resize: false});
+		}
+		layout();
+
+		$(window).resize(layout); */
+		
+		var outerContainer = $('.layout-outer');
+
+		function layout() {
+			outerContainer.layout({resize: false});
+		}
+		layout();
+
+		$(window).resize(layout);
+
+	});
+
+
+</script>
+{% endblock %}
+
+{% block content_header %}	{% include "header.html"%} {% endblock %}
+
+{% block content %}
+<div class="projectsList">
+	<ul>				
+	{% for workflow in workflows %}
+		<li class="projList">
+			<strong>
+				{% if workflow.exists %}
+					<a href="{{abs_url}}project_content/?p={{workflow.project}}&m=workflow" class="projName">{{workflow.name}}</a>
+				{% else %}
+					<a href="#" class="projName" onclick="javascript:createProject('{{workflow.project}}','{{workflow.file}}')">{{workflow.name}}</a>
+				{% endif %}
+			</strong>
+		</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endblock %}
+
+
+

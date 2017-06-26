@@ -1,0 +1,103 @@
+{% extends "layouts/100.html" %}
+
+{% block title %}Scipion Web Tools{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+	<link href="{{messi_css}}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+	<script type="text/javascript" src="{{messi_js}}"></script>
+	<script type="text/javascript" src="{{utils}}"></script>
+	<script type="text/javascript" src="{{config}}"></script>
+{% endblock %}
+
+{% block main_col %}
+
+	<div id="box">
+		<h1>Scipion Web Tools - <a href="http://www.west-life.eu/" target="_blank">
+			<img style="height: 45px" src="http://about.west-life.eu/network/west-life/images/logos/west-life.png"/></a>
+		</h1>
+		<br />
+		<div id="minibox">
+			<div id="steps">
+				<h2>Single particle analysis tools</h2>
+			</div>
+			<br/>
+
+			<div id="lineOpt">
+				<P>
+			Align your movies
+			</P>
+				<span id="buttons">
+					<a href="{{abs_url}}mymovies"><button type="button" class="btn btn_wide button2 primary_inv">My movie alignment</button></a>
+				</span>
+			</div>
+			<br/>
+
+			<div id="lineOpt">
+				<P>
+					Create your initial volume
+				</P>
+				<span id="buttons">
+					<a href="{{abs_url}}myfirstmap"><button type="button" class="btn btn_wide button2 primary_inv">My first map</button></a>
+				</span>
+			</div>
+			<br/>
+
+			<div id="lineOpt">
+				<P>
+					Analyze your maps
+				</P>
+				<span id="buttons">
+					<a href="{{abs_url}}myresmap"><button type="button" class="btn btn_wide button2 primary_inv">My resolution map</button></a>
+				</span>
+			</div>
+			<br/>
+
+			<div id="steps">
+				<h2>Reliability tools</h2>
+			</div>
+			<br/>
+
+			<div id="lineOpt">
+				<P>
+					Explore protein interactions
+				</P>
+				<span id="buttons">
+					<!-- EXAMPLE PROJECT -->
+					<a href="http://3diana.cnb.csic.es/DIMERO/run_dimero_form.html">
+						<img src="http://3diana.cnb.csic.es/DIMERO/IMG/3diana_logo.png" style="height:35px;margin-bottom:15px"/>
+					</a>
+				</span>
+			</div>
+			<div id="lineOpt">
+				<P>
+					Check the reliability of your data
+				</P>
+				<span id="buttons">
+					<!-- EXAMPLE PROJECT -->
+					<a href="{{abs_url}}mypval"><button type="button" class="btn btn_wide button2 primary_inv">My reliability tool</button></a>
+				</span>
+			</div>
+			<br />
+			<!--<div id="lineOpt">-->
+				<!--<h3 id="textbtn">-->
+					<!--Calculate you quality map score-->
+				<!--</h3>-->
+				<!--<span id="buttons">-->
+					<!--&lt;!&ndash; EXAMPLE PROJECT &ndash;&gt;-->
+					<!--<a href="{{abs_url}}myscoring">-->
+						<!--<button class="btn button2 validation_inv" type="button">-->
+							<!--My map scoring-->
+						<!--</button>-->
+					<!--</a>-->
+				<!--</span>-->
+			<!--</div>-->
+			<!--<br />-->
+		</div>
+	</div>
+
+{% endblock %}
