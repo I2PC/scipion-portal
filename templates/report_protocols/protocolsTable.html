@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  <h2>Protocol's usage ranking</h2>
+    <p>Here you can see a ranking from the most to the less used scipion protocols.</p>
+    <div class="alert alert-success" role="alert">A big, big "thank you" to all of those that have allowed scipion to send usage statistics.
+    You should see you country in the map!.</div>
+   <div class="row">
+        <div class="col-md-4">
+
+            <table class="table table-striped">
+                <thead>
+                    <th>Rank</th>
+                    <th>Protocol Name</th>
+                    <th>Times used</th>
+                </thead>
+                <tbody>
+                {% for protocol in protocols %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ protocol.name }}</td>
+                    <td>{{ protocol.timesUsed }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+   </div>
+{% endblock %}
