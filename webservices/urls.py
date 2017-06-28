@@ -22,7 +22,9 @@ from report_protocols import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    #url(r'^portal/', include('pyworkflow.web.pages.urls')),
+    url(r'^', include('web.urls')),
+    url(r'^webservices$', views.index, name='index'),
     url(r'^report_protocols/', include('report_protocols.urls')),
     url(r'^ask_version/', include('ask_version.urls')),
     url(r'^admin/', admin.site.urls),

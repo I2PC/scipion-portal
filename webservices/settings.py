@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'ask_version',
     #'tastypie',
     'report_protocols',
+    #'pyworkflow.web.pages'
+    'web',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -59,7 +61,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': [TEMPLATE_DIR, "/tmp/templ"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,4 +134,5 @@ STATIC_PATH = os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS = (
     STATIC_PATH,
 )
-print "STATICFILES_DIRS",STATICFILES_DIRS
+
+EMAIL_FOR_SUBSCRIPTION = 'scipion-users-join@lists.sourceforge.net'
