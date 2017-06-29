@@ -163,7 +163,8 @@ def startDownload(request):
         request.session[FILE_TO_DOWNLOAD] = fileName
 
         context = {
-            "fileToDownload": fileName
+            "fileToDownload": fileName,
+            "abs_url": getAbsoluteURL(),
         }
         context.update(csrf(request))
 
@@ -219,5 +220,8 @@ def getDownloadsStatsToJSON():
 
 
 def showDownloadStats(request):
-    context = {"downloadsJSON": getDownloadsStatsToJSON()}
+    context = {
+        "downloadsJSON": getDownloadsStatsToJSON(),
+        "abs_url": getAbsoluteURL(),
+    }
     return render_to_response('home/download_stats.html', context)
