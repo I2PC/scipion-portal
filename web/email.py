@@ -22,7 +22,7 @@ def formatTo(to):
 def subscribeToUsersList(emailToSubscribe):
     message = 'Please, subscribe me to the scipion users list. Sent from Scipion web site on behalf of '\
               + emailToSubscribe
-    to = settings.EMAIL_FOR_SUBSCRIPTION
+    to = settings.EMAIL_CONF["EMAIL_FOR_SUBSCRIPTION"]
 
     subject = 'Please, subscribe ' + emailToSubscribe
     sender = emailToSubscribe

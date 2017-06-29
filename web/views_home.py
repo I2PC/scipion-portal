@@ -27,9 +27,9 @@
 
 import os
 import json
-import pytz
+import calendar
+from datetime import datetime, timedelta, tzinfo
 from django.shortcuts import render_to_response, redirect
-from datetime import datetime
 from django.http import HttpResponse, HttpResponseNotFound
 from django.conf import settings
 from django.template.context_processors import csrf
@@ -42,7 +42,9 @@ except ImportError:
 from web.email import validateEmail, subscribeToUsersList
 import mimetypes
 
+from django.forms.models import model_to_dict
 from django.conf import settings
+from web.models import Download
 
 FILE_TO_DOWNLOAD = 'fileToDownload'
 
@@ -67,50 +69,15 @@ def download_form(request):
     context.update(csrf(request))
     return render_to_response('home/download_form.2.html', context)
 
+def utc_to_local(utc_dt):
+    timestamp = calendar.timegm(utc_dt.timetuple())
+    local_dt = datetime.fromtimestamp(timestamp)
+    return local_dt.replace(microsecond=utc_dt.microsecond)
+
 def getAbsoluteURL(additionalPath=None):
     if additionalPath is None:
         additionalPath = ''
     return '/' + additionalPath
-
-def strDate(stringDate, format="%Y-%m-%d %H:%M:%S.%f"):
-    """
-    Usually date are created in python using datetime.now
-    and then persisted in sqlite and retrieved as text (2016-03-14 17:30:34.645956)
-    or in SQLite (creation date is populated by SQLite using datetime() -->
-    'The datetime() function returns "YYYY-MM-DD HH:MM:SS".'
-
-    The default format should deal with both cases.
-
-    Parameters
-    ----------
-    stringDate : String with a date ->  "2016-12-10"
-    format : Format of the date -> "%Y-%m-%d"
-
-    Returns
-    -------
-
-    """
-    return datetime.strptime(stringDate, format)
-
-def dateNaiveToAware(naiveDate):
-    """
-    Converts a naive date (https://docs.python.org/2/library/datetime.html#module-datetime) to a
-    timezone aware date using DJANGO TIME ZONE settings: https://docs.djangoproject.com/es/1.9/topics/i18n/timezones/
-    Parameters
-    ----------
-    naiveDate : the naive date
-
-    Returns
-    -------
-    timezone aware date.
-    """
-
-    serverTZ = pytz.timezone(str(settings.TIME_ZONE))
-    newDate = naiveDate
-    if not isinstance(newDate, datetime):
-        newDate = strDate(newDate)
-    loacalizeDate = serverTZ.localize(newDate)
-    return loacalizeDate
 
 def loadDownloadables():
     f = open(getInstallPath("downloadables.json"))
@@ -154,7 +121,7 @@ def startDownload(request):
 
     # If full name is None it's a direct access..
     if fullName is None:
-        return redirect('app.views_home.download_form')
+        return redirect('download_form')
 
     if not len(fullName) > 0:
         errors += "Please fill in the fullName field.\n"
@@ -174,19 +141,15 @@ def startDownload(request):
         platform = fileSplit[1]
         fileName = fileSplit[2]
 
-        # TODO: sqlite -> postgres
-        # mapper = getDownloadsMapper()
-        # mapper.enableAppend()
-        # download = DownloadRecord(fullName=fullName,
-        #                           organization=organization,
-        #                           email=email,
-        #                           subscription=mailoption,
-        #                           country=country,
-        #                           version=version,
-        #                           platform=platform)
-        # mapper.store(download)
-        # mapper.commit()
-        # mapper.close()
+        download = Download.objects.create(
+            fullName=fullName,
+            organization=organization,
+            email=email,
+            subscription=mailoption,
+            country=country,
+            version=version,
+            platform=platform,
+        )
 
         # If the user want's to be subscribed
         if mailoption == '0': subscribeToUsersList(email)
@@ -229,7 +192,7 @@ def doDownload(request):
         return response
     else:
 
-        return redirect('app.views_home.download_form')
+        return redirect('download_form')
 
 
 def getDownloadsStats(request):
@@ -240,28 +203,19 @@ def getDownloadsStats(request):
 
 
 def getDownloadsStatsToJSON():
-    return '{}'
-    TODO
-    # mapper = getDownloadsMapper()
-    # downloadData = mapper.selectAll()
-    # result = []
-    # for download in downloadData:
-    #     ddict = download.getObjDict()
-    #     del ddict['email']
-    #     del ddict['fullName']
+    result = []
+    for download in Download.objects.all():
+        ddict = model_to_dict(download)
+        del ddict['email']
+        del ddict['fullName']
+        #from pdb import set_trace; set_trace()
+        ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
 
-    #     # Date has to be formatted right: 2012-04-23T18:25:43.511Z
-    #     creation = download.getObjCreation()
-
-    #     creation = dateNaiveToAware(strDate(creation, '%Y-%m-%d %H:%M:%S'))
-
-    #     ddict['timeStamp'] = creation.isoformat()
-
-    #     # Convert subscription: 0 = Yes 1 = No
-    #     ddict['subscription']= 'Yes' if ddict['subscription'] == '0' else 'No'
-    #     result.append(ddict)
-    # jsonStr = json.dumps(result, ensure_ascii=False)
-    # return jsonStr
+        # Convert subscription: 0 = Yes 1 = No
+        ddict['subscription']= ('Yes' if ddict['subscription'] else 'No')
+        result.append(ddict)
+    jsonStr = json.dumps(result, ensure_ascii=False)
+    return jsonStr
 
 
 def showDownloadStats(request):

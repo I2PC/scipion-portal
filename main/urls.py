@@ -1,4 +1,4 @@
-"""webservices URL Configuration
+"""Scipion Portal URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.9/topics/http/urls/
@@ -22,7 +22,6 @@ from report_protocols import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    #url(r'^portal/', include('pyworkflow.web.pages.urls')),
     url(r'^', include('web.urls')),
     url(r'^webservices$', views.index, name='index'),
     url(r'^report_protocols/', include('report_protocols.urls')),
