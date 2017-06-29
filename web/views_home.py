@@ -145,7 +145,7 @@ def startDownload(request):
             fullName=fullName,
             organization=organization,
             email=email,
-            subscription=mailoption,
+            subscription=mailoption == "0",
             country=country,
             version=version,
             platform=platform,
