@@ -14,6 +14,7 @@ class Protocol(models.Model):
 
 class IpAddressBlackList(models.Model):
     client_ip = models.GenericIPAddressField(null=True)
+    note = models.CharField(max_length=128, null=True)
 
 class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
