@@ -13,7 +13,7 @@ from urllib2 import urlopen
 from contextlib import closing
 
 
-from models import Workflow, Protocol
+from models import Workflow, Protocol, IpAddressBlackList
 
 class ProtocolResource(ModelResource):
     """allow search in protocol table"""
@@ -50,6 +50,15 @@ class WorkflowResource(ModelResource):
             ip = request.META.get('REMOTE_ADDR')
         return ip
 
+    def isInBlackList(self,ip):
+        """ check if ip address is in blackList and then return False. 
+            Otherwise return True"""
+        try:
+            IpAddressBlackList.objects.get(client_ip=ip)
+        except IpAddressBlackList.DoesNotExist:
+            return False
+        return True
+        
     def get_geographical_information(self, ip):
         location_country = "N/A"
         location_city = "N/A"
@@ -98,31 +107,27 @@ class WorkflowResource(ModelResource):
 
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
-        workflow.client_address = socket.getfqdn(workflow.client_ip)
-        workflow.client_country, workflow.client_city = \
-            self.get_geographical_information(workflow.client_ip)
-        workflow.timesModified += 1
-        workflow.lastModificationDate = datetime.datetime.now()
-        workflow.save()
+        if isInBlackList(workflow.client_ip):    
+	    workflow.client_address = socket.getfqdn(workflow.client_ip)
+	    workflow.client_country, workflow.client_city = \
+	        self.get_geographical_information(workflow.client_ip)
+            workflow.timesModified += 1
+            workflow.lastModificationDate = datetime.datetime.now()
+            workflow.save()
 
-        #print "project_workflowList", project_workflowCounter
-        #print "workflow.project_workflow", dabase_workflowCounter
-        #if workflow already exists substract before adding
-        if not created:
-            #print "not created"
-            project_workflowDict =  project_workflowCounter - dabase_workflowCounter
-        else:
-            #print "created"
-            project_workflowDict =project_workflowCounter
-
-        #print "project_workflowDict_2", project_workflowDict
-        for protocolName, numberTimes in project_workflowDict.iteritems():
-            if Protocol.objects.filter(name=protocolName).exists():
-                protocolObj = Protocol.objects.get(name=protocolName)
+            #if workflow already exists substract before adding
+            if not created:
+                project_workflowDict =  project_workflowCounter - dabase_workflowCounter
             else:
-                protocolObj = Protocol(name=protocolName)
-            protocolObj.timesUsed += numberTimes
-            protocolObj.save()
+                project_workflowDict =project_workflowCounter
+
+            for protocolName, numberTimes in project_workflowDict.iteritems():
+                if Protocol.objects.filter(name=protocolName).exists():
+                    protocolObj = Protocol.objects.get(name=protocolName)
+                else:
+                    protocolObj = Protocol(name=protocolName)
+                protocolObj.timesUsed += numberTimes
+                protocolObj.save()
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
