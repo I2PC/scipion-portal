@@ -12,6 +12,8 @@ class Protocol(models.Model):
     def __str__(self):  # For Python 2, use __unicode__ too
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
+class IpAddressBlackList(models.Model):
+    client_ip = models.GenericIPAddressField(null=True)
 
 class Workflow(models.Model):
     project_uuid = models.CharField(max_length=44)
