@@ -111,8 +111,8 @@ class WorkflowResource(ModelResource):
 
             workflow.client_ip = client_ip
             workflow.client_address = socket.getfqdn(workflow.client_ip)
-	    workflow.client_country, workflow.client_city = \
-	        self.get_geographical_information(workflow.client_ip)
+            workflow.client_country, workflow.client_city = \
+            self.get_geographical_information(workflow.client_ip)
             workflow.timesModified += 1
             workflow.lastModificationDate = datetime.datetime.now()
             workflow.save()
