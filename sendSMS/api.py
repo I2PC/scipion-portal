@@ -26,7 +26,7 @@ class sendMsgResource(ModelResource):
         #get posted data
         phoneNumber = request.POST['phoneNumber']
         message = request.POST['message']
-        ###print "phoneNumber", phoneNumber, "message", message
+        print "phoneNumber", phoneNumber, "message", message
         # Create an SNS client
         client = boto3.client(
             "sns",
