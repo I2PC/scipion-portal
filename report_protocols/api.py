@@ -108,8 +108,8 @@ class WorkflowResource(ModelResource):
 
         workflow.project_workflow = project_workflow
         workflow.client_ip = self.get_client_ip(request)
-        if isInBlackList(workflow.client_ip):    
-	    workflow.client_address = socket.getfqdn(workflow.client_ip)
+        if True:#self.isInBlackList(workflow.client_ip):    
+            workflow.client_address = socket.getfqdn(workflow.client_ip)
 	    workflow.client_country, workflow.client_city = \
 	        self.get_geographical_information(workflow.client_ip)
             workflow.timesModified += 1
