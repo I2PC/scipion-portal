@@ -56,8 +56,8 @@ class WorkflowResource(ModelResource):
         try:
             IpAddressBlackList.objects.get(client_ip=ip)
         except IpAddressBlackList.DoesNotExist:
-            return False
-        return True
+            return True
+        return False
         
     def get_geographical_information(self, ip):
         location_country = "N/A"
