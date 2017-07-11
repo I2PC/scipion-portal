@@ -53,6 +53,7 @@ class WorkflowResource(ModelResource):
     def isInBlackList(self,ip):
         """ check if ip address is in blackList and then return False. 
             Otherwise return True"""
+        return True
         try:
             IpAddressBlackList.objects.get(client_ip=ip)
         except IpAddressBlackList.DoesNotExist:
