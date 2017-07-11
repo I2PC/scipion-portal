@@ -16,8 +16,8 @@ class ProtocolAdmin(admin.ModelAdmin):
     ordering = ('-timesUsed',"name")
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):
-    list_display = ('client_ip',)
-    ordering = ('client_ip',)
+    list_display = ('client_ip','note')
+    ordering = ('client_ip','note')
 
 # Register your models here.
 admin.site.register(Protocol,ProtocolAdmin)
