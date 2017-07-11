@@ -107,8 +107,9 @@ class WorkflowResource(ModelResource):
             dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
 
         workflow.project_workflow = project_workflow
-        workflow.client_ip = self.get_client_ip(request)
-        if True:#self.isInBlackList(workflow.client_ip):    
+        client_ip = self.get_client_ip(request)
+        workflow.client_ip = client_ip
+        if self.isInBlackList(client_ip):    
             workflow.client_address = socket.getfqdn(workflow.client_ip)
 	    workflow.client_country, workflow.client_city = \
 	        self.get_geographical_information(workflow.client_ip)
