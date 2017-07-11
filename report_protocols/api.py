@@ -95,20 +95,21 @@ class WorkflowResource(ModelResource):
            curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
            curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
                    """
-        project_uuid = request.POST['project_uuid']
-        project_workflow = request.POST['project_workflow']
-        project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
-
-        workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
-        if not created:
-            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
-        else:
-            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
-
-        workflow.project_workflow = project_workflow
         client_ip = self.get_client_ip(request)
-        workflow.client_ip = client_ip
         if self.isInBlackList(client_ip):    
+            project_uuid = request.POST['project_uuid']
+            project_workflow = request.POST['project_workflow']
+            project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+
+            workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
+            if not created:
+                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
+            else:
+                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+
+            workflow.project_workflow = project_workflow
+
+            workflow.client_ip = client_ip
             workflow.client_address = socket.getfqdn(workflow.client_ip)
 	    workflow.client_country, workflow.client_city = \
 	        self.get_geographical_information(workflow.client_ip)
