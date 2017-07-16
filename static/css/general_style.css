@@ -57,9 +57,6 @@ textarea {
 }
 
 /* MAIN CONTAINER LINKS */
-.twitterFeed {
-	float: right;
-}
 
 .main-links .glyphicon {
 	margin-right: 8px;
@@ -78,6 +75,27 @@ textarea {
 .timeline-Header {
 	display: none !important;
 }
+
+/* FORM STYLING */
+
+#downloadForm label {
+	margin-top: 10px;
+}
+
+#downloadForm .btn input[type="radio"] {
+	margin-right: 6px;
+}
+
+#startdownload, #downloadStats, #scipionUsage, #protocolsTable, #downloadForm {
+	margin-top: 48px;
+}
+
+@media (max-width: 690px){
+	#startdownload,  #downloadStats, #scipionUsage, #protocolsTable, #downloadForm {
+		margin-top: 76px;
+	}
+}
+
 
 /* HEADER */
 header {
