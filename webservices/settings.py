@@ -25,7 +25,7 @@ SECRET_KEY = 'in##hj=!8!%v+%i0f!9a(#eq^bgc6lnz^lkt%rkgql*0=2tm&^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'calm-shelf-73264.herokuapp.com', u'127.0.0.1', u'localhost']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ask_version',
     #'tastypie',
     'report_protocols',
+    'sendSMS',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -132,4 +133,3 @@ STATIC_PATH = os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS = (
     STATIC_PATH,
 )
-print "STATICFILES_DIRS",STATICFILES_DIRS
