@@ -13,7 +13,7 @@ class Protocol(models.Model):
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
 class IpAddressBlackList(models.Model):
-    client_ip = models.GenericIPAddressField(null=True)
+    client_ip = models.GenericIPAddressField(null=True,unique=True)
     note = models.CharField(max_length=128, null=True)
     def __str__(self):
         return str(self.client_ip)
