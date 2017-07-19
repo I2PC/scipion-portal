@@ -1,7 +1,7 @@
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
-  padding-bottom: 20px;
+  padding-bottom: 0px;
 }
 
 .backimage {
@@ -12,19 +12,28 @@ body {
 
 .logoLine {
 	float: right;
-	margin-top: 5px;"
+	margin-top: 13px;
+}
+
+.logoLine img {
+	margin-left: 10px;
 }
 
 .headerImage {
-	max-height: 50px;
+	margin-top: 4px;
+	max-height: 58px;
 }
 
 .scipionlogo {
-	height: 30px;
+	height: 38px;
 }
 
 .mynav {
 	background-color: white;
+}
+
+.mynav .container {
+	height: 64px;
 }
 
 .footerLink a{
@@ -37,10 +46,24 @@ body {
 }
 
 @media (max-width: 690px){
+	.mynav .container {
+	height: 102px;
+	text-align: center;
+	}
+	.jumbotron {
+		margin-top: 64px;
+	    padding: 18px 15px;
+	}
 	.backimage {
 		background-image: none;
 		background-repeat: no-repeat;
 		background-position: right;
+	}
+	.logoLine {
+		margin-top: 0px;
+	}
+	.scipionlogo {
+	height: 26px;
 	}
 	.mainHead h2 {
 		font-size: 24px;
@@ -124,6 +147,11 @@ header #headerRightContainer{
 /* Customize Bootstrap style here, better to move it oustide jumbotron?:
  following https://bootstrapbay.com/blog/customize-bootstrap/ approach
 */
+
+@media screen and (min-width: 768px) {
+.jumbotron {
+    padding: 82px 0 48px 0;
+}
 
 a {
 	color: inherit;

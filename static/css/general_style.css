@@ -56,6 +56,47 @@ textarea {
 	font-size: 0.9em;
 }
 
+/* MAIN CONTAINER LINKS */
+
+.main-links .glyphicon {
+	margin-right: 8px;
+}
+
+.main-links a {
+	text-decoration: none;
+    border-bottom: 2px solid #333;
+}
+
+.main-links a:hover {
+	text-decoration: none;
+    border-bottom: 2px solid firebrick;
+}
+
+.timeline-Header {
+	display: none !important;
+}
+
+/* FORM STYLING */
+
+#downloadForm label {
+	margin-top: 10px;
+}
+
+#downloadForm .btn input[type="radio"] {
+	margin-right: 6px;
+}
+
+#startdownload, #downloadStats, #scipionUsage, #protocolsTable, #downloadForm {
+	margin-top: 48px;
+}
+
+@media (max-width: 690px){
+	#startdownload,  #downloadStats, #scipionUsage, #protocolsTable, #downloadForm {
+		margin-top: 76px;
+	}
+}
+
+
 /* HEADER */
 header {
 	/* height: 100px; */
@@ -180,12 +221,20 @@ footer{
  	clear: both;
  	position: relative;
  	z-index: 10;
- 	height: 110px;
+ 	height: 140px;
  	text-align: center;
- 	font-size: 0.8em;
- 	margin-top: 20px;
+ 	font-size: 1em;
+ 	margin-top: 30px;
  	/* This shoulb be uncommented if we want the footer to be displayed initially*/ 
  	/* margin-top: -110px;  */
+}
+.footerStyle {
+	padding-top: 40px;
+	background: #eee;
+	text-align: center;
+}
+.footerText {
+	color: gray;
 }
 footer #footerLine{
 	height:6px;
@@ -231,17 +280,17 @@ footer .footerLink{
 }
 footer .footerLink a {
     color: gray;
-    text-decoration: none;
+    text-decoration: underline;
 }
 footer .footerLink a:hover {
     color: firebrick;
 }
 footer .logoLine {
-    float: right;
-    margin-top: 0px;
+    float: none;
+    margin-top: 18px;
 }
 footer .logo{
-	max-height:30px;
+	max-height:38px;
 	margin-right:5px;
 }
 
