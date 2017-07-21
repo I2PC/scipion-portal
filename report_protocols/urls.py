@@ -10,7 +10,6 @@ user_api.register(WorkflowResource())
 user_api.register(ProtocolResource())
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
     url(r'^api/',include(user_api.urls)),
     url(r'^protocolTable/',views.protocolTable, name ='protocolTable'),
     url(r'^scipionUsage', views.scipionUsage, name='scipionUsage'),

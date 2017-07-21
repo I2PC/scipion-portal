@@ -1,18 +1,36 @@
+
+
 ## Scipion Portal
 
 > http://calm-shelf-73264.herokuapp.com
 
 ## Set up
 
+### Dependencies
+
+```
+$ sudo pip install -r requirements.txt
+```
+
 ### Configuration file: scipion.conf
 
 The default location for the configuration file is `$HOME/.config/scipion-portal/scipion.conf`.
-You can set the environment variable `SCIPION_CONF` to use a different path. See file `scipion.conf.template`
+Use the environment variable `SCIPION_CONFIG` for a different path. See file `scipion.conf.template`
 in the repository for reference.
 
-### Database: postgreSQL
+### Database: Postgres
+
+```
+$ createdb scipion
+$ pg_restore scipion_usage_bd_20170620.backup | psql scipion
+$ psql scipion
+$ echo "ALTER TABLE django_content_type ADD COLUMN name character varying(50) NOT NULL DEFAULT 'someName';" | psql scipion
+```
 
 Set the environment variable `DATABASE_URL`. Example: `postgres://user:password@localhost:5432/scipion`.
+
+$ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
+$ python manage.py migrate --fake-initial
 
 ## Test: Query from command line:
 
@@ -20,6 +38,12 @@ Set the environment variable `DATABASE_URL`. Example: `postgres://user:password@
 $ curl http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/protocol/?name=ProtMonitorSystem<br>
 $ curl http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=b9a2d873-53d2-42fb-aa69-a5002f2f08e9
 ```
+
+## Development server
+
+$ export SCIPION_CONFIG=path/to/scipion.conf
+$ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
+$ python manage.py runserver
 
 ### Downloads
 
