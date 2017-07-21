@@ -34,3 +34,19 @@ for reference.
 ## Details of usage data collection
 
 You can find them here https://github.com/I2PC/scipion/wiki/Collecting-Usage-Statistics-for-Scipion
+
+## Convert old sqlite3 database to postgres
+
+Install the dependencies:
+
+```
+$ sudo pip install records
+```
+
+And execute the utilities script passing source and target database path/url. An example:
+
+```
+$ python utilities/convert_db_sqlite_to_postgres.py \
+  downloads.sqlite3 \
+  postgres://user:password@localhost:5432/scipion
+```

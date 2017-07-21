@@ -6,7 +6,9 @@
 #
 # Usage example:
 #
-# $ python convert_db_sqlite_to_postgres.py downloads.sqlite3 postgres://localhost:5432/scipion
+# $ python convert_db_sqlite_to_postgres.py \
+#     downloads.sqlite3 \
+#     postgres://user@password:localhost:5432/scipion
 #
 from __future__ import print_function
 import sys
