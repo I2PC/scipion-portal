@@ -51,12 +51,17 @@
 
 
     {% block jumbotron %}{%  endblock %}
-    <div class="container">
-        {% block content %}Base HTML, content block{% endblock %}
-      <hr>
-    </div> <!-- /container -->        
 
-    <footer class="footerStyle">
+    <div id="wrapMain2">    
+
+        <div class="container">
+            {% block content %}Base HTML, content block{% endblock %}
+          <hr>
+        </div> <!-- /container -->        
+
+    </div> <!-- /wrapMain -->
+
+    <footer id="footer" class="footerStyle">
       {% include "_footer.html" %}
     </footer>
     

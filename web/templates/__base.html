@@ -22,9 +22,11 @@
     <body>
         {% block header %}{% endblock %}
         <div id="main" role="main">
-            <div class="container">
-                {% block content %}
-                {% endblock %}
+            <div id="wrapMain2">  
+                <div class="container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
             </div>
             {% block footer %}{% endblock %}
         </div>
