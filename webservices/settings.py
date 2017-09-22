@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'ask_version',
     #'tastypie',
     'report_protocols',
-    'sendSMS',
+    #'sendSMS',
+    'micStatistics',
 ]
 
 MIDDLEWARE_CLASSES = [
