@@ -13,12 +13,6 @@
 $ sudo pip install -r requirements.txt
 ```
 
-### Run the server
-
-```
-$ python manage.py runserver
-```
-
 ### Configuration file: scipion.conf
 
 The default location for the configuration file is `$HOME/.config/scipion-portal/scipion.conf`.
@@ -27,9 +21,11 @@ in the repository for reference.
 
 ## Development server
 
+```
 $ export SCIPION_CONFIG=path/to/scipion.conf
 $ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
 $ python manage.py runserver
+```
 
 ### Downloads
 
