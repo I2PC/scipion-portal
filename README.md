@@ -76,6 +76,6 @@ You can find them here https://github.com/I2PC/scipion/wiki/Collecting-Usage-Sta
 ## Test: Query from command line:
 
 ```
-$ curl http://scipion.i2pc.es/report_protocols/api/workflow/protocol/?name=ProtMonitorSystem<br>
+$ curl http://scipion.i2pc.es/report_protocols/api/workflow/protocol/?name=ProtMonitorSystem
 $ curl http://scipion.i2pc.es/report_protocols/api/workflow/workflow/?project_uuid=b9a2d873-53d2-42fb-aa69-a5002f2f08e9
 ```
