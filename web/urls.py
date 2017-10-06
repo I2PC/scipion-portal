@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.views.generic import RedirectView
 from web import views_home
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     url(r'^download/', views_home.doDownload),
     url(r'^getdownloadsdata', views_home.getDownloadsStats),
     url(r'^downloadstats', views_home.showDownloadStats),
+    url(r'^docs/$', RedirectView.as_view(url='https://github.com/I2PC/scipion/wiki')),
 ]
