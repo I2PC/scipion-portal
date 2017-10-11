@@ -1,5 +1,3 @@
-
-
 ## Scipion Portal
 
 > http://calm-shelf-73264.herokuapp.com
@@ -11,7 +9,9 @@
 ### Dependencies
 
 ```
-$ sudo pip install -r requirements.txt
+$ cd scipion-portal
+$ virtualenv --python /usr/bin/python2 env
+$ env/bin/pip install -r requirements.txt
 ```
 
 ### Configuration file: scipion.conf
@@ -25,7 +25,33 @@ in the repository for reference.
 ```
 $ export SCIPION_CONFIG=path/to/scipion.conf
 $ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
-$ python manage.py runserver
+$ env/bin/python manage.py runserver
+```
+
+## Production server (Apache)
+
+```
+<VirtualHost *:80>
+  ServerName scipion.i2pc.es
+  Alias /static /home/ubuntu/scipion-portal/staticfiles
+
+  <Directory /home/ubuntu/scipion-portal/staticfiles>
+    Require all granted
+  </Directory>
+
+  <Directory /home/ubuntu/scipion-portal/main>
+    <Files wsgi.py>
+      Require all granted
+    </Files>
+  </Directory>
+
+  WSGIDaemonProcess scipion-portal python-home=/home/ubuntu/scipion-portal/env python-path=/home/ubuntu/scipion-portal
+  WSGIProcessGroup scipion-portal
+  WSGIScriptAlias / /home/ubuntu/scipion-portal/main/wsgi.py
+
+  SetEnv SCIPION_CONFIG /home/ubuntu/.config/scipion-portal/scipion.conf
+  SetEnv DATABASE_URL postgres://scipion:j6rUtd8Y6qW@localhost:5432/scipion
+</VirtualHost>
 ```
 
 ### Downloads
@@ -54,13 +80,13 @@ $ python manage.py migrate --fake-initial
 Install the dependencies:
 
 ```
-$ sudo pip install records
+$ env/bin/pip install records
 ```
 
 And execute the utilities script passing source and target database path/url. An example:
 
 ```
-$ python utilities/convert_db_sqlite_to_postgres.py \
+$ env/bin/python utilities/convert_db_sqlite_to_postgres.py \
   downloads.sqlite3 \
   postgres://user:password@localhost:5432/scipion
 ```
