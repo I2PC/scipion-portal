@@ -141,9 +141,18 @@ LOGIN_URL = reverse_lazy("accounts:login")
 
 THUMBNAIL_EXTENSION = 'png'     # Or any extn for your thumbnails
 
-BACKUPPATH='/media/roberto'
+import socket
+if socket.gethostname()== 'linux-bxmv.suse':
+    BACKUPPATH='/run/media/roberto'
+else:
+    BACKUPPATH='/media/roberto'
+
 DEFAULTMIC=1
 DEFAULTWORKFLOW=1
 #SCIPIONPATH='/usr/local/scipion'
 SCIPIONPATH='/home/roberto/Scipion/scipion_box'
 WORKFLOWFILENAME='workflow.json'
+EMAILFROM="noreply-biocomp@cnb.csic.es"
+EMAILTO="user@domain"
+SMTP="localhost"
+PUBLISHCMD="rsync -av %(REPORT_FOLDER)s scipionbox@nolan:public_html/"

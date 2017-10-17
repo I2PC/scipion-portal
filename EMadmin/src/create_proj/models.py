@@ -38,6 +38,7 @@ class Acquisition(models.Model):
     projname   = models.CharField(max_length=128, blank=True, unique=True)
     backupPath = models.FilePathField(path=settings.BACKUPPATH, allow_folders=True,
                                        allow_files=False)
+    schedule = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         #create project name
@@ -67,10 +68,10 @@ PHP_CHOICES = [(1, '1'), (2, '2'),(3, '3'), (4, '4'), (5, '5'), (6, '6')]
 class Acquisition2(models.Model):
     acquisition = models.ForeignKey(Acquisition)
     nominal_magnification = models.FloatField(blank=True)
-    pixelsize = models.FloatField(blank=False)  # A/px
+    sampling_rate = models.FloatField(blank=False)  # A/px
     spotsize = models.FloatField(blank=True)
     illuminated_area = models.FloatField(blank=True)
-    dose_per_pixel = models.FloatField(blank=False)  # e/px
+    dose_per_frame = models.FloatField(blank=False)  # e/px
     total_exposure_time = models.FloatField(blank=False)
     number_of_fractions = models.PositiveIntegerField(blank=False)
     frames_in_fraction = models.PositiveIntegerField(blank=False)

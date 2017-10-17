@@ -11,7 +11,8 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.db import IntegrityError
 import json
-
+from parse_protocol import parse_protocol
+import subprocess
 @login_required
 def index(request):
     return HttpResponse("Rango says hey there world!")
@@ -76,10 +77,8 @@ def save_workflow(acquisition2):
     workflowPath = os.path.join(projectPath, settings.WORKFLOWFILENAME)
     #parse workflow
     parseWorkFlow  = json.loads(workflow)
-    ###Make modules for each workflow
-    #import
-    #centralizate this string
-    parseWorkFlow[0]['filesPath'] = projectPath + '/GRID_??/DATA/Images-Disc1/GridSquare_*/Data/'
+    for protocol in parseWorkFlow:
+        parse_protocol(protocol, acquisition2)
     #modify workflow
     workflow = json.dumps(parseWorkFlow)
     #save workflow
@@ -89,10 +88,6 @@ def save_workflow(acquisition2):
     #some editing is needed here to change the workflow
 
 def create_project(acquisition2):
-    """./../ scipion_box / scipion
-    python.. /../ scipion_box / scripts / create_project.py
-    kk / home / scipionuser / OffloadData / * / * json
-    """
     acquisition = acquisition2.acquisition
     # get root directory
     scipion = os.path.join(settings.SCIPIONPATH,'scipion')
@@ -104,13 +99,21 @@ def create_project(acquisition2):
     command = scipion + " python " + script + " " + projname + " " + workfowPath
     os.system(command)
 
+def call_scipion_last(acquisition2):
+    print "call_scipion_last"
+    # get root directory
+    scipion = os.path.join(settings.SCIPIONPATH,'scipion')
+    #run command
+    command = scipion + " last&"
+    print "command", command
+    os.system(command)
+
 @login_required
 def add_acquisition2(request):
     if request.method == 'POST':
         form = AcquisitionForm2(request.POST)
         if form.is_valid():
             acquisition2 = form.save(commit=False)
-            print "acquisition", request.session['idacquisition']
             acquisition2.acquisition = Acquisition.objects.get(pk=request.session['idacquisition'])
             acquisition2.save()
             #save workflow
@@ -118,11 +121,11 @@ def add_acquisition2(request):
             #create_project
             create_project(acquisition2)
             #open scipion
+            call_scipion_last(acquisition2)
 
         else:
             pass
-
-        return HttpResponse("Acquisition2 done")
+        return render(request,'create_proj/done.html',{})
     else:
         form = AcquisitionForm2()
         return render(request,
