@@ -140,3 +140,10 @@ LOGIN_REDIRECT_URL = reverse_lazy("profiles:show_self")
 LOGIN_URL = reverse_lazy("accounts:login")
 
 THUMBNAIL_EXTENSION = 'png'     # Or any extn for your thumbnails
+
+BACKUPPATH='/media/roberto'
+DEFAULTMIC=1
+DEFAULTWORKFLOW=1
+#SCIPIONPATH='/usr/local/scipion'
+SCIPIONPATH='/home/roberto/Scipion/scipion_box'
+WORKFLOWFILENAME='workflow.json'

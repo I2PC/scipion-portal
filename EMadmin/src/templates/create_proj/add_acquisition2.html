@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }}Add an Acquisition{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="about" %}
+{% endblock %}
+
+<!-- Benefits of the Django application -->
+{% block container %}
+<div id="sec1" class="text-page">
+  <div class="container">
+
+        <form id="category_form" method="post"
+              action="{% url 'create_proj:add_acquisition2' %}">
+
+            {% csrf_token %}
+
+             <table cellpadding="10">{{ form.as_table }}</table>
+
+            <input type="submit" name="submit" value="Launch Scipion" />
+        </form>
+ </div>
+</div>
+{% endblock container %}
