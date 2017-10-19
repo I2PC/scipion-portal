@@ -158,5 +158,6 @@ EMAILTO="user@domain"
 SMTP="localhost"
 PUBLISHCMD="rsync -av %(REPORT_FOLDER)s scipionbox@nolan:public_html/"
 BACKUPMESSAGE='delete and double click to see mounted disks'
-TRANSFERTOOL='lsyncd'
+TRANSFERTOOL='/usr/local/bin/lsyncd'
+TRANSFERTOOLARGS=["-nodaemon", "-rsync", "-delay 300"]
 TRANSFERTOOLARGS=["-nodaemon", "-rsync"]
