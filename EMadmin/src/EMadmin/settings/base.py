@@ -145,19 +145,17 @@ import socket
 if socket.gethostname()== 'linux-bxmv.suse':
     BACKUPPATH='/run/media/roberto'
 else:
-    BACKUPPATH='/media/roberto'
+    BACKUPPATH='/media/scipionuser'
 
 DEFAULTMIC=1
 DEFAULTWORKFLOW=1
-#SCIPIONPATH='/usr/local/scipion'
-SCIPIONPATH='/home/roberto/Scipion/scipion_box'
-SCIPIONUSERDATA='/home/roberto/ScipionUserData'
+SCIPIONPATH='/usr/local/scipion'
+SCIPIONUSERDATA='/home/scipionuser/ScipionUserData'
 WORKFLOWFILENAME='workflow.json'
 EMAILFROM="noreply-scipionbox@cnb.csic.es"
 EMAILTO="user@domain"
 SMTP="localhost"
 PUBLISHCMD="rsync -av %(REPORT_FOLDER)s scipionbox@nolan:public_html/"
 BACKUPMESSAGE='delete and double click to see mounted disks'
-TRANSFERTOOL='/usr/local/bin/lsyncd'
-TRANSFERTOOLARGS=["-nodaemon", "-rsync", "-delay 300"]
-TRANSFERTOOLARGS=["-nodaemon", "-rsync"]
+TRANSFERTOOL='/usr/bin/lsyncd'
+TRANSFERTOOLARGS=["-nodaemon", "-delay", "300" , "-rsync"]
