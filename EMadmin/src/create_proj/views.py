@@ -13,23 +13,24 @@ from django.db import IntegrityError
 import json
 from parse_protocol import parse_protocol
 import subprocess
+
 @login_required
 def index(request):
     return HttpResponse("Rango says hey there world!")
 
-@login_required
 def create_directory_three(acquisition):
+    """ Create directories to store movies
+    """
     def _createPath(p):
         # Create the project path
-        sys.stdout.write("Creating path '%s' ... " % p)
         if not os.path.exists(p):
             os.makedirs(p)
-        sys.stdout.write("DONE\n")
 
     # get root directory
     dataPath = acquisition.microscope.dataFolder
     projname = acquisition.projname
     projPath = os.path.join(dataPath,projname)
+    sys.stdout.write("Creating directories at path '%s' ... " % projPath)
     _createPath(projPath)
 
     #create GRIDS
@@ -37,37 +38,73 @@ def create_directory_three(acquisition):
         gridFolder = os.path.join(projPath, 'GRID_%02d' % (i + 1))
         _createPath(os.path.join(gridFolder, 'ATLAS'))
         _createPath(os.path.join(gridFolder, 'DATA'))
-    #_createPath(scipionProjPath)
-    # get workflow and pass it to scipion
-    # back up
+
+def launch_backup(acquisition):
+    """backup using lsyncd
+    """
+    print "launch_backup"
+    if acquisition.backupPath == settings.BACKUPMESSAGE:
+        return
+    else:
+        print "launch_backup1"
+        # get root directory
+        scipion_user_data = settings.SCIPIONUSERDATA
+        projname = acquisition.projname
+        sourcePath = os.path.join(scipion_user_data, 'projects', projname)
+        print "scipion_user_data",scipion_user_data
+        print "projname", projname
+        args = settings.TRANSFERTOOLARGS
+        print "args1",  args
+        args += [sourcePath]
+        print "args2",  args
+        args += [acquisition.backupPath]
+        print "args3",  args
+        print [settings.TRANSFERTOOL] +  args
+        print "args4",  args
+        s = subprocess.Popen([settings.TRANSFERTOOL] +  args)
+        print "launch_backup2"
 
 @login_required
 def add_acquisition(request):
+    """
+    Show first half of the form that is parameters that
+    can be set before the microscope is acquiring data
+    """
     if request.method == 'POST':
         form = AcquisitionForm(request.POST)
         if form.is_valid():
             try:
                 acquisition = form.save(commit=False)
-                acquisition.user = request.user
+                acquisition.user = request.user  # set logged user
                 acquisition.save()
             except IntegrityError as e:
+                # check if the project already exsits
                 if 'UNIQUE' in e.args[0]:
-                    return HttpResponse("Exists a project with this name. "
-                                        "Please provide a different one. Project name=%s"%acquisition.projname)
+                    form.errors['sample'] = ["Exists a project with this " \
+                                            "name: %s." % acquisition.projname,
+                                             "Please change Sample field"]
+                    return render(request,
+                              'create_proj/add_acquisition.html',
+                              {'form': form})
                 else:
-                    print "args", e
+                    form.errors['microscope'] = e.args[0]
+            # save acquisition as session variable so we can link
+            # it with acquisition2
             request.session['idacquisition'] = acquisition.id
+            # create directories for data (in mic storage disk)
             create_directory_three(acquisition)
+            # show second part of the form
             return redirect(reverse('create_proj:add_acquisition2'))
-        else:
-            return HttpResponse("ERROR in add_acquisition:-(")
     else:
-        form = AcquisitionForm()
-        return render(request,
-                      'create_proj/add_acquisition.html',
-                      {'form': form})
+        form = AcquisitionForm()  # create a clean form
+    return render(request,
+                  'create_proj/add_acquisition.html',
+                  {'form': form})
 
 def save_workflow(acquisition2):
+    """
+    Get workflow from database
+    """
     acquisition = acquisition2.acquisition
     # get root directory
     dataPath = acquisition.microscope.dataFolder
@@ -75,53 +112,97 @@ def save_workflow(acquisition2):
     projectPath = os.path.join(dataPath, projname)
     workflow = acquisition.workflow.workflow
     workflowPath = os.path.join(projectPath, settings.WORKFLOWFILENAME)
-    #parse workflow
+    # PARSE PROTOCOLS
+    #  convert protocol to dictionary
     parseWorkFlow  = json.loads(workflow)
+    # modify fields
     for protocol in parseWorkFlow:
         parse_protocol(protocol, acquisition2)
-    #modify workflow
+    # convert dictionary back to json
     workflow = json.dumps(parseWorkFlow)
-    #save workflow
+    # save workflow
     f = open(workflowPath,'w')
     f.write(workflow)
     f.close()
-    #some editing is needed here to change the workflow
 
 def create_project(acquisition2):
+    """create project from workflow file"""
     acquisition = acquisition2.acquisition
     # get root directory
     scipion = os.path.join(settings.SCIPIONPATH,'scipion')
     script = os.path.join(settings.SCIPIONPATH,'scripts/create_project.py')
     projname = acquisition.projname
     dataPath = acquisition.microscope.dataFolder
-    workfowPath = os.path.join(dataPath,projname,settings.WORKFLOWFILENAME)
+    workflowPath = os.path.join(dataPath,projname,settings.WORKFLOWFILENAME)
     #run command
-    command = scipion + " python " + script + " " + projname + " " + workfowPath
-    os.system(command)
+    args = ["python"]
+    args += [script]
+    args += [projname]
+    args += [workflowPath]
+    proc = subprocess.Popen([scipion] +  args)
+    proc.wait() # wait untill process finish
+
+    #command = scipion + " python " + script + " " + projname + " " + \
+    #          workflowPath
+    #os.system(command)
 
 def call_scipion_last(acquisition2):
+    """ start scipion """
+
     print "call_scipion_last"
     # get root directory
     scipion = os.path.join(settings.SCIPIONPATH,'scipion')
     #run command
-    command = scipion + " last&"
-    print "command", command
-    os.system(command)
+    args = ["last"]
+    proc = subprocess.Popen([scipion] +  args)
+
+def schedule_protocol(acquisition2):
+    """
+    :param acquisition2: if requested run python in schedule mode"
+    :return:
+    """
+    acquisition = acquisition2.acquisition
+    if acquisition.schedule is False:
+        return
+    # get root directory
+    scipion = os.path.join(settings.SCIPIONPATH,'scipion')
+    script = os.path.join(settings.SCIPIONPATH,'scripts/schedule_project.py')
+    projname = acquisition.projname
+    # dataPath = acquisition.microscope.dataFolder
+    # workfowPath = os.path.join(dataPath,projname,settings.WORKFLOWFILENAME)
+    # run command
+    # command = scipion + " python " + script + " " + projname
+    # os.system(command)
+
+    args = ["python"]
+    args += [script]
+    args += [projname]
+    proc = subprocess.Popen([scipion] +  args)
+    proc.wait()
+
 
 @login_required
 def add_acquisition2(request):
+    """ Process second half of the form
+    """
     if request.method == 'POST':
         form = AcquisitionForm2(request.POST)
         if form.is_valid():
             acquisition2 = form.save(commit=False)
-            acquisition2.acquisition = Acquisition.objects.get(pk=request.session['idacquisition'])
+            # link to Acquisition object
+            acquisition2.acquisition = \
+                Acquisition.objects.get(pk=request.session['idacquisition'])
             acquisition2.save()
-            #save workflow
+            #create workflow and replace values
             save_workflow(acquisition2)
             #create_project
             create_project(acquisition2)
+            #schedule?
+            schedule_protocol(acquisition2)
             #open scipion
             call_scipion_last(acquisition2)
+            # launch backup
+            launch_backup(acquisition2.acquisition)
 
         else:
             pass

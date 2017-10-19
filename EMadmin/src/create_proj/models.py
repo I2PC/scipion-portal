@@ -36,8 +36,8 @@ class Acquisition(models.Model):
     voltage    = models.IntegerField(default=200)
     date       = models.DateTimeField(default=datetime.now, blank=True)
     projname   = models.CharField(max_length=128, blank=True, unique=True)
-    backupPath = models.FilePathField(path=settings.BACKUPPATH, allow_folders=True,
-                                       allow_files=False)
+    backupPath = models.CharField(max_length=128,
+                                  default='NOBACKUP',blank=True)
     schedule = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -91,7 +91,7 @@ class Acquisition2(models.Model):
                                       default=70)
     php = models.IntegerField(choices=PHP_CHOICES,
                                       default=3)
-
+"""
 #not sure about this clase may be we can rely on workflow
 class ScipionBox(models.Model):
     #project Name
@@ -118,3 +118,4 @@ class ScipionBox(models.Model):
                                  default='noreply-biocomp@cnb.csic.es')
     smtp_to = models.CharField(max_length=256, default='user@domain')
 
+"""

@@ -15,7 +15,7 @@ def parse_ProtImportMovies(protocol, acquisition2):
     protocol["samplingRate"] = acquisition2.sampling_rate
     protocol["dosePerFrame"] = acquisition2.dose_per_frame
 
-def parse_ProtMonitorSummary(protocol, acquisition2):
+def parse_ProtMonitorSummary(protocol, acquisition2=None):
     protocol["emailFrom"] = settings.EMAILFROM
     protocol["emailTo"] = settings.EMAILTO
     protocol["smtp"] = settings.SMTP
@@ -23,7 +23,6 @@ def parse_ProtMonitorSummary(protocol, acquisition2):
 
 def parse_protocol(protocol, acquisition2):
     key = protocol["object.className"]
-    print "parse_protocolqqq", key
     if key=="ProtImportMovies":
         parse_ProtImportMovies(protocol, acquisition2)
     elif key=="ProtMotionCorr":

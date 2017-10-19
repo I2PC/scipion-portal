@@ -18,13 +18,23 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
+	<td>link=Electron Microscopy Facility</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
 	<td>link=Do it »</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>id=id_sample</td>
-	<td>sample126</td>
+	<td>misample200</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_backupPath</td>
+	<td>/run/media/roberto/Ubuntu 16.04.2 LTS amd64</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
