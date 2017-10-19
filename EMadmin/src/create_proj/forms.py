@@ -44,6 +44,11 @@ class AcquisitionForm(forms.ModelForm):
 
 class AcquisitionForm2(forms.ModelForm):
     # An inline class to provide additional information on the form.
+    sampling_rate = forms.FloatField(label="Sampling rate (A/px)")
+    illuminated_area = forms.FloatField(label="Illuminated area (m)")
+    dose_per_frame = forms.FloatField(label="Dose per fraction (e/A^2)")
+    dose_rate = forms.FloatField(label="Dose rate (e/(px*sec))")
+    total_exposure_time = forms.FloatField(label="Total exposure time (sec)")
     class Meta:
         # Provide an association between the ModelForm and a model
         model = Acquisition2
