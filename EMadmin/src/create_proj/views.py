@@ -46,23 +46,14 @@ def launch_backup(acquisition):
     if acquisition.backupPath == settings.BACKUPMESSAGE:
         return
     else:
-        print "launch_backup1"
         # get root directory
         scipion_user_data = settings.SCIPIONUSERDATA
         projname = acquisition.projname
         sourcePath = os.path.join(scipion_user_data, 'projects', projname)
-        print "scipion_user_data",scipion_user_data
-        print "projname", projname
         args = settings.TRANSFERTOOLARGS
-        print "args1",  args
         args += [sourcePath]
-        print "args2",  args
         args += [acquisition.backupPath]
-        print "args3",  args
-        print [settings.TRANSFERTOOL] +  args
-        print "args4",  args
         s = subprocess.Popen([settings.TRANSFERTOOL] +  args)
-        print "launch_backup2"
 
 @login_required
 def add_acquisition(request):
