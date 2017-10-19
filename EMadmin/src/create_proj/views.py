@@ -42,7 +42,7 @@ def create_directory_three(acquisition):
 def launch_backup(acquisition):
     """backup using lsyncd
     """
-    print "launch_backup"
+
     if acquisition.backupPath == settings.BACKUPMESSAGE:
         return
     else:
@@ -50,9 +50,11 @@ def launch_backup(acquisition):
         scipion_user_data = settings.SCIPIONUSERDATA
         projname = acquisition.projname
         sourcePath = os.path.join(scipion_user_data, 'projects', projname)
+        targetPath = os.path.join(acquisition.backupPath, projname)
         args = settings.TRANSFERTOOLARGS
         args += [sourcePath]
-        args += [acquisition.backupPath]
+        args += [targetPath]
+        print [settings.TRANSFERTOOL] +  args
         s = subprocess.Popen([settings.TRANSFERTOOL] +  args)
 
 @login_required
