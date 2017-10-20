@@ -8,7 +8,7 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 # Must mention ALLOWED_HOSTS in production!
-# ALLOWED_HOSTS = ["EMadmin.com"]
+ALLOWED_HOSTS = ["127.0.0.1",]
 
 # Cache the templates in memory for speed-up
 loaders = [
