@@ -7,13 +7,12 @@ import subprocess
 import re
 from models import Acquisition
 from datetime import datetime, timedelta
-
+import psutil
 
 class SkipAcquisitionForm(forms.Form):
     def __init__(self, *args, **kwargs):
          """Get projects done last week by current user"""
          user = kwargs.pop('user',None)
-         print "user", user
          last_week = datetime.today() - timedelta(days=7)
          super(SkipAcquisitionForm, self).__init__(*args, **kwargs)
          self.fields['project'].queryset =  \
@@ -30,6 +29,7 @@ class AcquisitionForm(forms.ModelForm):
                                   help_text="run scipion in batch mode",
                                   required=False)
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request',None)
         _dir_list = [os.path.join(settings.BACKUPPATH, o)
                      for o in os.listdir(settings.BACKUPPATH)
                      if os.path.isdir(os.path.join(settings.BACKUPPATH,o))]
@@ -37,39 +37,25 @@ class AcquisitionForm(forms.ModelForm):
         self.fields['backupPath'].widget = ListTextWidget(
                 data_list=_dir_list, name='dir-list', size=40)
 
-#    def clean_backupPath(self):
-#        def is_running(process):
-#            from subprocess import check_output
-#            try:
-#                pidList = check_output(["pidof",process])
-#            except subprocess.CalledProcessError:
-#                pidList = [0]
-#            return pidList
-
-    def find_procs_by_name(self,name):
-        "Return a list of processes matching 'name'."
-        assert name, name
-        ls = []
-        for p in psutil.process_iter():
-            name_, exe, cmdline = "", "", []
+    def clean_backupPath(self):
+        def is_running(process):
+            from subprocess import check_output
             try:
-                name_ = p.name()
-                cmdline = p.cmdline()
-                exe = p.exe()
-            except (psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-            except psutil.NoSuchProcess:
-                continue
-            if name == name_ or cmdline[0] == name or os.path.basename(exe) == name:
-                ls.append(name)
-        return ls
+                pidList = check_output(["pidof",process])
+            except subprocess.CalledProcessError:
+                pidList = [0]
+            return pidList
+
         # if  lsyncd running report error TRANSFERTOOL
         counterList = is_running(settings.TRANSFERTOOL)
-        if len(counterList) > 0:
-            msg = "There are %d backup scripts running in the background " \
-                  "Consider killing Them. " \
-                  "The command 'kill -9 %s' will kill it. " \
-                  "Execute it at your own risk from a terminal" % counter
+        if len(counterList) > 0 and\
+                (not self.cleaned_data['multiple_backup']):
+            msg = "There are %d backup scripts (%s) running in the background " \
+                  "Consider killing Them. Execute in a terminal: " \
+                  "'ps -ef | grep %s' to get a list with the  processes." \
+                  "Use 'kill -9 process_number' to kill the process. " \
+                  "If you want to ignore this warning just resend the form" %\
+                  (len(counterList), settings.TRANSFERTOOL, settings.TRANSFERTOOL)
             raise forms.ValidationError(msg)
         return self.cleaned_data.get('backupPath')
     class Meta:

@@ -38,6 +38,7 @@ class Acquisition(models.Model):
     projname   = models.CharField(max_length=128, blank=True, unique=True)
     backupPath = models.CharField(max_length=128,
                                   default='NOBACKUP',blank=True)
+    multiple_backup = models.BooleanField(default=False)
     schedule = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
