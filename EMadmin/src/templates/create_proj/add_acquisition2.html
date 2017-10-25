@@ -6,13 +6,17 @@
 {% block title %}{{ block.super }}Add an Acquisition{% endblock %}
 
 {% block navbar-left %}
-  {% include "_navbar.html" with active_link="about" %}
+  {% include "_navbar.html" with active_link="add_acquisition2" %}
 {% endblock %}
 
 <!-- Benefits of the Django application -->
 {% block container %}
-<div id="sec1" class="text-page">
+<div id="sec2" class="text-page">
   <div class="container">
+      <div class="col-md-12">
+        <h2>Create Project - II </h2>
+        <p class="lead">.
+      </div>
 
         <form id="category_form" method="post"
               action="{% url 'create_proj:add_acquisition2' %}">

@@ -43,8 +43,9 @@ class Acquisition(models.Model):
     def save(self, *args, **kwargs):
         #create project name
         user_name = slugify(self.user.name)
+        sample_name = slugify(self.sample)
         self.projname = "%s_%s_%s"%(self.date.strftime('%Y_%m_%d'),
-                                    user_name, self.sample)
+                                    user_name, sample_name)
         super(Acquisition, self).save(*args, **kwargs)
 
     def __unicode__(self):  #For Python 2, use __str__ on Python 3
@@ -66,7 +67,7 @@ O1_HOLE_CHOICES = [(30, '30'), (70, '70')]
 PHP_CHOICES = [(0, '--'), (1, '1'), (2, '2'),(3, '3'), (4, '4'), (5, '5'), (6, '6')]
 
 class Acquisition2(models.Model):
-    acquisition = models.ForeignKey(Acquisition)
+    acquisition = models.ForeignKey(Acquisition, unique=True)
     nominal_magnification = models.FloatField(blank=False)
     sampling_rate = models.FloatField(blank=False)  # A/px OK
     spotsize = models.FloatField(blank=False)
@@ -91,31 +92,3 @@ class Acquisition2(models.Model):
                                       default=70)
     php = models.IntegerField(choices=PHP_CHOICES,
                                       default=3)
-"""
-#not sure about this clase may be we can rely on workflow
-class ScipionBox(models.Model):
-    #project Name
-    name = models.CharField(max_length=128, blank=False)
-    # Default backup directory (usually usb mount point
-    data_backup = models.CharField(max_length=256, default='/media/scipionuser')
-    # Name for the Scipion project inside the session folder
-    #scipion_project = models.FilePathField(
-    #        default='/home/scipionuser/ScipionUserData/projects')
-    # Pattern to be used when importing movies
-    pattern = models.CharField(max_length=256,
-                               default = 'GRID_??/DATA/Images-Disc?/'
-                                         'GridSquare_*/Data/FoilHole_\
-                                         *frames.mrc')
-    # HTML report settings <- rely on workflow?
-    html_publish = \
-        models.CharField(max_length=256, default='rsync -av %(REPORT_FOLDER)s '
-                         'scipionbox@nolan:/home/scipionbox/public_html/')
-
-    # Email notification settings <- rely on workflow
-    email_notification = models.BooleanField(default=False)
-    smtp_server = models.CharField(max_length=256, default='localhost')
-    smtp_from = models.CharField(max_length=256,
-                                 default='noreply-biocomp@cnb.csic.es')
-    smtp_to = models.CharField(max_length=256, default='user@domain')
-
-"""

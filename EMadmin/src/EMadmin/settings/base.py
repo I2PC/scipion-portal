@@ -36,6 +36,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -79,7 +80,8 @@ INSTALLED_APPS = (
     'accounts',
 
     'create_proj',
-
+    'create_report',
+    'django_tables2',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -141,21 +143,30 @@ LOGIN_URL = reverse_lazy("accounts:login")
 
 THUMBNAIL_EXTENSION = 'png'     # Or any extn for your thumbnails
 
-import socket
-if socket.gethostname()== 'linux-bxmv.suse':
-    BACKUPPATH='/run/media/roberto'
+import socket, os
+hostName =  socket.gethostname()
+import getpass
+user = getpass.getuser()
+if hostName == 'linux-bxmv.suse':
+    BACKUPPATH='/run'
 else:
-    BACKUPPATH='/media/scipionuser'
+    BACKUPPATH="/"
+BACKUPPATH=os.path.join(BACKUPPATH,"media", user)
+if user == "scipionuser":
+    SCIPIONPATH='/usr/local/scipion'
+else:
+    SCIPIONPATH='/home/roberto/Scipion/scipion_box'
 
 DEFAULTMIC=1
 DEFAULTWORKFLOW=1
-SCIPIONPATH='/usr/local/scipion'
 SCIPIONUSERDATA='/home/scipionuser/ScipionUserData'
 WORKFLOWFILENAME='workflow.json'
 EMAILFROM="noreply-scipionbox@cnb.csic.es"
 EMAILTO="user@domain"
 SMTP="localhost"
-PUBLISHCMD="rsync -av %(REPORT_FOLDER)s scipionbox@nolan:public_html/"
+PUBLISHURL="nolan.cnb.csic.es"
+PUBLISHUSER="scipionbox"
+PUBLISHCMD="rsync -av %(REPORT_FOLDER)s " + "%s@%s:public_html/"%(PUBLISHUSER,PUBLISHURL)
 BACKUPMESSAGE='delete and double click to see mounted disks'
 TRANSFERTOOL='/usr/bin/lsyncd'
 TRANSFERTOOLARGS=["-nodaemon", "-delay", "300" , "-rsync"]

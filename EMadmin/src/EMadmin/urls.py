@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 import profiles.urls
 import accounts.urls
 import create_proj.urls
+import create_report.urls
 from . import views
 
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^users/', include(profiles.urls, namespace='profiles')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^create_proj/', include(create_proj.urls, namespace='create_proj')),
+    url(r'^create_report/', include(create_report.urls, namespace='create_report')),
     url(r'^', include(accounts.urls, namespace='accounts')),
 ]
 
