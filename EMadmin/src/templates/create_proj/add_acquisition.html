@@ -27,7 +27,7 @@
 
             {% csrf_token %}
 
-             <table cellpadding="10">{{ form.as_table }}</table>
+             <table cellpadding="10">{{ form.as_ul }}</table>
 
             <input type="submit" name="submit_add_acquisition" value="Create Project" />
         </form>
@@ -37,7 +37,7 @@
 
             {% csrf_token %}
 
-             <table cellpadding="10">{{ form2.as_table }}</table>
+             <table cellpadding="10">{{ form2.as_ul }}</table>
 
             <input type="submit" name="skip_submit_add_acquisition" value="Skip Project Creation" />
         </form>
