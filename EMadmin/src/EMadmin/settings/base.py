@@ -154,12 +154,13 @@ else:
 BACKUPPATH=os.path.join(BACKUPPATH,"media", user)
 if user == "scipionuser":
     SCIPIONPATH='/usr/local/scipion'
+    SCIPIONUSERDATA='/home/scipionuser/ScipionUserData'
 else:
     SCIPIONPATH='/home/roberto/Scipion/scipion_box'
+    SCIPIONUSERDATA='/home/roberto/ScipionUserData'
 
 DEFAULTMIC=1
 DEFAULTWORKFLOW=1
-SCIPIONUSERDATA='/home/scipionuser/ScipionUserData'
 WORKFLOWFILENAME='workflow.json'
 EMAILFROM="noreply-scipionbox@cnb.csic.es"
 EMAILTO="user@domain"
