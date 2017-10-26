@@ -8,7 +8,7 @@ import re
 from models import Acquisition
 from datetime import datetime, timedelta
 import psutil
-
+#kill port sudo lsof -t -i tcp:8000 | xargs kill -9
 class SkipAcquisitionForm(forms.Form):
     def __init__(self, *args, **kwargs):
          """Get projects done last week by current user"""
@@ -25,11 +25,14 @@ class SkipAcquisitionForm(forms.Form):
 class AcquisitionForm(forms.ModelForm):
     backupPath = forms.CharField(required=True,
                                  initial=settings.BACKUPMESSAGE)
-    schedule = forms.BooleanField(initial=False,
-                                  help_text="run scipion in batch mode",
+    schedule = forms.BooleanField(widget= forms.CheckboxInput(),initial=False,
+                                  label="Run scipion in batch mode (schedule)",
                                   required=False)
+    multiple_backup = forms.BooleanField(initial=False,
+                                  label="Ignore backup warning",
+                                  required=False)
+
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request',None)
         _dir_list = [os.path.join(settings.BACKUPPATH, o)
                      for o in os.listdir(settings.BACKUPPATH)
                      if os.path.isdir(os.path.join(settings.BACKUPPATH,o))]
@@ -37,7 +40,8 @@ class AcquisitionForm(forms.ModelForm):
         self.fields['backupPath'].widget = ListTextWidget(
                 data_list=_dir_list, name='dir-list', size=40)
 
-    def clean_backupPath(self):
+#    def clean_backupPath(self):
+    def clean(self):
         def is_running(process):
             from subprocess import check_output
             try:
@@ -48,16 +52,23 @@ class AcquisitionForm(forms.ModelForm):
 
         # if  lsyncd running report error TRANSFERTOOL
         counterList = is_running(settings.TRANSFERTOOL)
-        if len(counterList) > 0 and\
-                (not self.cleaned_data['multiple_backup']):
-            msg = "There are %d backup scripts (%s) running in the background " \
-                  "Consider killing Them. Execute in a terminal: " \
+        print "lsync pid =", counterList
+        for k, v in self.cleaned_data.iteritems():
+             print "**", k, v, "**"
+        if counterList[0] != 0 and\
+                (not self.cleaned_data.get('multiple_backup')):
+            msg = "There is at least one backup script running in the " \
+                  "background " \
+                  "Consider killing it. Execute in a terminal: " \
                   "'ps -ef | grep %s' to get a list with the  processes." \
                   "Use 'kill -9 process_number' to kill the process. " \
-                  "If you want to ignore this warning just resend the form" %\
-                  (len(counterList), settings.TRANSFERTOOL, settings.TRANSFERTOOL)
+                  "If you want to ignore this warning select 'ignore " \
+                  "backup warning' and resend the " \
+                  "form" % settings.TRANSFERTOOL
             raise forms.ValidationError(msg)
-        return self.cleaned_data.get('backupPath')
+#        return self.cleaned_data.get('backupPath')
+        return self.cleaned_data
+
     class Meta:
         # Provide an association between the ModelForm and a model
         model = Acquisition
