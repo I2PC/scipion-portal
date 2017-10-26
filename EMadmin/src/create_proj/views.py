@@ -39,7 +39,6 @@ def create_directory_three(acquisition):
         gridFolder = os.path.join(projPath, 'GRID_%02d' % (i + 1))
         _createPath(os.path.join(gridFolder, 'ATLAS'))
         _createPath(os.path.join(gridFolder, 'DATA'))
-        print "create", gridFolder
 
 def launch_backup(acquisition):
     """backup using lsyncd
@@ -53,10 +52,10 @@ def launch_backup(acquisition):
         projname = acquisition.projname
         sourcePath = os.path.join(scipion_user_data, 'projects', projname)
         targetPath = os.path.join(acquisition.backupPath, projname)
-        args = settings.TRANSFERTOOLARGS
+        args=None
+        args = list(settings.TRANSFERTOOLARGS)
         args += [sourcePath]
         args += [targetPath]
-        print [settings.TRANSFERTOOL] +  args
         s = subprocess.Popen([settings.TRANSFERTOOL] +  args)
 
 @login_required
@@ -99,7 +98,10 @@ def add_acquisition(request):
             # show second part of the form
             return redirect(reverse('create_proj:add_acquisition2'))
         else:
-            print "HORROR: what am I doing here? add_acquisition"
+            form2 = SkipAcquisitionForm(user=request.user)
+            return render(request,
+                  'create_proj/add_acquisition.html',
+                  {'form': formP, 'form2': form2})
     else:
         form = AcquisitionForm()  # create a clean form
         form2 = SkipAcquisitionForm(user=request.user)  # create a clean form
@@ -131,7 +133,6 @@ def save_workflow(acquisition2):
     f = open(workflowPath,'w')
     f.write(workflow)
     f.close()
-    print "CREATE WORKFLOW", workflowPath
 
 def create_project(acquisition2):
     """create project from workflow file"""
@@ -147,7 +148,6 @@ def create_project(acquisition2):
     args += [script]
     args += [projname]
     args += [workflowPath]
-    print scipion, args
     proc = subprocess.Popen([scipion] +  args)
     proc.wait() # wait untill process finish
 
@@ -158,7 +158,6 @@ def create_project(acquisition2):
 def call_scipion_last(acquisition2):
     """ start scipion """
 
-    print "call_scipion_last"
     # get root directory
     scipion = os.path.join(settings.SCIPIONPATH,'scipion')
     #run command
@@ -237,4 +236,3 @@ def add_acquisition2(request):
         return render(request,
                       'create_proj/add_acquisition2.html',
                       {'form': form})
-
