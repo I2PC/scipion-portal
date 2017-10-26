@@ -13,7 +13,7 @@ from urllib2 import urlopen
 from contextlib import closing
 
 
-from models import Workflow, Protocol
+from models import Workflow, Protocol, IpAddressBlackList
 
 class ProtocolResource(ModelResource):
     """allow search in protocol table"""
@@ -50,6 +50,15 @@ class WorkflowResource(ModelResource):
             ip = request.META.get('REMOTE_ADDR')
         return ip
 
+    def isInBlackList(self,ip):
+        """ check if ip address is in blackList and then return False. 
+            Otherwise return True"""
+        try:
+            IpAddressBlackList.objects.get(client_ip=ip)
+        except IpAddressBlackList.DoesNotExist:
+            return True
+        return False
+        
     def get_geographical_information(self, ip):
         location_country = "N/A"
         location_city = "N/A"
@@ -86,43 +95,41 @@ class WorkflowResource(ModelResource):
            curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
            curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
                    """
-        project_uuid = request.POST['project_uuid']
-        project_workflow = request.POST['project_workflow']
-        project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+        client_ip = self.get_client_ip(request)
+        if self.isInBlackList(client_ip):    
+            project_uuid = request.POST['project_uuid']
+            project_workflow = request.POST['project_workflow']
+            project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
 
-        workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
-        if not created:
-            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
-        else:
-            dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
-
-        workflow.project_workflow = project_workflow
-        workflow.client_ip = self.get_client_ip(request)
-        workflow.client_address = socket.getfqdn(workflow.client_ip)
-        workflow.client_country, workflow.client_city = \
-            self.get_geographical_information(workflow.client_ip)
-        workflow.timesModified += 1
-        workflow.lastModificationDate = datetime.datetime.now()
-        workflow.save()
-
-        #print "project_workflowList", project_workflowCounter
-        #print "workflow.project_workflow", dabase_workflowCounter
-        #if workflow already exists substract before adding
-        if not created:
-            #print "not created"
-            project_workflowDict =  project_workflowCounter - dabase_workflowCounter
-        else:
-            #print "created"
-            project_workflowDict =project_workflowCounter
-
-        #print "project_workflowDict_2", project_workflowDict
-        for protocolName, numberTimes in project_workflowDict.iteritems():
-            if Protocol.objects.filter(name=protocolName).exists():
-                protocolObj = Protocol.objects.get(name=protocolName)
+            workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
+            if not created:
+                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
             else:
-                protocolObj = Protocol(name=protocolName)
-            protocolObj.timesUsed += numberTimes
-            protocolObj.save()
+                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+
+            workflow.project_workflow = project_workflow
+
+            workflow.client_ip = client_ip
+            workflow.client_address = socket.getfqdn(workflow.client_ip)
+            workflow.client_country, workflow.client_city = \
+            self.get_geographical_information(workflow.client_ip)
+            workflow.timesModified += 1
+            workflow.lastModificationDate = datetime.datetime.now()
+            workflow.save()
+
+            #if workflow already exists substract before adding
+            if not created:
+                project_workflowDict =  project_workflowCounter - dabase_workflowCounter
+            else:
+                project_workflowDict =project_workflowCounter
+
+            for protocolName, numberTimes in project_workflowDict.iteritems():
+                if Protocol.objects.filter(name=protocolName).exists():
+                    protocolObj = Protocol.objects.get(name=protocolName)
+                else:
+                    protocolObj = Protocol(name=protocolName)
+                protocolObj.timesUsed += numberTimes
+                protocolObj.save()
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
