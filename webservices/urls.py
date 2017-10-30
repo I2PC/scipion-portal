@@ -18,14 +18,12 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
 
-import sendSMS
 from report_protocols import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     url(r'^', include('web.urls')),
     url(r'^report_protocols/', include('report_protocols.urls')),
-    url(r'^sendSMS/', include('sendSMS.urls')),
     url(r'^ask_version/', include('ask_version.urls')),
     url(r'^admin/', admin.site.urls),
 ]

@@ -40,11 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django_extensions",
     'ask_version',
-    #'tastypie',
     'report_protocols',
     'web',
-    #'sendSMS',
-    'micStatistics',
 ]
 
 MIDDLEWARE_CLASSES = [
