@@ -1,6 +1,6 @@
 
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'main.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webservices.settings')
 import django
 django.setup()
 from report_protocols.models import Workflow
