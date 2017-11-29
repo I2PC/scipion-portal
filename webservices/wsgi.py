@@ -13,7 +13,7 @@ import django
 from django.core.wsgi import get_wsgi_application
 from django.core.handlers.wsgi import WSGIHandler
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webservices.settings")
 
 class WSGIEnvironment(WSGIHandler):
     def __call__(self, environ, start_response):
