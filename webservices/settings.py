@@ -26,7 +26,7 @@ SECRET_KEY = 'in##hj=!8!%v+%i0f!9a(#eq^bgc6lnz^lkt%rkgql*0=2tm&^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'calm-shelf-73264.herokuapp.com', u'127.0.0.1', u'localhost']
 
 
 # Application definition
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django_extensions",
     'ask_version',
-    #'tastypie',
     'report_protocols',
     'web',
 ]
@@ -56,7 +55,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'main.urls'
+ROOT_URLCONF = 'webservices.urls'
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 TEMPLATES = [
@@ -75,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'main.wsgi.application'
+WSGI_APPLICATION = 'webservices.wsgi.application'
 
 
 # Database
@@ -140,7 +139,6 @@ SCIPION_CONFIG = os.environ.get('SCIPION_CONFIG',
     os.path.expanduser("~/.config/scipion-portal/scipion.conf"))
 
 EMAIL_CONF = config.loadEmailConf(SCIPION_CONFIG)
-
 EMAIL_USE_TLS = EMAIL_CONF['EMAIL_USE_TLS']
 EMAIL_HOST = EMAIL_CONF['EMAIL_HOST']
 EMAIL_PORT = EMAIL_CONF['EMAIL_PORT']
