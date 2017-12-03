@@ -28,7 +28,10 @@ class WorkflowResource(ModelResource):
     class Meta:
         queryset = Workflow.objects.all()
         resource_name = 'workflow'
-        filtering = {'project_uuid': ALL}
+        filtering = {
+            'project_uuid': ALL,
+            'timesModified': ['gte', 'gt', 'lte', 'lt']
+        }
         #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
 
     #agnade al mapeo de urls los webservices que desarrolleis
@@ -77,7 +80,16 @@ class WorkflowResource(ModelResource):
     def scipionByCountry(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
         # curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/
-        scipion_by_country = Workflow.objects.all().values('client_country').annotate(total=Count('client_country'))
+        filterDict = dict(request.GET.iterlists())
+
+        filter = dict()
+        for key, value in filterDict.iteritems():
+            filter[key] = value[0]
+        print filter
+
+        scipion_by_country = Workflow.objects.filter(**filter)\
+            .values('client_country')\
+            .annotate(total=Count('client_country'))
 
         from django.core.serializers.json import DjangoJSONEncoder
         json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)

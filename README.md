@@ -14,7 +14,7 @@ $ virtualenv --python /usr/bin/python2 env
 $ env/bin/pip install -r requirements.txt
 ```
 
-### Configuration file: scipion.conf
+### Configuration file: scipion.conf. Only used for the email configuration
 
 The default location for the configuration file is `$HOME/.config/scipion-portal/scipion.conf`.
 Use the environment variable `SCIPION_CONFIG` for a different path. See file `scipion.conf.template`
