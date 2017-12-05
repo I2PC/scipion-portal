@@ -54,7 +54,7 @@
 	};
 
 	function loadCountryChart(){
-		var data = propertyAggregationToPieChartData(downloadsAggregation['country'], 'downloads', 20);
+		var data = propertyAggregationToPieChartData(downloadsAggregation['country'], 'downloads', 2);
 		loadPieChart('#piebycountry', 'Downloads by country', data);
 	};
 
@@ -192,12 +192,21 @@
 			data:[]
 		}];
 
-		var minPie = {name:"Others (&lt;" + min + ')', y:0}
+		var total = 0;
+		var minPctg = min/100;
+
+		// Calculate the total value
+		for (prop in propertyAggregation){
+			var value = propertyAggregation[prop];
+			total = total + value;
+		};
+
+		var minPie = {name:"Others (&lt;" + min + '%)', y:0}
 		for (prop in propertyAggregation){
 
 			var value = propertyAggregation[prop];
 
-			if( min !== undefined && value < min ) {
+			if( min !== undefined && value/total < minPctg ) {
 				minPie.y = minPie.y + value;
 
 			} else {
