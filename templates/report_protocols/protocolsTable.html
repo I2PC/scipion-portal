@@ -1,32 +1,99 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/themes/sand-signika.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+	<script src='{% static "js/highcharts.utils.js" %}'></script>
+{% endblock %}
 {% block content %}
+<script>
+    $(document).ready(function() {
+        $('#protRank').DataTable(protDataTable);
+        loadCharts();
+    } );
+    var protAggregation = {};
+    var protRankData =[
+        {% for protocol in protocols %}
+            {% if forloop.counter > 1 %}
+                ,
+            {% endif %}
+            {
+                'rank': {{ forloop.counter }},
+                'name': '{{ protocol.name }}',
+                'description': '{{ protocol.description }}',
+                'timesUsed': {{ protocol.timesUsed }},
+                'package': '{{ protocol.package.name }}',
+                'type': '{{ protocol.protocolType.name }}'
+            }
+        {% endfor %}
+    ];
+
+    var columns = [
+            { "title": "Rank", "data" : "rank" },
+            { "title": "Name", "data" : "name" },
+            { "title": "Description", "data": "description"},
+            { "title": "Times used", "data" : "timesUsed" },
+            { "title": "Package", "data" : "package" },
+            { "title": "Type", "data" : "type" }
+        ];
+
+    var protDataTable = {
+        "data": protRankData,
+        "columns": columns
+        };
+
+
+	function loadCharts() {
+
+		prepareData();
+
+		loadPackageChart();
+		loadPackageByType();
+	}
+
+	function loadPackageChart(){
+		var data = propertyAggregationToPieChartData(protAggregation['package'], 'timesUsed');
+
+		loadPieChart('#piebypackage', 'Usage by EM package', data);
+	};
+
+	function loadPackageByType(){
+        loadStackedColumnChart('#packagebytype', "Package by type",
+                protRankData, "type", "package", "timesUsed", "Times used");
+	};
+
+	function prepareData(){
+
+		// Aggregate data
+		aggregateAll(protRankData, protAggregation, "timesUsed");
+
+	}
+
+</script>
 <div id="protocolsTable">
-  <h2>Protocol's usage ranking</h2>
+    <h2>Protocol's usage ranking</h2>
     <p>Here you can see a ranking from the most to the less used scipion protocols.</p>
     <div class="alert alert-success" role="alert">A big, big "thank you" to all of those that have allowed scipion to send usage statistics.
     You should see your protocols in the list!.</div>
-   <div class="row">
-        <div class="col-md-4">
-
-            <table class="table table-striped">
-                <thead>
-                    <th>Rank</th>
-                    <th>Protocol Name</th>
-                    <th>Times used</th>
-                </thead>
-                <tbody>
-                {% for protocol in protocols %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ protocol.name }}</td>
-                    <td>{{ protocol.timesUsed }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="protRank" class="table table-striped"></table>
         </div>
-   </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="piebypackage"></div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-12" id="packagebytype"></div>
+    </div>
 </div>
 {% endblock %}

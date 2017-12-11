@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Protocol, Workflow, IpAddressBlackList
+from models import Protocol, Workflow, IpAddressBlackList, Package, ProtocolType
 
 class WorkflowAdmin(admin.ModelAdmin):
     list_display = ('project_uuid',
@@ -11,8 +11,16 @@ class WorkflowAdmin(admin.ModelAdmin):
                     'timesModified')
     ordering = ("-lastModificationDate",)
 
+class PackageAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    ordering = ("name",)
+
+class ProtocolTypeAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    ordering = ("name",)
+
 class ProtocolAdmin(admin.ModelAdmin):
-    list_display = ('name', 'timesUsed')
+    list_display = ('name', 'timesUsed', 'package')
     ordering = ('-timesUsed',"name")
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):
@@ -23,5 +31,7 @@ class IpAddressBlackListAdmin(admin.ModelAdmin):
 admin.site.register(Protocol,ProtocolAdmin)
 admin.site.register(Workflow, WorkflowAdmin)
 admin.site.register(IpAddressBlackList, IpAddressBlackListAdmin)
+admin.site.register(Package, PackageAdmin)
+admin.site.register(ProtocolType, ProtocolTypeAdmin)
 
 

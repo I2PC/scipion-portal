@@ -1,20 +1,19 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
 
-{% block content %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script>
+        google.charts.load('current', {'packages':['geochart'], mapsApiKey:"AIzaSyC3mj6BP5J1RspM4GTcVj0RVOnhLJdLzrs"});
+        google.charts.setOnLoadCallback(drawRegionsMap);
 
-      google.charts.load('current', {'packages':['geochart'], mapsApiKey:"AIzaSyC3mj6BP5J1RspM4GTcVj0RVOnhLJdLzrs"});
-      google.charts.setOnLoadCallback(drawRegionsMap);
-
-      function drawRegionsMap() {
+        function drawRegionsMap() {
           getScipionUsageRAW();
 
-      }
+        }
 
-      function getScipionUsage(rawData){
+        function getScipionUsage(rawData){
 
           //rawData =  [{"client_country": "Netherlands", "total": 2}, {"client_country": "United Kingdom", "total": 9}, {"client_country": "Germany", "total": 5}, {"client_country": "United States", "total": 1}, {"client_country": "Sweden", "total": 9}, {"client_country": "Spain", "total": 549}, {"client_country": "Czechia", "total": 8}];
 
@@ -30,13 +29,13 @@
           chartLine.push(workflows);
           chartData.push(chartLine);
 
-      	}
+        }
 
         return chartData;
-      };
+        };
 
-      function getScipionUsageRAW(){
-      // Form: http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/?
+        function getScipionUsageRAW(){
+        // Form: http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/?
 
         var scipionUsageDataURL = "/report_protocols/api/workflow/workflow/scipionByCountry/";
 
@@ -61,7 +60,7 @@
             };
 
             chart.draw(chartData, options);
-      	})
+        })
         .fail(function( jqxhr, textStatus, error ) {
             var err = textStatus + ", " + error;
             console.log( "Request Failed: " + err );
@@ -69,10 +68,10 @@
         .always(function() {
             console.log( "complete" );
         });
-      };
-
-
-</script>
+        };
+    </script>
+{% endblock js %}
+{% block content %}
     <div id="scipionUsage">
         <h2>Scipion usage map</h2>
         <p>Map showing where Scipion is being used. The number refers to the

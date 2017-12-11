@@ -5,10 +5,20 @@ import datetime
 
 # project assumes hash computed with hashlib.sha256()
 
+class Package(models.Model):
+    name = models.CharField(max_length=128)
+    def __str__(self):  # For Python 2, use __unicode__ too
+        return "package=%s"%(self.name)
+class ProtocolType(models.Model):
+    name = models.CharField(max_length=128)
+    def __str__(self):  # For Python 2, use __unicode__ too
+        return "Protocol type=%s"%(self.name)
 class Protocol(models.Model):
     name = models.CharField(max_length=128)
-    package = models.CharField(max_length=44, null=True)
+    description = models.CharField(max_length=128, null=True)
     timesUsed = models.IntegerField(default=0)
+    package = models.ForeignKey(Package, null=True, on_delete=models.CASCADE)
+    protocolType = models.ForeignKey(ProtocolType, null=True, on_delete=models.CASCADE)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
