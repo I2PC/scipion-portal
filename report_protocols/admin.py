@@ -20,7 +20,7 @@ class ProtocolTypeAdmin(admin.ModelAdmin):
     ordering = ("name",)
 
 class ProtocolAdmin(admin.ModelAdmin):
-    list_display = ('name', 'timesUsed', 'package')
+    list_display = ('name', 'timesUsed', 'package', 'protocolType')
     ordering = ('-timesUsed',"name")
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):
