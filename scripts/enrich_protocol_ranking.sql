@@ -11,6 +11,8 @@ update report_protocols_protocol set package_id = 1 where name like '%Import%' o
 	'ProtCreateStreamData','LegacyProtocol','ProtSubSet','ProtMonitorCTF', 'ProtExtractCoords',
 	'ProtMonitorSummary', 'ProtCreateFSC');
 
+select * from report_protocols_protocol where name like '%Import%'
+
 insert into report_protocols_package (id, name) VALUES (2, 'Xmipp');
 update report_protocols_protocol set package_id = 2 where name like '%Xmipp%'
 or name in ('BatchProtNMACluster', 'ProtMovieAssignGain', 'ChimeraProtRigidFit',
@@ -101,11 +103,31 @@ select * from report_protocols_protocol where package_id is NULL;
 
 /* Enrich types */
 /* Clean types info */
-update report_protocols_protocol set protocolType_id = NULL;
+update report_protocols_protocol set "protocolType_id" = NULL;
 delete from report_protocols_protocoltype;
 /**/
 insert into report_protocols_protocoltype (id, name) VALUES (1, 'Movie alignment');
-update report_protocols_protocol set protocolType_id = 1 where name in 
-('ProtMotioncorr', 'ProtUnblur', 'ProtSummovie','XmippProtOFAlignment','XmippProtMovieAverage', 'XmippProtMovieCorr');
+update report_protocols_protocol set "protocolType_id" = 1 where name in 
+('ProtMotionCorr', 'ProtUnblur', 'ProtSummovie','XmippProtOFAlignment','XmippProtMovieAverage', 'XmippProtMovieCorr');
 
+insert into report_protocols_protocoltype (id, name) VALUES (2, 'CTF estimation');
+update report_protocols_protocol set "protocolType_id" = 2 where name in 
+('XmippProtCTFMicrographs', 'ProtCTFFind', 'ProtGctf');
 
+insert into report_protocols_protocoltype (id, name) VALUES (3, 'Initial model');
+update report_protocols_protocol set "protocolType_id" = 3 where name in 
+('XmippProtRansac', 'XmippProtReconstructSignificant', 'EmanProtInitModel');
+
+insert into report_protocols_protocoltype (id, name) VALUES (4, 'Picking');
+update report_protocols_protocol set "protocolType_id" = 4 where name in 
+('BsoftProtParticlePicking','XmippProtParticlePickingPairs', 'SparxGaussianProtPicking', 'DogPickerProtPicking', 'XmippProtParticlePicking', 'XmippParticlePickingAutomatic');
+
+insert into report_protocols_protocoltype (id, name) VALUES (5, '2D classification');
+update report_protocols_protocol set "protocolType_id" = 5 where name in 
+('XmippProtCL2D', 'ProtRelionClassify2D');
+
+insert into report_protocols_protocoltype (id, name) VALUES (6, '3D refinement');
+update report_protocols_protocol set "protocolType_id" = 6 where name in 
+('ProtRelionRefine3D', 'XmippProtProjMatch', 'EmanProtRefine', 'ProtFreeAlign', 'SpiderProtRefinement', 'XmippProtReconstructHighRes');
+
+select * from report_protocols_protocol where name like '%Refine%'
