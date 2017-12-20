@@ -1,8 +1,7 @@
 ﻿/* Insert packages */
-/* Clean package info
+/* Clean package info */
 update report_protocols_protocol set package_id = NULL;
 delete from report_protocols_package;
-*/
 
 insert into report_protocols_package (id, name) VALUES (1, 'Scipion');
 update report_protocols_protocol set package_id = 1 where name like '%Import%' or name in 
