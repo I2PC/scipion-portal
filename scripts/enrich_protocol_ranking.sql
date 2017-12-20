@@ -10,7 +10,7 @@ update report_protocols_protocol set package_id = 1 where name like '%Import%' o
 	'ProtCreateStreamData','LegacyProtocol','ProtSubSet','ProtMonitorCTF', 'ProtExtractCoords',
 	'ProtMonitorSummary', 'ProtCreateFSC');
 
-select * from report_protocols_protocol where name like '%Import%'
+select * from report_protocols_protocol where name like '%Import%';
 
 insert into report_protocols_package (id, name) VALUES (2, 'Xmipp');
 update report_protocols_protocol set package_id = 2 where name like '%Xmipp%'
