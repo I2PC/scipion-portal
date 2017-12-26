@@ -18,6 +18,7 @@
 {% block main_col %}
 <div id="downloadStats">
 	<h1 class="primary">Scipion download statistics</h1>
+	<div id="piebyversion"></div><br/>
 	<div id="piebyplatform"></div><br/>
 	<div id="piebycountry"></div><br/>
 	<div id="downloadsovertime"></div><br/>
@@ -41,12 +42,22 @@
 
 		prepareData();
 
+		loadVersionChart()
 		loadPlatformChart();
 		loadCountryChart();
 		loadDownloadsTimeSeries();
 		loadDownloadsAccumulated();
 		loadSubscriptionChart();
 	}
+
+	function loadVersionChart(){
+		var data = propertyAggregationToPieChartData(
+		    downloadsAggregation['version'],
+			'downloads');
+
+		loadPieChart('#piebyversion', 'Download by version', data);
+
+	};
 
 	function loadPlatformChart(){
 		var data = propertyAggregationToPieChartData(downloadsAggregation['platform'], 'downloads');
