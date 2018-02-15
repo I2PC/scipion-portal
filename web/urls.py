@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^getdownloadsdata', views_home.getDownloadsStats),
     url(r'^downloadstats', views_home.showDownloadStats),
     url(r'^docs/$', RedirectView.as_view(url='https://github.com/I2PC/scipion/wiki')),
+    url(r'^acknowledgements', views_home.acknowledgements),
 ]

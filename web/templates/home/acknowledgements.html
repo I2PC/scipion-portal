@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="http://mistic100.github.io/jQCloud/dist/jqcloud2/dist/jqcloud.min.css">
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script src="http://mistic100.github.io/jQCloud/dist/jqcloud2/dist/jqcloud.min.js"></script>
+{% endblock %}
+{% block content %}
+<style>
+
+#wordcloud {
+  width:100%;
+  height:200px;
+}
+</style>
+<script>
+
+    var words = [];
+
+    {% for ack in acknowledgements %}
+        words.push({
+            text: "{{ack.title}}",
+            weight: 1
+        {% if ack.url %}
+            , link: '{{ack.url}}'
+        {% endif %}
+        });
+    {% endfor %}
+
+    $(document).ready(function() {
+        $('#wordcloud').jQCloud(words, {
+            autoResize: true,
+            colors: ['firebrick']});
+    } );
+
+</script>
+<div>
+    <h2>Acknowledgements</h2>
+    <p>Scipion is produced mainly in Madrid, but it's final result will not be
+    possible without the contribution of many people, institutions,
+    and funders. We really wish to thank all of them and include everyone,
+    but very likely the list bellow will get outdated.
+    Please contact us to update it.</p>
+
+    <div class="row">
+
+        <div class="col-md-12" id="wordcloud"></div>
+    </div>
+
+    <div class="row">
+    {% for ack in acknowledgements %}
+
+        <div class="col-md-3">
+            <img class="img-responsive center-block" style="border-radius: 50%;height: 60px;width: 60px"
+                 src="
+                 {%if ack.image is None %}
+                    http://photos3.fotosearch.com/bthumb/CSP/CSP991/businessman-clipart__k12028581.jpg
+                 {% else %}
+                    {{ack.image}}
+                 {% endif %}
+                ">
+            {% if ack.url %}
+            <h3><a href="{{ack.url}}">{{ack.title}}</a></h3>
+            {% else %}
+            <h3>{{ack.title}}</h3>
+            {% endif %}
+            <p>{{ ack.description }}</p>
+        </div>
+
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

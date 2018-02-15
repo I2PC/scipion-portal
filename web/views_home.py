@@ -44,7 +44,7 @@ import mimetypes
 
 from django.forms.models import model_to_dict
 from django.conf import settings
-from web.models import Download
+from web.models import Download, Acknowledgement
 
 FILE_TO_DOWNLOAD = 'fileToDownload'
 
@@ -140,6 +140,7 @@ def startDownload(request):
         version = fileSplit[0]
         platform = fileSplit[1]
         fileName = fileSplit[2]
+        size = fileSplit[3]
 
         download = Download.objects.create(
             fullName=fullName,
@@ -149,6 +150,7 @@ def startDownload(request):
             country=country,
             version=version,
             platform=platform,
+            size=size
         )
 
         # If the user want's to be subscribed
@@ -225,3 +227,9 @@ def showDownloadStats(request):
         "abs_url": getAbsoluteURL(),
     }
     return render_to_response('home/download_stats.html', context)
+
+def acknowledgements(request):
+    acknowledgements = Acknowledgement.objects.all()
+    context_dict={}
+    context_dict['acknowledgements'] = acknowledgements
+    return render_to_response('home/acknowledgements.html', context_dict)

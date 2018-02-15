@@ -61,7 +61,8 @@
 					<div class="btn-group">
 						{% for file in files %}
 						<button class="btn btn-default">
-							<input type="radio" name="file" value="{{version}}~{{file.name}}~{{file.file}}">{{file.name}}
+							<input type="radio" name="file" value="{{version}}~{{file.name}}~{{file.file}}~{{file.size}}">
+								{{file.name}} - {{file.size}}
 						</button>
 						{% endfor %}
 					</div>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Download
+from models import Download, Acknowledgement
 
 class DownloadAdmin(admin.ModelAdmin):
     list_display = ("fullName", "organization", "country", "subscription", "version", "platform", "creation")
@@ -15,4 +15,10 @@ class DownloadAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return True
 
+
+class AcknowledgementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'description', 'url', 'image')
+
+
 admin.site.register(Download, DownloadAdmin)
+admin.site.register(Acknowledgement, AcknowledgementAdmin)
