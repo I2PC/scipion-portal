@@ -56,7 +56,7 @@
         <div class="col-md-3">
             <img class="img-responsive center-block" style="border-radius: 50%;height: 60px;width: 60px"
                  src="
-                 {%if ack.image is None %}
+                 {%if ack.image == None %}
                     http://photos3.fotosearch.com/bthumb/CSP/CSP991/businessman-clipart__k12028581.jpg
                  {% else %}
                     {{ack.image}}
