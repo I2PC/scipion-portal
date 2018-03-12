@@ -43,8 +43,10 @@ from web.email import validateEmail, subscribeToUsersList
 import mimetypes
 
 from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from django.conf import settings
-from web.models import Download, Acknowledgement
+from django.core import serializers
+from web.models import Download, Acknowledgement, Plugin
 
 FILE_TO_DOWNLOAD = 'fileToDownload'
 
@@ -215,7 +217,7 @@ def getDownloadsStatsToJSON():
         ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
 
         # Convert subscription: 0 = Yes 1 = No
-        ddict['subscription']= ('Yes' if ddict['subscription'] else 'No')
+        ddict['subscription'] = ('Yes' if ddict['subscription'] else 'No')
         result.append(ddict)
     jsonStr = json.dumps(result, ensure_ascii=False)
     return jsonStr
@@ -228,8 +230,19 @@ def showDownloadStats(request):
     }
     return render_to_response('home/download_stats.html', context)
 
+def getPluginsDict():
+    result = {}
+    for plugin in Plugin.objects.all():
+        pluginDict = model_to_dict(plugin)
+        result[pluginDict['name']] = pluginDict
+    return result
+
+def getPluginsJSON(request):
+    return JsonResponse(getPluginsDict(), json_dumps_params={'indent': 4})
+
+
 def acknowledgements(request):
     acknowledgements = Acknowledgement.objects.all()
-    context_dict={}
+    context_dict = {}
     context_dict['acknowledgements'] = acknowledgements
     return render_to_response('home/acknowledgements.html', context_dict)
