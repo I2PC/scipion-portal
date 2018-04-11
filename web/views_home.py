@@ -234,7 +234,7 @@ def getPluginsDict():
     result = {}
     for plugin in Plugin.objects.all():
         pluginDict = model_to_dict(plugin)
-        result[pluginDict['name']] = pluginDict
+        result[pluginDict['pipName']] = pluginDict
     return result
 
 def getPluginsJSON(request):

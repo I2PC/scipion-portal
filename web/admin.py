@@ -23,8 +23,7 @@ class AcknowledgementAdmin(admin.ModelAdmin):
 
 class PluginAdmin(admin.ModelAdmin):
     form = PluginForm
-    list_display = ('name', 'dirName', 'pipName',
-                    'pluginSourceUrl', 'binaryVersions', 'pluginVersions')
+    list_display = ('name', 'pipName')
 
 
 admin.site.register(Download, DownloadAdmin)

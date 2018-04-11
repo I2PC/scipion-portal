@@ -30,13 +30,9 @@ class Acknowledgement(models.Model):
 
 class Plugin(models.Model):
 
-    name = models.CharField(max_length=256, help_text='name used to install')
-    dirName = models.CharField(max_length=256,
-                               help_text='name of folder in pip package')
-    pipName = models.CharField(max_length=256, null=True, blank=True, )
-    pluginSourceUrl = models.CharField(max_length=500, null=True, blank=True)
-    binaryVersions = ArrayField(models.CharField(max_length=20))
-    pluginVersions = JSONField(blank=True, null=True, default=None)
+    pipName = models.CharField(max_length=256, help_text='name of the plugin in pip repository')
+    name = models.CharField(max_length=256, null=True, blank=True)
+
 
 
 
