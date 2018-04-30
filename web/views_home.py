@@ -46,7 +46,8 @@ from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.conf import settings
 from django.core import serializers
-from web.models import Download, Acknowledgement, Plugin
+from web.models import Download, Acknowledgement
+from report_protocols.models import Package
 
 FILE_TO_DOWNLOAD = 'fileToDownload'
 
@@ -232,9 +233,10 @@ def showDownloadStats(request):
 
 def getPluginsDict():
     result = {}
-    for plugin in Plugin.objects.all():
+    for plugin in Package.objects.all():
         pluginDict = model_to_dict(plugin)
-        result[pluginDict['pipName']] = pluginDict
+        if pluginDict['pipName'] != "":
+            result[pluginDict['pipName']] = pluginDict
     return result
 
 def getPluginsJSON(request):

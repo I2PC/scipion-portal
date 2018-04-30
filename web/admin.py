@@ -1,6 +1,6 @@
 from django.contrib import admin
-from forms import PluginForm
-from models import Download, Acknowledgement, Plugin
+from models import Download, Acknowledgement
+
 
 class DownloadAdmin(admin.ModelAdmin):
     list_display = ("fullName", "organization", "country", "subscription", "version", "platform", "creation")
@@ -21,11 +21,5 @@ class AcknowledgementAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'url', 'image')
 
 
-class PluginAdmin(admin.ModelAdmin):
-    form = PluginForm
-    list_display = ('name', 'pipName')
-
-
 admin.site.register(Download, DownloadAdmin)
 admin.site.register(Acknowledgement, AcknowledgementAdmin)
-admin.site.register(Plugin, PluginAdmin)

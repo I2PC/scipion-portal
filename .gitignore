@@ -58,6 +58,7 @@ staticfiles/
 # Flask stuff:
 instance/
 .webassets-cache
+log/
 
 # Scrapy stuff:
 .scrapy
@@ -90,8 +91,10 @@ ENV/
 # Rope project settings
 .ropeproject
 /webservice/
-.idea
+.idea/
 /.gitignore
 
 # postgres dumps
 *.dump
+
+
