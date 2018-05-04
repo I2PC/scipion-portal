@@ -1,6 +1,7 @@
 from django.contrib import admin
 from models import Download, Acknowledgement
 
+
 class DownloadAdmin(admin.ModelAdmin):
     list_display = ("fullName", "organization", "country", "subscription", "version", "platform", "creation")
     search_fields = ("fullName", "organization", "country", "email", "platform")

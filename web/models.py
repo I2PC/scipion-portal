@@ -24,3 +24,4 @@ class Acknowledgement(models.Model):
     description = models.CharField(max_length=500)
     url = models.CharField(max_length=500, null=True, blank=True)
     image = models.CharField(max_length=500, null=True, blank=True)
+
