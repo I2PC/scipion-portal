@@ -41,7 +41,7 @@ class Protocol(models.Model):
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 
 class IpAddressBlackList(models.Model):
-    client_ip = models.GenericIPAddressField(null=True,unique=True)
+    client_ip = models.GenericIPAddressField(null=True, unique=True)
     note = models.CharField(max_length=128, null=True)
 
     def __str__(self):
@@ -59,4 +59,4 @@ class Workflow(models.Model):
     timesModified = models.IntegerField(default=0)
 
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "workflow=%s, json=%s"%(self.project_uuid[:8],self.project_workflow)
+        return "workflow=%s, json=%s" % (self.project_uuid[:8], self.project_workflow)
