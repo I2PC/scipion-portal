@@ -43,6 +43,8 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
             url(r"^(%s)/scipionByCountry%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('scipionByCountry'), name="scipionByCountry"),
+            url(r"^(%s)/updateWorkflowsGeoInfo%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
         ]
 
     def get_client_ip(self, request):
@@ -63,10 +65,10 @@ class WorkflowResource(ModelResource):
         return False
         
     def get_geographical_information(self, ip):
-        location_country = "N/A"
+        location_country = "VA"
         location_city = "N/A"
         # Automatically geolocate the connecting IP
-        url = 'http://freegeoip.net/json/%s'%ip
+        url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,'015c8dc22c593065dd51791ba674205c')
         print "url", url
         try:
             with closing(urlopen(url)) as response:
@@ -145,6 +147,29 @@ class WorkflowResource(ModelResource):
         statsDict = {}
         statsDict['error'] = False
         return self.create_response(request, statsDict)
+
+    def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
+        """ Query all workflows that does not have GEO info and tries to get it
+          """
+        statsDict = {}
+
+        # Get the workflows with missing geo info
+        for workflow in Workflow.objects.filter(client_country="N/A"):
+
+            # Request GeoInfo
+            workflow.client_country, workflow.client_city = \
+                self.get_geographical_information(workflow.client_ip)
+
+            # Save it
+            workflow.save()
+
+            # Annotate stats
+
+
+        statsDict['error'] = False
+
+        return self.create_response(request, statsDict)
+
 
     def deleteObject(self, request):
         project_uuid = request.POST['project_uuid']
