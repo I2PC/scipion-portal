@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -153,13 +152,3 @@ STATIC_PATH = os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS = (
     STATIC_PATH,
 )
-
-SCIPION_CONFIG = os.environ.get('SCIPION_CONFIG',
-    os.path.expanduser("~/.config/scipion-portal/scipion.conf"))
-
-EMAIL_CONF = config.loadEmailConf(SCIPION_CONFIG)
-EMAIL_USE_TLS = EMAIL_CONF['EMAIL_USE_TLS']
-EMAIL_HOST = EMAIL_CONF['EMAIL_HOST']
-EMAIL_PORT = EMAIL_CONF['EMAIL_PORT']
-EMAIL_HOST_USER = EMAIL_CONF['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = EMAIL_CONF['EMAIL_HOST_PASSWORD']
