@@ -34,19 +34,19 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.conf import settings
 from django.template.context_processors import csrf
 # Depending on DJANGO version (first is for DJANGO 1.9) second for 1.5.5
+from ip_address import get_geographical_information, get_client_ip
+
 try:
     from wsgiref.util import FileWrapper
 except ImportError:
     from django.core.servers.basehttp import FileWrapper
 
-from web.email import validateEmail, subscribeToUsersList
+from web.email import subscribeToUsersList
 import mimetypes
 
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
-from django.conf import settings
-from django.core import serializers
-from web.models import Download, Acknowledgement
+from web.models import Download, Acknowledgement, Bundle
 from report_protocols.models import Package
 
 FILE_TO_DOWNLOAD = 'fileToDownload'
@@ -65,8 +65,10 @@ def download_form(request):
     # Load the downloadables data
     downloadables = loadDownloadables()
 
+    bundles = list(Bundle.objects.all())
+
     context = {
-        "downloadables": downloadables,
+        "downloadables": bundles,
         "abs_url": getAbsoluteURL(),
     }
     context.update(csrf(request))
@@ -82,124 +84,91 @@ def getAbsoluteURL(additionalPath=None):
         additionalPath = ''
     return '/' + additionalPath
 
-def loadDownloadables():
-    f = open(getInstallPath("downloadables.json"))
-
-    d = json.load(f)
-
-    f.close()
-
-    checkDowloadablesExistence(d)
-
-    return d
-
-
-def checkDowloadablesExistence(downloadables):
-    """ Structure should be like this:
-
-    Parameters
-    ----------
-    downloadables: list of downloadable files
-
-    """
-
-    for version, files in downloadables.iteritems():
-        # remove all files that doesn't exists
-        files[:] = [dFile for dFile in files if os.path.exists(getInstallPath(dFile.get(DOWNLOADABLES_FILE)))]
+# def loadDownloadables():
+#     f = open(getInstallPath("downloadables.json"))
+#
+#     d = json.load(f)
+#
+#     f.close()
+#
+#     checkDowloadablesExistence(d)
+#
+#     return d
 
 
-def getInstallPath(fileName=''):
-    return os.path.join(SCRIPT_DIRECTORY, "../static/install", fileName)
+# def checkDowloadablesExistence(downloadables):
+#     """ Structure should be like this:
+#
+#     Parameters
+#     ----------
+#     downloadables: list of downloadable files
+#
+#     """
+#
+#     for version, files in downloadables.iteritems():
+#         # remove all files that doesn't exists
+#         files[:] = [dFile for dFile in files if os.path.exists(getInstallPath(dFile.get(DOWNLOADABLES_FILE)))]
+
+#
+# def getInstallPath(fileName=''):
+#     return os.path.join(SCRIPT_DIRECTORY, "../static/install", fileName)
 
 
 def startDownload(request):
-    fullName = request.POST.get('fullName')
-    organization = request.POST.get('organization')
-    email = request.POST.get('email')
-    mailoption = request.POST.get('mailoption')
-    country = request.POST.get('country')
-    bundle = request.POST.get('file')
+
+    bundleId = request.GET.get('bundleId')
 
     errors = ""
+    bundle = None
+    if not len(bundleId) > 0:
+        errors += "File not specified.\n"
+    else:
+        # Get the bundle
+        bundle = Bundle.objects.get(id=bundleId)
 
-    # If full name is None it's a direct access..
-    if fullName is None:
-        return redirect('download_form')
-
-    if not len(fullName) > 0:
-        errors += "Please fill in the fullName field.\n"
-    if not len(organization) > 0:
-        errors += "Please fill in the Organization field.\n"
-    if not len(email) > 0 and validateEmail(email):
-        errors += "Please fill in the Email field.\n"
-    # if not len(mailoption) > 0:
-    #         errors += "Please choose one into the Country field.\n"
-    if not len(bundle) > 0:
-        errors += "Please fill in the Scipion Version field.\n"
+        if bundle is None:
+            errors += "File with %s id not found." % bundleId
 
     if len(errors) == 0:
 
-        fileSplit = bundle.split("~")
-        version = fileSplit[0]
-        platform = fileSplit[1]
-        fileName = fileSplit[2]
-        size = fileSplit[3]
-
-        download = Download.objects.create(
-            fullName=fullName,
-            organization=organization,
-            email=email,
-            subscription=mailoption == "0",
+        # Get the ip
+        client_ip = get_client_ip(request)
+        # Get the country...
+        country, city = get_geographical_information(client_ip)
+        Download.objects.create(
             country=country,
-            version=version,
-            platform=platform,
-            size=size
+            version=bundle.version,
+            platform=bundle.platform,
+            size=bundle.size
         )
 
-        # If the user want's to be subscribed
-        if mailoption == '0': subscribeToUsersList(email)
-
         # Return a response with the scipion download file
-        path = getInstallPath(fileName)
+        path = bundle.file.file.name
 
         if not os.path.exists(path):
             return HttpResponseNotFound('Path not found: %s' % path)
 
-        request.session[FILE_TO_DOWNLOAD] = fileName
+        with open(path, 'rb') as fh:
+            response = HttpResponse(fh.read(),
+                            content_type="application/tar+gzip")
+            response['Content-Disposition'] = 'inline; filename=' \
+                                              + os.path.basename(path)
+            return response
 
-        context = {
-            "fileToDownload": fileName,
-            "abs_url": getAbsoluteURL(),
-        }
-        context.update(csrf(request))
+        raise Http404
 
-        return render_to_response('home/startdownload.html', context)
+        # request.session[FILE_TO_DOWNLOAD] = path
+        #
+        # context = {
+        #     "fileToDownload": path,
+        #     "abs_url": getAbsoluteURL(),
+        # }
+        # context.update(csrf(request))
+        #
+        # return render_to_response('home/startdownload.html', context)
 
     else:
         redirect(download_form)
-
-def doDownload(request):
-
-    # Return a response with the scipion download file
-    if FILE_TO_DOWNLOAD in request.session:
-
-        fileToDownload = request.session[FILE_TO_DOWNLOAD]
-
-        path = getInstallPath(fileToDownload)
-
-        if not os.path.exists(path):
-            return HttpResponseNotFound('Path not found: %s' % path)
-
-        response = HttpResponse(FileWrapper(open(path)),
-                                content_type=mimetypes.guess_type(path)[0])
-        response['Content-Length'] = os.path.getsize(path)
-        response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(path)
-
-        return response
-    else:
-
-        return redirect('download_form')
-
 
 def getDownloadsStats(request):
 
@@ -212,13 +181,7 @@ def getDownloadsStatsToJSON():
     result = []
     for download in Download.objects.all():
         ddict = model_to_dict(download)
-        del ddict['email']
-        del ddict['fullName']
-        #from pdb import set_trace; set_trace()
         ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
-
-        # Convert subscription: 0 = Yes 1 = No
-        ddict['subscription'] = ('Yes' if ddict['subscription'] else 'No')
         result.append(ddict)
     jsonStr = json.dumps(result, ensure_ascii=False)
     return jsonStr

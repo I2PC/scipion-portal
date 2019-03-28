@@ -10,11 +10,13 @@ from contextlib import closing
 import json
 
 
-def get_geographical_information( ip):
-    location_country = "N/A"
+def get_geographical_information(ip):
+
+    location_country = "VA"
     location_city = "N/A"
     # Automatically geolocate the connecting IP
-    url = 'http://freegeoip.net/json/%s'%ip
+    url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,'015c8dc22c593065dd51791ba674205c')
+    print "url", url
     try:
         with closing(urlopen(url)) as response:
             location = json.loads(response.read())
@@ -25,10 +27,10 @@ def get_geographical_information( ip):
     return (location_country, location_city)
 
 
-workflows = Workflow.objects.all()
-
-for workflow in workflows:
-    workflow.client_address = socket.getfqdn(workflow.client_ip)
-    workflow.client_country, workflow.client_city = \
-        get_geographical_information(workflow.client_ip)
-    workflow.save()
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

@@ -1,10 +1,10 @@
 from django.contrib import admin
-from models import Download, Acknowledgement
+from models import Download, Acknowledgement, Bundle
 
 
 class DownloadAdmin(admin.ModelAdmin):
-    list_display = ("fullName", "organization", "country", "subscription", "version", "platform", "creation")
-    search_fields = ("fullName", "organization", "country", "email", "platform")
+    list_display = ('country', 'version', 'platform', 'creation')
+    search_fields = ('country', 'platform', 'version', 'size', 'creation')
     ordering = ("-creation",)
 
     def has_add_permission(self, request):
@@ -17,9 +17,14 @@ class DownloadAdmin(admin.ModelAdmin):
         return True
 
 
+class BundleAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+    list_display = ('id', 'version', 'platform', 'size', 'date', 'deprecated')
+
 class AcknowledgementAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'url', 'image')
 
 
 admin.site.register(Download, DownloadAdmin)
 admin.site.register(Acknowledgement, AcknowledgementAdmin)
+admin.site.register(Bundle, BundleAdmin)

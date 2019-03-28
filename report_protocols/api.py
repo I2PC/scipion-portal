@@ -12,7 +12,7 @@ import socket
 from urllib2 import urlopen
 from contextlib import closing
 
-
+from ip_address import get_client_ip, get_geographical_information
 from models import Workflow, Protocol, IpAddressBlackList
 
 class ProtocolResource(ModelResource):
@@ -47,14 +47,6 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
         ]
 
-    def get_client_ip(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
-
     def isInBlackList(self,ip):
         """ check if ip address is in blackList and then return False. 
             Otherwise return True"""
@@ -63,21 +55,6 @@ class WorkflowResource(ModelResource):
         except IpAddressBlackList.DoesNotExist:
             return True
         return False
-        
-    def get_geographical_information(self, ip):
-        location_country = "VA"
-        location_city = "N/A"
-        # Automatically geolocate the connecting IP
-        url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,'015c8dc22c593065dd51791ba674205c')
-        print "url", url
-        try:
-            with closing(urlopen(url)) as response:
-                location = json.loads(response.read())
-                location_city = location['city']
-                location_country = location['country_name']
-        except:
-            print("Location could not be determined automatically")
-        return (location_country, location_city)
 
     def scipionByCountry(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
@@ -109,7 +86,7 @@ class WorkflowResource(ModelResource):
            curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/?project_uuid=ed566c70-3118-4722-86ad-06f1f6e77e74
            curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
                    """
-        client_ip = self.get_client_ip(request)
+        client_ip = get_client_ip(request)
         if self.isInBlackList(client_ip):    
             project_uuid = request.POST['project_uuid']
             project_workflow = request.POST['project_workflow']
@@ -126,7 +103,7 @@ class WorkflowResource(ModelResource):
             workflow.client_ip = client_ip
             workflow.client_address = socket.getfqdn(workflow.client_ip)
             workflow.client_country, workflow.client_city = \
-            self.get_geographical_information(workflow.client_ip)
+            get_geographical_information(workflow.client_ip)
             workflow.timesModified += 1
             workflow.lastModificationDate = datetime.datetime.now()
             workflow.save()
@@ -158,7 +135,7 @@ class WorkflowResource(ModelResource):
 
             # Request GeoInfo
             workflow.client_country, workflow.client_city = \
-                self.get_geographical_information(workflow.client_ip)
+                get_geographical_information(workflow.client_ip)
 
             # Save it
             workflow.save()

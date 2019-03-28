@@ -97,4 +97,7 @@ ENV/
 # postgres dumps
 *.dump
 
+# bundles
+bundles
+
 

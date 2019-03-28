@@ -9,6 +9,7 @@ class WorkflowAdmin(admin.ModelAdmin):
                     'client_country',
                     'client_city',
                     'timesModified')
+    search_fields = ('project_workflow', 'date', 'client_country', 'client_city', 'timesModified')
     ordering = ("-lastModificationDate",)
 
 

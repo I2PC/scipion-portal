@@ -23,8 +23,6 @@
 	<div id="piebycountry"></div><br/>
 	<div id="downloadsovertime"></div><br/>
 	<div id="accumulatedDownloads"></div><br/>
-	<div id="piebysubscription"></div><br/>
-
 
 	<script>
 	var downloadData = {{downloadsJSON|safe}};
@@ -47,7 +45,6 @@
 		loadCountryChart();
 		loadDownloadsTimeSeries();
 		loadDownloadsAccumulated();
-		loadSubscriptionChart();
 	}
 
 	function loadVersionChart(){
@@ -82,11 +79,6 @@
 		downloadsTimeSeries[0].type='area'
 
 		loadAreaChart('#accumulatedDownloads', 'Accumulated downloads', downloadsTimeSeries)
-	};
-
-	function loadSubscriptionChart(){
-		var data = propertyAggregationToPieChartData(downloadsAggregation['subscription'], 'users');
-		loadPieChart('#piebysubscription', 'Subscription', data);
 	};
 
 	function prepareData(){
