@@ -16,12 +16,11 @@
 {% endblock %}
 
 {% block main_col %}
-<div id="downloadForm">
     <h1 class="primary">Scipion downloads</h1>
     <!-- Load non deprecated bundles -->
     {% for bundle in downloadables %}
         {% if not bundle.deprecated %}
-        <a href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
+        <a class="btn btn-lg button2 primary_inv" role="button" href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
             {{bundle.version}} - {{bundle.platform}}
         </a> ({{bundle.size}} - {{ bundle.date }})<br/>
         {% endif %}
@@ -37,7 +36,8 @@
         </a> ({{bundle.size}} - {{ bundle.date }})<br/>
         {% endif %}
     {% endfor %}
-
+    </br>
+    </br>
     <p>Have a look to the <a href="downloadstats">download statistics page!</a></p>
 </div>
 {% endblock %}

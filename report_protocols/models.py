@@ -4,13 +4,19 @@ from django.db import models
 import datetime
 
 # project assumes hash computed with hashlib.sha256()
+from webservices import settings
 
 
 class Package(models.Model):
     name = models.CharField(max_length=128)
     # We add fields for pluginization
-    pipName = models.CharField(max_length=256, help_text='name of the plugin in pip repository',
+    pipName = models.CharField(max_length=256, help_text='Name of the plugin at pypi.org',
                                blank=True, default="")
+
+    description = models.CharField(max_length=256, blank=True, default="")
+    url = models.CharField(max_length=256, help_text="Software site url",
+                           blank=True, default="")
+    logo = models.ImageField(blank=True, upload_to=settings.PATH_PACKAGES)
 
     def __str__(self):  # For Python 2, use __unicode__ too
         return "package=%s,pipName=%s" % (self.name, self.pipName)
@@ -18,7 +24,8 @@ class Package(models.Model):
 
 class ProtocolType(models.Model):
     name = models.CharField(max_length=128)
-
+    description = models.CharField(max_length=256, default="")
+    icon = models.ImageField(blank=True, upload_to=settings.PATH_PROT_TYPES)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "Protocol type=%s"%(self.name)
 

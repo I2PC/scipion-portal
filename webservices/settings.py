@@ -144,11 +144,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
-
+STATIC_URL = '/static/'
 STATIC_PATH = os.path.join(BASE_DIR,'static')
 STATICFILES_DIRS = (
     STATIC_PATH,
 )
+
+# Uploading folders (for images or bundles that are uploaded)
+# All this paths will be under MEDIA folder
+MEDIA_ROOT = 'uploads'
+MEDIA_URL = '/uploads/'
+
+PATH_PACKAGES = os.path.join(MEDIA_ROOT, "packages")
+PATH_BUNDLES = os.path.join(MEDIA_ROOT, "bundles")
+PATH_PROT_TYPES = os.path.join(MEDIA_ROOT, "prot-types")

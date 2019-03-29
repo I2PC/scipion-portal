@@ -461,14 +461,6 @@ table#data tr:nth-child(even) {
     text-decoration: none;
 }
 
-.button2:hover,
-.button2:focus {
-    opacity: 0.8
-}
-.button2:active {
-    opacity: 0.8
-}
-
 /* Fixed size buttons */
 .btn_wide{
 	min-width:12em;
@@ -613,4 +605,9 @@ progress[value]::-webkit-progress-value {
  border-radius: 2px;
  background-size: 35px 20px, 100% 100%, 100% 100%;
  border-radius: 4px;
+}
+
+.prot-type-icon{
+	width:50px;
+	height:50px;
 }

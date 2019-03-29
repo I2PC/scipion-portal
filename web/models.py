@@ -4,6 +4,8 @@ import uuid
 
 from django.db import models
 
+from webservices import settings
+
 
 class Download(models.Model):
 
@@ -19,7 +21,7 @@ class Download(models.Model):
     size = models.CharField(max_length=256)
 
 class Bundle(models.Model):
-    file = models.FileField(upload_to="bundles/")
+    file = models.FileField(upload_to=settings.PATH_BUNDLES)
     version = models.CharField(max_length=20)  # Bundle version
     platform = models.CharField(max_length=256)  # Type (sources/binaries)
     size = models.CharField(max_length=256)  # Bundle size

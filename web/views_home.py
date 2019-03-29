@@ -62,8 +62,6 @@ def home(request):
     return render_to_response('home/index.html', context)
 
 def download_form(request):
-    # Load the downloadables data
-    downloadables = loadDownloadables()
 
     bundles = list(Bundle.objects.all())
 

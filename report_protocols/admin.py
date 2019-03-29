@@ -14,12 +14,12 @@ class WorkflowAdmin(admin.ModelAdmin):
 
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'pipName')
+    list_display = ('name', 'pipName', 'description', 'url')
     ordering = ("name", 'pipName')
 
 
 class ProtocolTypeAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'description')
     ordering = ("name",)
 
 

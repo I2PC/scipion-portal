@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^api/', include(user_api.urls)),
     url(r'^protocolTable/', views.protocolTable, name='protocolTable'),
     url(r'^scipionUsage', views.scipionUsage, name='scipionUsage'),
+    url(r'^protocoltypes', views.protocolTypes, name='protocolTypes'),
 ]
 

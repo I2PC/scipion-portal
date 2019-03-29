@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+    <h2>Protocol types and its protocols catalogue</h2>
+    <p>This is a dynamic list of protocol types that are present
+    in Scipion. Some of them might come from a development environment
+    and soon will be released.</p>
+    <hr>
+
+    {% for type in types %}
+    <br/>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title primary">
+            {% if type.icon %}
+                <img class="prot-type-icon img-thumbnail"src="/uploads/{{ type.icon.name }} " alt="icon for {{ type.name }}">
+            {% endif %}
+            {{ type.name }}
+            {% if not type.description == "" %}
+                - {{ type.description }}
+            {% endif %}
+        </h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        {%  for prot in type.protocol_set.all %}
+            <li class="list-group-item">{{ prot.name }}
+                {% if not prot.description == None %}
+                - {{ prot.description }}
+                {% endif %}
+                ({{ prot.package.name}})
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+{% endblock %}
