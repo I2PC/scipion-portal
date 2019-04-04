@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from models import Protocol, ProtocolType
+from models import Protocol, ProtocolType, Package
 
 
 def protocolTable(request):
@@ -16,3 +16,9 @@ def protocolTypes(request):
     context_dict = {}
     context_dict['types'] = types
     return render(request, 'report_protocols/protocolTypes.html', context_dict)
+
+def packages(request):
+    types = Package.objects.all()
+    context_dict = {}
+    context_dict['packages'] = types
+    return render(request, 'report_protocols/packages.html', context_dict)

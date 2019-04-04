@@ -27,7 +27,7 @@
             {% endif %}
             {
                 'rank': {{ forloop.counter }},
-                'name': '{{ protocol.name }}',
+                'name': '{% if protocol.friendlyName %}{{protocol.friendlyName}}{% else %}{{protocol.name}}{% endif %}',
                 'description': '{{ protocol.description }}',
                 'timesUsed': {{ protocol.timesUsed }},
                 'package': '{{ protocol.package.name }}',

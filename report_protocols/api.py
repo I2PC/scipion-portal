@@ -1,6 +1,7 @@
-from django.core import serializers
 from django.db.models import Count
 from django.http import HttpResponse
+from tastypie.authentication import BasicAuthentication, Authentication
+from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
 from django.conf.urls import url
@@ -9,11 +10,10 @@ import json
 from collections import Counter
 import datetime
 import socket
-from urllib2 import urlopen
-from contextlib import closing
 
 from ip_address import get_client_ip, get_geographical_information
-from models import Workflow, Protocol, IpAddressBlackList
+from models import Workflow, Protocol, IpAddressBlackList, Package
+
 
 class ProtocolResource(ModelResource):
     """allow search in protocol table"""
@@ -22,6 +22,51 @@ class ProtocolResource(ModelResource):
         resource_name = 'protocol'
         filtering = {'name': ALL}
         #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
+        authentication = BasicAuthentication()
+        authorization = Authorization()
+        # Add resource urls
+
+    def prepend_urls(self):
+        return [
+            url(r"^(%s)/batchupdate%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('batchupdate'), name="protocol_batch_update")
+            ]
+
+    def batchupdate(self, request, * args, **kwargs):
+        """receive a json dictionary with protocols info
+           store the dictionary in protocols table
+           Expected json format should be like:
+           [
+              {"name": "prot1", "description": "this protocol ....", "friendlyName": "nice name"},
+              {"name": "prot2", "description": "this protocol2 ....", "friendlyName": "nice name2"}
+              ...
+           ]
+        """
+        # Since prepended url do not handle auhtorization we need to do it here
+        self.method_check(request, allowed=['post'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        # Verify user
+        protocolsJson = request.body
+        protocolsList = json.loads(protocolsJson)
+
+
+        def chooseValue(new, old):
+
+            return old if new == "" else new
+
+        # For each package
+        for protocol in protocolsList:
+
+            # If it exists
+            dbProtocol, created = Protocol.objects.get_or_create(name=protocol ["name"])
+            dbProtocol.description = chooseValue(protocol["description"], dbProtocol.description)
+            dbProtocol.friendlyName = chooseValue(protocol["friendlyName"], dbProtocol.friendlyName)
+            dbProtocol.save()
+
+        return self.create_response(request, protocolsList)
+
 
 class WorkflowResource(ModelResource):
     """allow search in workflow table"""
@@ -34,7 +79,7 @@ class WorkflowResource(ModelResource):
         }
         #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
 
-    #agnade al mapeo de urls los webservices que desarrolleis
+    # Add resource urls
     def prepend_urls(self):
         return [
             url(r"^(%s)/addOrUpdateWorkflow%s$" % (self._meta.resource_name, trailing_slash()),
@@ -160,3 +205,46 @@ class WorkflowResource(ModelResource):
     def reportProtocolUsage(self, request, * args, **kwargs):
         """ask for a protocol histogram"""
         pass
+
+class PackageResource(ModelResource):
+    """allow search in workflow table"""
+    class Meta:
+        queryset = Package.objects.all()
+        resource_name = 'package'
+        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
+        authentication = BasicAuthentication()
+        authorization = Authorization()
+
+    def prepend_urls(self):
+        return [
+            url(r"^(%s)/batchupdate%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('batchupdate'), name="package_batch_update")
+            ]
+    def batchupdate(self, request, * args, **kwargs):
+        """receive a json dictionary with packages info
+           store the dictionary in packages table
+           Expected json format should be like:
+           [
+              {"name": "package1", "url": "http:sdsdds", "description": "blah blah blah"},
+              ...
+           ]
+        """
+        # Since prepended url do not handle authorization we need to do it here
+        self.method_check(request, allowed=['post'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        packagesJson = request.body
+        packagesList = json.loads(packagesJson)
+
+        # For each package
+        for package in packagesList:
+
+            # If it exists
+            dbPackage, created = Package.objects.get_or_create(name=package["name"])
+            dbPackage.url = package["url"]
+            dbPackage.description = package["description"]
+            dbPackage.save()
+
+        return self.create_response(request, packagesList)
+

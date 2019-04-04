@@ -8,7 +8,7 @@ from webservices import settings
 
 
 class Package(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
     # We add fields for pluginization
     pipName = models.CharField(max_length=256, help_text='Name of the plugin at pypi.org',
                                blank=True, default="")
@@ -32,7 +32,7 @@ class ProtocolType(models.Model):
 
 class Protocol(models.Model):
     name = models.CharField(max_length=128)
-    description = models.CharField(max_length=128,
+    description = models.CharField(max_length=2048,
                                    blank=True,
                                    null=True)
     timesUsed = models.IntegerField(default=0)
@@ -44,6 +44,7 @@ class Protocol(models.Model):
                                      null=True,
                                      blank=True,
                                      on_delete=models.CASCADE)
+    friendlyName = models.CharField(max_length=256, blank=True, null=True)
     def __str__(self):  # For Python 2, use __unicode__ too
         return "prot=%s, used=%d"%(self.name, self.timesUsed)
 

@@ -611,3 +611,7 @@ progress[value]::-webkit-progress-value {
 	width:50px;
 	height:50px;
 }
+.package-icon{
+	width:100px;
+	height:100px;
+}

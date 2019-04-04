@@ -9,29 +9,43 @@
     <hr>
 
     {% for type in types %}
-    <br/>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title primary">
+    <br/><br/>
+       <div itemscope itemtype="http://schema.org/SoftwareApplication">
+        <div class="row">
+            <div class="col text-center align-middle">
             {% if type.icon %}
-                <img class="prot-type-icon img-thumbnail"src="/uploads/{{ type.icon.name }} " alt="icon for {{ type.name }}">
+                <img class="prot-type-icon img-thumbnail" src="/uploads/{{ type.icon.name }} " alt="icon for {{ type.name }}">
             {% endif %}
-            {{ type.name }}
-            {% if not type.description == "" %}
-                - {{ type.description }}
-            {% endif %}
-        </h5>
-      </div>
-      <ul class="list-group list-group-flush">
+            <h1><span itemprop="name">{{ type.name }}</span></h1>
+            </div>
+        </div>
+       {% if not type.description %}
+        <div class="row">
+            <div class="col text-center align-middle">
+                {{ type.description }}
+            </div>
+        </div>
+        {% endif %}
+        <br/><br/>
+        <h2>Available protocols:</h2>
         {%  for prot in type.protocol_set.all %}
-            <li class="list-group-item">{{ prot.name }}
-                {% if not prot.description == None %}
-                - {{ prot.description }}
-                {% endif %}
-                ({{ prot.package.name}})
-            </li>
+            {% if prot.description %}
+            <div class="row">
+                <div class="col-md-12" itemprop="featureList">
+                    <h4>{%  if prot.friendlyName == None %}
+                        {{ prot.name }}
+                    {%  else %}
+                        {{ prot.friendlyName }}
+                    {% endif %}
+                    {% if prot.package %}
+                        <span itemprop="applicationCategory">({{ prot.package.name}})</span>
+                    {% endif %}
+                    </h4>
+                    <p>{{ prot.description }}</p>
+                </div>
+            </div>
+            {% endif %}
         {% endfor %}
-      </ul>
     </div>
     {% endfor %}
 {% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+    <h2>Packages integrated in Scipion</h2>
+
+    {% for package in packages %}
+    <br/><br/>
+    <div itemscope itemtype="http://schema.org/SoftwareApplication">
+        <div class="row">
+            <div class="col text-center align-middle">
+            {% if package.logo %}
+                <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
+            {% endif %}
+            <h1><span itemprop="name">{{ package.name }}</span></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center align-middle">
+                {% if not package.description == "" %}
+                  <p><span itemprop="description">{{ package.description }}</span></p>
+                {% endif %}
+                {% if not package.url == "" %}
+                    <p>Web site at <a href="{{package.url}}" itemprop="downloadUrl">{{package.url}}.</a></p>
+                {% endif %}
+                Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, Cryo-em</span>
+            </div>
+        </div>
+
+        <br/><br/>
+        <h2>Available methods:</h2>
+        <br/>
+        {%  for prot in package.protocol_set.all %}
+            {% if prot.description %}
+            <div class="row">
+                <div class="col-md-12" itemprop="featureList">
+                    <h4>{%  if prot.friendlyName == None %}
+                        {{ prot.name }}
+                    {%  else %}
+                        {{ prot.friendlyName }}
+                    {% endif %}
+                    {% if not prot.protocolType == None %}
+                        <span itemprop="applicationCategory">({{ prot.protocolType.name}})</span>
+                    {% endif %}
+                    </h4>
+                    <p>{{ prot.description }}</p>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{#  CONTRIBUTORS --> <span itemprop="contributor">Jose Miguel</span>, <span itemprop="contributor">Gregory Sharov</span> #}
+{#        OS: --<span itemprop="operatingSystem">Linux</span> and offers methods in the area of#}
+    {% endfor %}
+{% endblock %}
