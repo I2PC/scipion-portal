@@ -615,3 +615,9 @@ progress[value]::-webkit-progress-value {
 	width:100px;
 	height:100px;
 }
+
+.collaborator-img{
+	border-radius: 50%;
+	height: 60px;
+	width: 60px;
+}

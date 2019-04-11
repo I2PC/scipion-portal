@@ -2,11 +2,10 @@
 {% load staticfiles %}
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" href="http://mistic100.github.io/jQCloud/dist/jqcloud2/dist/jqcloud.min.css">
 {% endblock %}
 {% block js %}
     {{ block.super }}
-    <script src="http://mistic100.github.io/jQCloud/dist/jqcloud2/dist/jqcloud.min.js"></script>
+    <script src="https://wordcloud2-js.timdream.org/src/wordcloud2.js"></script>
 {% endblock %}
 {% block content %}
 <style>
@@ -21,19 +20,14 @@
     var words = [];
 
     {% for ack in acknowledgements %}
-        words.push({
-            text: "{{ack.title}}",
-            weight: 1
-        {% if ack.url %}
-            , link: '{{ack.url}}'
-        {% endif %}
-        });
+        words.push(['{{ack.title}}', '14']);
     {% endfor %}
 
     $(document).ready(function() {
-        $('#wordcloud').jQCloud(words, {
-            autoResize: true,
-            colors: ['firebrick']});
+        WordCloud(document.getElementById('wordcloud'),
+            { list: words,
+              color: 'random-dark',
+              gridSize: 16 } );
     } );
 
 </script>
@@ -46,22 +40,15 @@
     Please contact us to update it.</p>
 
     <div class="row">
-
         <div class="col-md-12" id="wordcloud"></div>
     </div>
-
+    <br/><br/>
     <div class="row">
     {% for ack in acknowledgements %}
 
         <div class="col-md-3">
-            <img class="img-responsive center-block" style="border-radius: 50%;height: 60px;width: 60px"
-                 src="
-                 {%if ack.image == None %}
-                    http://photos3.fotosearch.com/bthumb/CSP/CSP991/businessman-clipart__k12028581.jpg
-                 {% else %}
-                    {{ack.image}}
-                 {% endif %}
-                ">
+            <img class="img-responsive center-block collaborator-img"
+                 src="{{ ack.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
             {% if ack.url %}
             <h3><a href="{{ack.url}}">{{ack.title}}</a></h3>
             {% else %}

@@ -19,7 +19,7 @@ class Package(models.Model):
     logo = models.ImageField(blank=True, upload_to=settings.PATH_PACKAGES)
 
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "package=%s,pipName=%s" % (self.name, self.pipName)
+        return self.name
 
 
 class ProtocolType(models.Model):
@@ -27,7 +27,7 @@ class ProtocolType(models.Model):
     description = models.CharField(max_length=256, default="")
     icon = models.ImageField(blank=True, upload_to=settings.PATH_PROT_TYPES)
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "Protocol type=%s"%(self.name)
+        return self.name
 
 
 class Protocol(models.Model):
@@ -46,7 +46,7 @@ class Protocol(models.Model):
                                      on_delete=models.CASCADE)
     friendlyName = models.CharField(max_length=256, blank=True, null=True)
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "prot=%s, used=%d"%(self.name, self.timesUsed)
+        return "%s (%s)" % (self.name, self.friendlyName)
 
 class IpAddressBlackList(models.Model):
     client_ip = models.GenericIPAddressField(null=True, unique=True)

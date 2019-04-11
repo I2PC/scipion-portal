@@ -12,7 +12,7 @@
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
             {% endif %}
-            <h1><span itemprop="name">{{ package.name }}</span></h1>
+            <h1 id="{{package.name}}"><span itemprop="name">{{ package.name }}</span></h1>
             </div>
         </div>
         <div class="row">
@@ -34,13 +34,10 @@
             {% if prot.description %}
             <div class="row">
                 <div class="col-md-12" itemprop="featureList">
-                    <h4>{%  if prot.friendlyName == None %}
-                        {{ prot.name }}
-                    {%  else %}
-                        {{ prot.friendlyName }}
-                    {% endif %}
+                    <h4 id="{{ prot.name }}">
+                        {{ prot.friendlyName | default:prot.name }}
                     {% if not prot.protocolType == None %}
-                        <span itemprop="applicationCategory">({{ prot.protocolType.name}})</span>
+                        <span itemprop="applicationCategory"> ({{ prot.protocolType.name}})</span>
                     {% endif %}
                     </h4>
                     <p>{{ prot.description }}</p>
@@ -48,8 +45,24 @@
             </div>
             {% endif %}
         {% endfor %}
+        <br/><br/>
+        <h2>Contributors:</h2>
+        <div class="row">
+        {%  for contibution in package.contribution_set.all %}
+            <div class="col-md-2">
+            <img class="img-responsive center-block collaborator-img"
+                 src="{{ contibution.contributor.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
+            {% if contibution.contributor.url %}
+            <h6 itemprop="contributor"><a href="{{contibution.contributor.url}}">{{contibution.contributor.title}}</a></h6>
+            {% else %}
+            <h6 itemprop="contributor">{{contibution.contributor.title}}</h6>
+            {% endif %}
+            </div>
+        {% empty %}
+            Missing information!, but be sure someone has done it.
+        {% endfor %}
+        </div>
     </div>
-{#  CONTRIBUTORS --> <span itemprop="contributor">Jose Miguel</span>, <span itemprop="contributor">Gregory Sharov</span> #}
-{#        OS: --<span itemprop="operatingSystem">Linux</span> and offers methods in the area of#}
+
     {% endfor %}
 {% endblock %}

@@ -27,8 +27,8 @@
             {% endif %}
             {
                 'rank': {{ forloop.counter }},
-                'name': '{% if protocol.friendlyName %}{{protocol.friendlyName}}{% else %}{{protocol.name}}{% endif %}',
-                'description': '{{ protocol.description }}',
+                'name': '{{ protocol.friendlyName | default:protocol.name }}',
+                'class': '{{ protocol.name }}',
                 'timesUsed': {{ protocol.timesUsed }},
                 'package': '{{ protocol.package.name }}',
                 'type': '{{ protocol.protocolType.name }}'
@@ -38,10 +38,24 @@
 
     var columns = [
             { "title": "Rank", "data" : "rank" },
-            { "title": "Name", "data" : "name" },
-            { "title": "Description", "data": "description"},
+            { "title": "Package",
+              "data": "package",
+              "render": function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = '<a href="{% url 'packages' %}/#' + data + '">' + data + '</a>';
+                    }
+                    return data;
+               }
+            },
+            { "title": "Name",
+              "data" : "name",
+              "render": function(data, type, row, meta){
+                    if(type === 'display'){
+                        data = '<a href="{% url 'packages' %}/#' + row.class + '">' + data + '</a>';
+                    }
+                    return data;
+               }},
             { "title": "Times used", "data" : "timesUsed" },
-            { "title": "Package", "data" : "package" },
             { "title": "Type", "data" : "type" }
         ];
 

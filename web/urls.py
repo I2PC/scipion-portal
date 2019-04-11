@@ -1,6 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.generic import RedirectView
 from web import views_home
+from tastypie.api import Api
+from api import ContributionResource
+
+api = Api(api_name="v2")
+api.register(ContributionResource())
+
 
 urlpatterns = [
     url(r'^$', views_home.home),
@@ -11,4 +17,5 @@ urlpatterns = [
     url(r'^getplugins', views_home.getPluginsJSON),
     url(r'^docs/$', RedirectView.as_view(url='https://github.com/I2PC/scipion/wiki')),
     url(r'^acknowledgements', views_home.acknowledgements),
+    url(r'^api/', include(api.urls)),
 ]

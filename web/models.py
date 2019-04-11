@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 import uuid
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
+from report_protocols.models import Package
 from webservices import settings
 
 
@@ -28,10 +30,30 @@ class Bundle(models.Model):
     date = models.DateTimeField(auto_now_add=True)  # Release date
     deprecated = models.BooleanField(default=False)
 
+
+@python_2_unicode_compatible
 class Acknowledgement(models.Model):
+
+    class Meta:
+        verbose_name = 'Contributor'
+        verbose_name_plural = 'Contributors'
 
     title = models.CharField(max_length=256)
     description = models.CharField(max_length=500)
     url = models.CharField(max_length=500, null=True, blank=True)
     image = models.CharField(max_length=500, null=True, blank=True)
+    githubName = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+class Contribution(models.Model):
+    contributor = models.ForeignKey(Acknowledgement,
+                                     null=False,
+                                     blank=False,
+                                     on_delete=models.CASCADE)
+    package = models.ForeignKey(Package,
+                                     null=False,
+                                     blank=False,
+                                     on_delete=models.CASCADE)
 
