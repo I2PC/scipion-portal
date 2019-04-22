@@ -7,12 +7,12 @@
     {% for package in packages %}
     <br/><br/>
     <div itemscope itemtype="http://schema.org/SoftwareApplication">
-        <div class="row">
+        <div id="{{package.name}}" class="row">
             <div class="col text-center align-middle">
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
             {% endif %}
-            <h1 id="{{package.name}}"><span itemprop="name">{{ package.name }}</span></h1>
+            <h1><span itemprop="name">{{ package.name }}</span></h1>
             </div>
         </div>
         <div class="row">
@@ -28,28 +28,29 @@
         </div>
 
         <br/><br/>
-        <h2>Available methods:</h2>
+        <h4>Available methods:</h4>
         <br/>
+        <dl class="row">
         {%  for prot in package.protocol_set.all %}
             {% if prot.description %}
-            <div class="row">
-                <div class="col-md-12" itemprop="featureList">
-                    <h4 id="{{ prot.name }}">
+                <dt class="col-sm-3" itemprop="featureList">
+                    <h5 id="{{ prot.name }}">
                         {{ prot.friendlyName | default:prot.name }}
                     {% if not prot.protocolType == None %}
-                        <span itemprop="applicationCategory"> ({{ prot.protocolType.name}})</span>
+                        <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
                     {% endif %}
-                    </h4>
-                    <p>{{ prot.description }}</p>
-                </div>
-            </div>
+                    </h5>
+                </dt>
+                <dd class="col-sm-9">{{ prot.description }}</dd>
+
             {% endif %}
         {% endfor %}
+        </dl>
         <br/><br/>
-        <h2>Contributors:</h2>
+        <h4>Contributors:</h4>
         <div class="row">
         {%  for contibution in package.contribution_set.all %}
-            <div class="col-md-2">
+            <div class="col-4 col-sm-3 col-md-2">
             <img class="img-responsive center-block collaborator-img"
                  src="{{ contibution.contributor.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
             {% if contibution.contributor.url %}

@@ -1,5 +1,6 @@
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, \
+    HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication, Authentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
@@ -13,6 +14,7 @@ import socket
 
 from ip_address import get_client_ip, get_geographical_information
 from models import Workflow, Protocol, IpAddressBlackList, Package
+from web.models import Acknowledgement, Contribution
 
 
 class ProtocolResource(ModelResource):
@@ -218,8 +220,11 @@ class PackageResource(ModelResource):
     def prepend_urls(self):
         return [
             url(r"^(%s)/batchupdate%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('batchupdate'), name="package_batch_update")
+                self.wrap_view('batchupdate'), name="package_batch_update"),
+            url(r"^(%s)/updatecollaborators%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('updatecollaborators'), name="package_collaborators")
             ]
+
     def batchupdate(self, request, * args, **kwargs):
         """receive a json dictionary with packages info
            store the dictionary in packages table
@@ -248,3 +253,62 @@ class PackageResource(ModelResource):
 
         return self.create_response(request, packagesList)
 
+    def updatecollaborators(self, request, *args, **kwargs):
+        """receive a json dictionary with packages info
+           store the dictionary in packages table
+           Expected json format should be like:
+           [
+              {"package": "package1",
+               "githubName": "octouser1",
+               "name": "John Smith",
+               "url": "-->github user url"
+               "image": "avatar url"},
+              ...
+           ]
+        """
+        # Since prepended url do not handle authorization we need to do it here
+        self.method_check(request, allowed=['post'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+
+        collaboratorsJson = request.body
+        collaborators = json.loads(collaboratorsJson)
+
+        # For each package
+        for collaborator in collaborators:
+
+            packageName = collaborator["package"]
+
+            # Get the package by name
+            package = Package.objects.filter(name__iexact=packageName).first()
+
+            if not package:
+                return HttpResponseBadRequest("Package %s not found." % packageName)
+
+            # If it exists by githubName
+            collab = Acknowledgement.objects.filter(githubName=collaborator["githubName"]).first()
+
+            # try name
+            if not collab:
+                collab = Acknowledgement.objects.filter(githubName=collaborator["name"]).first()
+
+                # Otherwise is a new one
+                if not collab:
+                    collab = Acknowledgement.objects.create()
+                    collab.description = "Contributed to Scipion framework."
+                    collab.title = collaborator["name"]
+
+
+            collab.githubName = collaborator["githubName"]
+            collab.url = collaborator["url"]
+            collab.image = collaborator["image"]
+
+            # Save the collaborator
+            collab.save()
+
+            # Save the collaboration
+            contribution, created = Contribution.objects.get_or_create(package=package,
+                                                              contributor=collab)
+            contribution.save()
+
+        return self.create_response(request, collaborators)
