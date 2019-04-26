@@ -5,14 +5,14 @@
  */
 
 Highcharts.theme = {
-   colors: ['#000000', '#004949',
+   colors: ['#B22222', '#924900',
             '#009292', '#FF6DB6',
             '#FEB5DA', '#490092',
             '#006DDB', '#B66DFF',
             '#6DB6FF', '#B6DBFF',
-            '#920000', '#924900',
             '#DB6D00', '#24FF24',
-            '#FFFF6D'],
+            '#004949', '#FFFF6D',
+            '#000000'],
    colorAxis: {
       maxColor: '#05426E',
       minColor: '#F3E796'

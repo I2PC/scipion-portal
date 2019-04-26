@@ -1,4 +1,4 @@
-{% extends "layouts/100.html" %}
+{% extends "layouts/contained.html" %}
 
 {% block title %}Scipion download form{% endblock %}
 {% load static %}
@@ -11,24 +11,25 @@
 {% block js %}
     {{ block.super }}
 	<script type="text/javascript" src="{% static "js/download/utils.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/download/download_utils.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/download/config.js" %}"></script>
 {% endblock %}
 
-{% block main_col %}
-    <h1 class="primary">Scipion downloads</h1>
+{% block content %}
+    <h2 class="mt-4">Scipion downloads</h2>
     <!-- Load non deprecated bundles -->
     {% for bundle in downloadables %}
         {% if not bundle.deprecated %}
-        <a class="btn btn-lg button2 primary_inv" role="button" href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
-            {{bundle.version}} - {{bundle.platform}}
-        </a> ({{bundle.size}} - {{ bundle.date }})<br/>
+        <div class="mt-4">
+            <a class="btn bg-primary" role="button" href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
+                {{bundle.version}} - {{bundle.platform}}
+            </a> <span class="text-muted">({{bundle.size}} - {{ bundle.date }})<br/>
+        </div>
         {% endif %}
     {% endfor %}
     <br/>
 
     <!-- Load deprecated bundles -->
-    <h2>Deprecated versions</h2>
+    <h4 class="mt-4">Deprecated versions</h4>
     {% for bundle in downloadables %}
         {% if bundle.deprecated %}
         <a href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">

@@ -1,13 +1,14 @@
-{% extends "base.html" %}
+{% extends "layouts/contained.html" %}
 {% load staticfiles %}
+{% block title %}Scipion package list{% endblock %}
 {% block content %}
 
-    <h2>Packages integrated in Scipion</h2>
+    <h2 class="mt-4">Packages integrated in Scipion</h2>
 
     {% for package in packages %}
-    <br/><br/>
     <div itemscope itemtype="http://schema.org/SoftwareApplication">
-        <div id="{{package.name}}" class="row">
+        <div class="mt-4" id="{{package.name}}" class="row">
+            <br/><br/>
             <div class="col text-center align-middle">
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">

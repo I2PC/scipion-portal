@@ -1,18 +1,46 @@
 	{% load static %}
-	
- 	<nav class="navbar navbar-fixed-top mynav">
-	  <div class="container">
-		  <a href="{{abs_url}}">
-			  <img class="headerImage"  src="{% static "img/scipion_logo_normal.png" %}">
-		  </a>
-		  <div class="logoLine">
-				<a href="http://i2pc.cnb.csic.es/LoadHome.htm">
-				  <img class="scipionlogo" src="{% static "img/logo_i2pc_with_title.png" %}" /></a>
-				<a href="http://www.structuralbiology.eu/">
-				  <img class="scipionlogo" src="{% static "img/logoInstruct.png" %}" /></a>
-				<a href="http://www.cnb.csic.es/">
-				  <img class="scipionlogo" src="{% static "img/logo_cnb_without_title.gif" %}" /></a>
-		  </div>
-	  </div>
-    <div class="headerLine"></div>
-  </nav>
+
+     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <span class="navbar-brand mb-0 h1">
+          <img src="{% static '/favicon-32x32.png'%}" width="24" height="24" alt="">
+          Scipion</span>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse active" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'download-page' %}">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://scipion-em.github.io/docs/">Documentation</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Statistics
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'download-stats' %}">Downloads</a>
+              <a class="dropdown-item" href="{%  url 'protocolTable' %}">Protocols ranking</a>
+              <a class="dropdown-item" href="{% url 'scipionUsage' %}">Usage map</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Features
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'packages' %}">Packages</a>
+              <a class="dropdown-item" href="{% url 'protocolTypes' %}">Categories</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="http://workflows.scipion.i2pc.es">Workflow repository</a>
+          </li>
+        </ul>
+      </div>
+    </nav>

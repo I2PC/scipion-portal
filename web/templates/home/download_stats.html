@@ -1,4 +1,4 @@
-{% extends "layouts/100.html" %}
+{% extends "layouts/contained.html" %}
 {% load static %}
 
 {% block title %}Scipion downloads statistics{% endblock %}
@@ -10,14 +10,14 @@
 	<script type="text/javascript" src="{% static "js/download/utils.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/download/config.js" %}"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
-	<script src='{% static "js/highcharts.theme.blindcolor.js" %}'></script>
+	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src='{% static "js/highcharts.utils.js" %}'></script>
 {% endblock %}
 
-{% block main_col %}
-<div id="downloadStats">
-	<h1 class="primary">Scipion download statistics</h1>
+{% block content %}
+<div>
+	<h2 class="mt-4">Scipion downloads statistics</h2>
 	<div id="piebyversion"></div><br/>
 	<div id="piebyplatform"></div><br/>
 	<div id="piebycountry"></div><br/>

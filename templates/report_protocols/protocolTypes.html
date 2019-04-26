@@ -1,9 +1,10 @@
-{% extends "base.html" %}
+{% extends "layouts/contained.html" %}
 {% load staticfiles %}
+{% block title %}Scipion categories{% endblock %}
 {% block content %}
 
-    <h2>Protocol types and its protocols catalogue</h2>
-    <p>This is a dynamic list of protocol types that are present
+    <h2 class="mt-4">Categories</h2>
+    <p>This is a dynamic list of methods grouped by categories that are present
     in Scipion. Some of them might come from a development environment
     and soon will be released.</p>
     <hr>
@@ -27,25 +28,24 @@
         </div>
         {% endif %}
         <br/><br/>
-        <h2>Available protocols:</h2>
+        <h4>Available methods:</h4>
+        <br/>
+        <dl class="row">
         {%  for prot in type.protocol_set.all %}
             {% if prot.description %}
-            <div class="row">
-                <div class="col-md-12" itemprop="featureList">
-                    <h4>{%  if prot.friendlyName == None %}
-                        {{ prot.name }}
-                    {%  else %}
-                        {{ prot.friendlyName }}
-                    {% endif %}
+                <dt class="col-sm-3">
+                    <h5 id="{{ prot.name }}">
+                        {{ prot.friendlyName | default:prot.name }}
                     {% if prot.package %}
-                        <span itemprop="applicationCategory">({{ prot.package.name}})</span>
+                        <small class="text-muted"> ({{ prot.package.name}})</small>
                     {% endif %}
-                    </h4>
-                    <p>{{ prot.description }}</p>
-                </div>
-            </div>
+                    </h5>
+                </dt>
+                <dd class="col-sm-9">{{ prot.description }}</dd>
+
             {% endif %}
         {% endfor %}
-    </div>
+        </dl>
+       </div>
     {% endfor %}
 {% endblock %}

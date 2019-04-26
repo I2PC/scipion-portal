@@ -1,5 +1,6 @@
-{% extends "base.html" %}
+{% extends "layouts/contained.html" %}
 {% load staticfiles %}
+{% block title %}Scipion acknowledgements{% endblock %}
 {% block css %}
     {{ block.super }}
 {% endblock %}
@@ -32,11 +33,10 @@
 
 </script>
 <div>
-    <h2>Acknowledgements</h2>
-    <p>Scipion is produced mainly in Madrid, but it's final result will not be
-    possible without the contribution of many people, institutions,
-    and funders. We really wish to thank all of them and include everyone,
-    but very likely the list bellow will get outdated.
+    <h2 class="mt-4">Acknowledgements</h2>
+    <p>Scipion was initially produced in Madrid, but currently it's final result will not be
+    possible without the contribution of many people, institutions, and funders.
+    We really wish to thank all of them and include everyone, but very likely the list bellow will get outdated.
     Please contact us to update it.</p>
 
     <div class="row">

@@ -1,5 +1,6 @@
-{% extends "base.html" %}
+{% extends "layouts/contained.html" %}
 {% load staticfiles %}
+{% block title %}Scipion protocols ranking{% endblock %}
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
@@ -9,7 +10,7 @@
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
-	<script src='{% static "js/highcharts.theme.blindcolor.js" %}'></script>
+	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src='{% static "js/highcharts.utils.js" %}'></script>
 {% endblock %}
@@ -92,8 +93,8 @@
 	}
 
 </script>
-<div id="protocolsTable">
-    <h2>Protocol's usage ranking</h2>
+<div>
+    <h2 class="mt-4">Protocol usage ranking</h2>
     <p>Here you can see a ranking from the most to the less used scipion protocols.</p>
     <div class="alert alert-success" role="alert">A big, big "thank you" to all of those that have allowed scipion to send usage statistics.
     You should see your protocols in the list!.</div>

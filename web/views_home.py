@@ -59,6 +59,10 @@ def home(request):
     context = {
         "abs_url": getAbsoluteURL(),
     }
+
+    # Get the packages
+    packages = Package.objects.all()
+    context['packages'] = packages
     return render_to_response('home/index.html', context)
 
 def download_form(request):
@@ -70,7 +74,7 @@ def download_form(request):
         "abs_url": getAbsoluteURL(),
     }
     context.update(csrf(request))
-    return render_to_response('home/download_form.2.html', context)
+    return render_to_response('home/download_form.html', context)
 
 def utc_to_local(utc_dt):
     timestamp = calendar.timegm(utc_dt.timetuple())

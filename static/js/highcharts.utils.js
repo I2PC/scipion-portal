@@ -375,7 +375,6 @@ function loadStackedColumnChart(container, title, rawData,
                 dataLabels: {
                     enabled: true,
                     formatter: function(){
-                        console.log(this);
                         var val = this.y;
                         if (val < 1) {
                             return '';

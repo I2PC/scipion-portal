@@ -4,32 +4,60 @@
 
 <html>
     <head>
-        {% block meta_tags %}{% endblock %}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-49632843-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-49632843-1');
+        </script>
+
+        {% block meta_tags %}
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        {% endblock %}
         <title>
             {% block title %}{% trans "Scipion" %}{% endblock %}
         </title>
+
+        {# Favicon stuff from https://realfavicongenerator.net  #}
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static '/apple-touch-icon.png'%}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static '/favicon-32x32.png'%}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static '/favicon-16x16.png'%}">
+        <link rel="manifest" href="{% static '/site.webmanifest'%}">
+        <link rel="mask-icon" href="{% static '/safari-pinned-tab.svg'%}" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#b91d47">
+        <meta name="theme-color" content="#ffffff">
         {% block css %}
-            <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css" />
-            <link rel="stylesheet" href="{% static 'css/general_style.css' %}" type="text/css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" typeof="text/css"/>
+        <link rel="stylesheet" href="{% static 'css/general_style.css' %}" type="text/css" />
         {% endblock %}
         {% block js %}
-            <script src="{% static 'js/vendor/jquery-1.11.2.min.js' %}" type="text/javascript"></script>
-            <script src="{% static 'js/vendor/bootstrap.min.js' %}" type="text/javascript"></script>
-            <script type="text/javascript" src="{% static "js/download/config.js" %}"></script>
+            <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+            <script src="{% static "js/download/config.js" %}" type="text/javascript"></script>
+            <script src='{% static "js/main.js" %}' type="text/javascript"></script>
         {% endblock %}
         {% block extra_head %}{% endblock %}
     </head>
     <body>
         {% block header %}{% endblock %}
-        <div id="main" role="main">
-            <div id="wrapMain2">  
-                <div class="container">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            </div>
-            {% block footer %}{% endblock %}
-        </div>
-
+        {% block navigation %}
+            {% include "_navigation.html" %}
+        {% endblock %}
+        {%  block container %}
+            {% block content %}
+            {% endblock %}
+        {% endblock %}
+        {% block footer %}
+        <footer id="footer" class="footerStyle">
+            {% include "_footer.html" %}
+        </footer>
+        {% endblock %}
     </body>
 </html>

@@ -44,7 +44,7 @@ class ProtocolResource(ModelResource):
               ...
            ]
         """
-        # Since prepended url do not handle auhtorization we need to do it here
+        # Since prepended url do not handle authorization we need to do it here
         self.method_check(request, allowed=['post'])
         self.is_authenticated(request)
         self.throttle_check(request)
@@ -61,10 +61,24 @@ class ProtocolResource(ModelResource):
         # For each package
         for protocol in protocolsList:
 
+            protName = protocol["name"]
+            packageName = protocol["package"]
+
             # If it exists
-            dbProtocol, created = Protocol.objects.get_or_create(name=protocol ["name"])
+            dbProtocol = Protocol.objects.filter(name__iexact=protName).first()
+
+            if not dbProtocol:
+                dbProtocol = Protocol.objects.create(name=protName)
             dbProtocol.description = chooseValue(protocol["description"], dbProtocol.description)
             dbProtocol.friendlyName = chooseValue(protocol["friendlyName"], dbProtocol.friendlyName)
+
+
+            # Try to get the package
+            dbPackage = Package.objects.filter(name__iexact=packageName).first()
+            if not dbPackage:
+                dbPackage = Package.objects.create(name=packageName)
+            dbProtocol.package = dbPackage
+
             dbProtocol.save()
 
         return self.create_response(request, protocolsList)
