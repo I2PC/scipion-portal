@@ -1,17 +1,20 @@
 // Aggregate all data in a matrix
 function aggregateAll(matrix, aggregatedSet, propertyValue){
 
-    for (var line in matrix){
+    for (let line in matrix){
 
         aggregateLine(matrix[line], aggregatedSet, propertyValue)
 
     }
 }
 
-// Aggregate a line
-function aggregateLine(line, aggregatedSet, propertyValue){
 
-    for (var prop in line) {
+function aggregateLine(line, aggregatedSet, propertyValue){
+/*
+    Line --> {city: "Madrid", type: "soft"}
+    aggregatedSet --> {city:{Madrid: 1}, type:{soft:1}
+ */
+    for (let prop in line) {
 
         aggregateProperty(prop, line, aggregatedSet, propertyValue)
 
@@ -19,10 +22,11 @@ function aggregateLine(line, aggregatedSet, propertyValue){
 }
 
 function aggregateProperty(prop, line, aggregatedSet, propertyValue){
+// Reads a property (prop) from line and adds it's value to the prop series in the aggregated set
 
-    var propertyAggregation = getPropertyAggregation(prop,aggregatedSet) ;
+    let propertyAggregation = getPropertyAggregation(prop, aggregatedSet);
 
-    var value = line[prop];
+    let value = line[prop];
 
     value = normalizeValue(value, prop);
 
@@ -43,7 +47,7 @@ function normalizeValue(value, property){
 
 function isDate(value, property){
 
-    return property == "timeStamp"
+    return property === "timeStamp"
 }
 function normalizeDate(date){
 
@@ -57,21 +61,22 @@ function normalizeDate(date){
 
 function removeTimeFromDate(date){
 
-    return new Date(date.toISOString().slice(0,10));
+    return new Date(date).toISOString().slice(0,10);
 }
 
 function aggregateValue(attribute, aggregation, value){
+// increase the attribute of aggregation by the value
 
-    if (value == undefined){
+    // default value to 1
+    if (value === undefined){
         value = 1;
-    };
-
+    }
     aggregation[attribute] = getObjectAttribute(aggregation, attribute,0)+value;
 
 }
 
 function getObjectAttribute(object, attribute, defaultValue){
-
+// returns the attribute of an object if exists, otherwise creates it with defaultValue.
     if (object[attribute] === undefined){
         object[attribute]= defaultValue;
     }
@@ -80,44 +85,44 @@ function getObjectAttribute(object, attribute, defaultValue){
 
 }
 function getPropertyAggregation(prop, aggregatedSet){
-
+// returns the property or an empty object.
     return getObjectAttribute(aggregatedSet, prop, {})
 }
 
 
 function propertyAggregationToPieChartData(propertyAggregation, name, min) {
 
-    var series = [{
-        name:name,
-        data:[]
+    let value;
+    const series = [{
+        name: name,
+        data: []
     }];
 
-    var total = 0;
-    var minPctg = min/100;
+    let total = 0;
+    const minPctg = min / 100;
 
     // Calculate the total value
-    for (prop in propertyAggregation){
-        var value = propertyAggregation[prop];
+    for (let prop in propertyAggregation){
+        value = propertyAggregation[prop];
         total = total + value;
-    };
+    }
+    const minPie = {name: "Others (&lt;" + min + '%)', y: 0};
+    for (let prop2 in propertyAggregation){
 
-    var minPie = {name:"Others (&lt;" + min + '%)', y:0}
-    for (prop in propertyAggregation){
-
-        var value = propertyAggregation[prop];
+        value = propertyAggregation[prop2];
 
         if( min !== undefined && value/total < minPctg ) {
             minPie.y = minPie.y + value;
 
         } else {
 
-            var pie = {
-            name: prop,
-            y:value
+            const pie = {
+                name: prop2,
+                y: value
 
-        };
+            };
 
-        series[0].data.push(pie);
+            series[0].data.push(pie);
         }
     }
 
@@ -128,50 +133,75 @@ function propertyAggregationToPieChartData(propertyAggregation, name, min) {
 
     return series;
 
-};
-
-function propertyAggregationToTimeSeries(propertyAggregation, name) {
+}
+function propertyAggregationToTimeSeries(propertyAggregation, name, type, series) {
 // Sample chart: http://www.highcharts.com/demo/line-time-series/sand-signika
 // Sample data: https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json
-    var series = [{
-        type: 'column',
+
+    if (series === undefined) {
+        series = [];
+    }
+    const serie = {
+        type: type,
         name: name,
         data: []
-    }];
+    };
 
-    var serie = [];
+    for (let prop in propertyAggregation){
 
-    for (prop in propertyAggregation){
-
-        var date = new Date(prop);
-        var dateMilis = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-        var point = [
-        dateMilis, propertyAggregation[prop]
+        const date = new Date(prop);
+        const dateMilis = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+        const point = [
+            dateMilis, propertyAggregation[prop]
         ];
 
-        serie.push(point);
+        serie.data.push(point);
     }
 
-    series[0].data = serie;
+    series.push(serie);
 
     return series;
 
-};
-
+}
 function accumulateData(data){
 
-    var previousValue = 0;
-    for (var i=0; i<data.length; i++){
+    let previousValue = 0;
+    for (let i=0; i<data.length; i++){
 
-        var point = data[i];
+        const point = data[i];
         point[1]= parseInt(point[1]) + previousValue;
 
         previousValue = point[1];
-    };
-
+    }
     return data;
-};
+}
+function createLines(data, seriesNameCallBack, valueCallBack ) {
+    /* From a source data (coming from Django) like:
+    [
+        {attr1: "value1", attr2: 3, ....},
+        ...
+    ]
 
+    it creates a new set of simple lines like:
+    [
+        {value1:3},
+        ...
+    ]
+     */
+    const lines = [];
+
+    for (let i=0;i<data.length;i++){
+        let line = data[i];
+        const serieName = seriesNameCallBack(line);
+        const value = valueCallBack(line);
+        let newLine = {};
+        newLine[serieName]= value;
+        lines.push(newLine);
+
+    }
+    return lines
+
+}
 
 function loadPieChart(container, title, data){
 
@@ -201,8 +231,32 @@ function loadPieChart(container, title, data){
         },
         series: data
     });
-};
+}
 
+function loadBarChart(container, title, data){
+
+    // Build the bar
+    $(container).highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'column'
+        },
+        title: {
+            text: title
+        },
+        xAxis: {
+            type: "category"
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+        },
+        plotOptions: {
+        },
+        series: data
+    });
+}
 function loadAreaChart(container, title, data){
 
     // Build the chart
@@ -224,8 +278,7 @@ function loadAreaChart(container, title, data){
         },
         series: data
     });
-};
-
+}
 function loadZoomableTimeSeries(container, title, data){
 
     $(container).highcharts({
@@ -248,36 +301,34 @@ function loadZoomableTimeSeries(container, title, data){
             }
         },
         legend: {
-            enabled: false
+            enabled: true
         },
         series: data
     });
-};
-
+}
 function loadStackedColumnChart(container, title, rawData,
                                 groupByProperty, seriesProp, valueProp,
                                 YAxisLabel){
 
     // Need to prepare the raw data
     // Find all groups/categories
-    var categories = [];
+    const categories = [];
 
-    if (YAxisLabel == undefined){
+    if (YAxisLabel === undefined){
         YAxisLabel = valueProp
     }
 
-    for (var i=0; i<rawData.length; i++) {
-        item = rawData[i];
-        var groupValue = item[groupByProperty];
+    for (let i=0; i<rawData.length; i++) {
+        let item = rawData[i];
+        const groupValue = item[groupByProperty];
 
-        if (groupValue == ""){
+        if (groupValue === ""){
             continue;
-        } else if ($.inArray(groupValue, categories) == -1){
+        } else if ($.inArray(groupValue, categories) === -1){
             categories.push(groupValue);
-        };
-    };
-
-    if (categories.length == 0){
+        }
+    }
+    if (categories.length === 0){
         return;
     }
 
@@ -285,18 +336,17 @@ function loadStackedColumnChart(container, title, rawData,
 
         function getSerie(serieName){
 
-            for (var s=0;s<series.length;s++){
+            for (let s=0; s<series.length; s++){
                 serie = series[s];
-                if (serie.name == seriesName) {
+                if (serie.name === seriesName) {
 
                     return serie;
-                };
-            };
-
+                }
+            }
             // no serie found... create one
             emptyData = [].slice.apply(new Uint8Array(categories.length));
 
-            var newSerie = {
+            const newSerie = {
                 name: serieName,
                 data: emptyData
             };
@@ -304,34 +354,30 @@ function loadStackedColumnChart(container, title, rawData,
             series.push(newSerie);
 
             return newSerie;
-        };
-
+        }
         function getCategoryIndex(categoryName){
-            for (var i=0;i<categories.length;i++){
+            for (let i=0; i<categories.length; i++){
                 if (categories[i] == categoryName) {
                     return i;
-                };
-            };
-        };
-
+                }
+            }
+        }
         if (value > 0){
-            var serie = getSerie(seriesName);
+            let serie = getSerie(seriesName);
 
-            var categoryIndex = getCategoryIndex(categoryName);
+            const categoryIndex = getCategoryIndex(categoryName);
 
             // Add the value to the category
             serie.data[categoryIndex] = serie.data[categoryIndex] + value;
-        };
-
-    };
-
+        }
+    }
     // Generate series based on number for categories found
-    var series = [];
-    for (var i=0; i<rawData.length; i++) {
+    let series = [];
+    for (let i=0; i<rawData.length; i++) {
         item = rawData[i];
-        var serieName = item[seriesProp];
-        var value = item[valueProp];
-        var categoryValue = item[groupByProperty];
+        let serieName = item[seriesProp];
+        let value = item[valueProp];
+        const categoryValue = item[groupByProperty];
 
         if (categoryValue == ""){
             continue;
@@ -339,9 +385,7 @@ function loadStackedColumnChart(container, title, rawData,
             addValueToSerie(serieName, value, categoryValue);
         }
 
-    };
-
-
+    }
     $(container).highcharts({
         chart: {
             type: 'column'
@@ -375,7 +419,7 @@ function loadStackedColumnChart(container, title, rawData,
                 dataLabels: {
                     enabled: true,
                     formatter: function(){
-                        var val = this.y;
+                        const val = this.y;
                         if (val < 1) {
                             return '';
                         }
@@ -387,4 +431,4 @@ function loadStackedColumnChart(container, title, rawData,
         },
         series: series
     });
-};
+}

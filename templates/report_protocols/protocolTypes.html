@@ -4,48 +4,45 @@
 {% block content %}
 
     <h2 class="mt-4">Categories</h2>
-    <p>This is a dynamic list of methods grouped by categories that are present
+    <p class="alert-warning">This is a dynamic list of methods grouped by categories that are present
     in Scipion. Some of them might come from a development environment
     and soon will be released.</p>
-    <hr>
 
     {% for type in types %}
-    <br/><br/>
-       <div itemscope itemtype="http://schema.org/SoftwareApplication">
-        <div class="row">
-            <div class="col text-center align-middle">
+    <div id="{{ type.name }}" class="card mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
+        <h3 class="pt-5 card-header">
             {% if type.icon %}
                 <img class="prot-type-icon img-thumbnail" src="/uploads/{{ type.icon.name }} " alt="icon for {{ type.name }}">
             {% endif %}
-            <h1><span itemprop="name">{{ type.name }}</span></h1>
-            </div>
-        </div>
-       {% if not type.description %}
-        <div class="row">
-            <div class="col text-center align-middle">
+            <span itemprop="name">{{ type.name }}</span>
+        </h3>
+        <div class="card-body">
+            {% if not type.description %}
+            <div class="card-title">
                 {{ type.description }}
             </div>
-        </div>
-        {% endif %}
-        <br/><br/>
-        <h4>Available methods:</h4>
-        <br/>
-        <dl class="row">
-        {%  for prot in type.protocol_set.all %}
-            {% if prot.description %}
-                <dt class="col-sm-3">
-                    <h5 id="{{ prot.name }}">
-                        {{ prot.friendlyName | default:prot.name }}
-                    {% if prot.package %}
-                        <small class="text-muted"> ({{ prot.package.name}})</small>
-                    {% endif %}
-                    </h5>
-                </dt>
-                <dd class="col-sm-9">{{ prot.description }}</dd>
-
             {% endif %}
-        {% endfor %}
-        </dl>
-       </div>
+            <div class="card-text">
+                <h4 class="primary">Available methods:</h4>
+                <dl class="row">
+                {%  for prot in type.protocol_set.all %}
+                    {% if prot.description %}
+                    <dt class="col-sm-3">
+                        <h5 id="{{ prot.name }}">
+                            {{ prot.friendlyName | default:prot.name }}
+                            {% if prot.package %}
+                            <a href="{% url 'packages' %}#{{ prot.package }}">
+                                <small class="text-muted"> ({{ prot.package.name}})</small>
+                            </a>
+                            {% endif %}
+                        </h5>
+                    </dt>
+                    <dd class="col-sm-9">{{ prot.description }}</dd>
+                    {% endif %}
+                {% endfor %}
+                </dl>
+            </div>
+        </div>
+    </div>
     {% endfor %}
 {% endblock %}

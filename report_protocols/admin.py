@@ -26,8 +26,9 @@ class ProtocolTypeAdmin(admin.ModelAdmin):
 
 
 class ProtocolAdmin(admin.ModelAdmin):
-    list_display = ('name', 'timesUsed', 'friendlyName', 'package', 'protocolType')
+    list_display = ('name', 'timesUsed', 'friendlyName', 'description', 'package', 'protocolType')
     ordering = ('-timesUsed', "name")
+    search_fields = ('name', 'timesUsed', 'friendlyName', 'description', 'package', 'protocolType')
 
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):

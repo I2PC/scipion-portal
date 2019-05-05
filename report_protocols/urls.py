@@ -17,7 +17,7 @@ new_api.register(WorkflowResource())
 urlpatterns = [
     url(r'^api/', include(old_api.urls)),
     url(r'^api/', include(new_api.urls)),
-    url(r'^protocolTable/', views.protocolTable, name='protocolTable'),
+    url(r'^protocolTable/', views.protocolTable, name='protocolRanking'),
     url(r'^scipionUsage', views.scipionUsage, name='scipionUsage'),
     url(r'^protocoltypes', views.protocolTypes, name='protocolTypes'),
     url(r'^packages', views.packages, name='packages'),

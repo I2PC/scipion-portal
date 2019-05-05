@@ -13,7 +13,7 @@ function drawScipionIntegrationGraph(id, elements) {
                 selector: 'node',
                 style: {
                     'background-color': '#bb797a',
-                    'font-size': 8
+                    'font-size': 9
                 }
             },
 
@@ -21,7 +21,7 @@ function drawScipionIntegrationGraph(id, elements) {
                 selector: 'edge',
                 style: {
                     'width': 1,
-                    'line-color': '#c22424',
+                    'line-color': '#222',
                     "line-style": "dotted",
                     'target-arrow-color': '#b22',
                     'target-arrow-shape': 'triangle'

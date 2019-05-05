@@ -41,83 +41,65 @@ try:
 except ImportError:
     from django.core.servers.basehttp import FileWrapper
 
-from web.email import subscribeToUsersList
-import mimetypes
-
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from web.models import Download, Acknowledgement, Bundle
 from report_protocols.models import Package
 
-FILE_TO_DOWNLOAD = 'fileToDownload'
 
-DOWNLOADABLES_FILE = 'file'
-
-SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-
+# noinspection PyUnusedLocal
 def home(request):
-    context = {
-        "abs_url": getAbsoluteURL(),
-    }
+    # Get the packages
+    return render_to_response('home/index.html')
+
+
+# noinspection PyUnusedLocal
+def biologists(request):
+    context = {}
 
     # Get the packages
     packages = Package.objects.all()
     context['packages'] = packages
-    return render_to_response('home/index.html', context)
+    return render_to_response('home/biologists.html', context)
+
+
+# noinspection PyUnusedLocal
+def facilities(request):
+
+    return render_to_response('home/facilities.html')
+
+
+# noinspection PyUnusedLocal
+def developers(request):
+
+    return render_to_response('home/developers.html')
+
+def contact(request):
+
+    packages = Package.objects.order_by("name")
+
+    context = {
+        "packages": packages,
+    }
+    return render_to_response('home/contactus.html', context)
+
 
 def download_form(request):
-
     bundles = list(Bundle.objects.all())
 
     context = {
         "downloadables": bundles,
-        "abs_url": getAbsoluteURL(),
     }
-    context.update(csrf(request))
     return render_to_response('home/download_form.html', context)
+
 
 def utc_to_local(utc_dt):
     timestamp = calendar.timegm(utc_dt.timetuple())
     local_dt = datetime.fromtimestamp(timestamp)
     return local_dt.replace(microsecond=utc_dt.microsecond)
 
-def getAbsoluteURL(additionalPath=None):
-    if additionalPath is None:
-        additionalPath = ''
-    return '/' + additionalPath
-
-# def loadDownloadables():
-#     f = open(getInstallPath("downloadables.json"))
-#
-#     d = json.load(f)
-#
-#     f.close()
-#
-#     checkDowloadablesExistence(d)
-#
-#     return d
-
-
-# def checkDowloadablesExistence(downloadables):
-#     """ Structure should be like this:
-#
-#     Parameters
-#     ----------
-#     downloadables: list of downloadable files
-#
-#     """
-#
-#     for version, files in downloadables.iteritems():
-#         # remove all files that doesn't exists
-#         files[:] = [dFile for dFile in files if os.path.exists(getInstallPath(dFile.get(DOWNLOADABLES_FILE)))]
-
-#
-# def getInstallPath(fileName=''):
-#     return os.path.join(SCRIPT_DIRECTORY, "../static/install", fileName)
-
 
 def startDownload(request):
-
     bundleId = request.GET.get('bundleId')
 
     errors = ""
@@ -152,28 +134,17 @@ def startDownload(request):
 
         with open(path, 'rb') as fh:
             response = HttpResponse(fh.read(),
-                            content_type="application/tar+gzip")
+                                    content_type="application/tar+gzip")
             response['Content-Disposition'] = 'inline; filename=' \
                                               + os.path.basename(path)
             return response
 
-        raise Http404
-
-        # request.session[FILE_TO_DOWNLOAD] = path
-        #
-        # context = {
-        #     "fileToDownload": path,
-        #     "abs_url": getAbsoluteURL(),
-        # }
-        # context.update(csrf(request))
-        #
-        # return render_to_response('home/startdownload.html', context)
-
     else:
         redirect(download_form)
 
-def getDownloadsStats(request):
 
+# noinspection PyUnusedLocal
+def getDownloadsStats(request):
     jsonStr = getDownloadsStatsToJSON()
 
     return HttpResponse(jsonStr, content_type='application/json')
@@ -189,12 +160,13 @@ def getDownloadsStatsToJSON():
     return jsonStr
 
 
+# noinspection PyUnusedLocal
 def showDownloadStats(request):
     context = {
         "downloadsJSON": getDownloadsStatsToJSON(),
-        "abs_url": getAbsoluteURL(),
     }
     return render_to_response('home/download_stats.html', context)
+
 
 def getPluginsDict():
     result = {}
@@ -204,12 +176,14 @@ def getPluginsDict():
             result[pluginDict['pipName']] = pluginDict
     return result
 
+
+# noinspection PyUnusedLocal
 def getPluginsJSON(request):
     return JsonResponse(getPluginsDict(), json_dumps_params={'indent': 4})
 
 
+# noinspection PyUnusedLocal
 def acknowledgements(request):
-    acknowledgements = Acknowledgement.objects.all()
-    context_dict = {}
-    context_dict['acknowledgements'] = acknowledgements
+    acks = Acknowledgement.objects.all()
+    context_dict = {'acknowledgements': acks}
     return render_to_response('home/acknowledgements.html', context_dict)

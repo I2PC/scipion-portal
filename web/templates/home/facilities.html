@@ -1,0 +1,148 @@
+{% extends "layouts/100.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/parallax.css' %}" typeof="text/css"/>
+    {{ block.super }}
+{% endblock %}
+{% block content %}
+{#    Taken from: https://www.script-tutorials.com/bootstrap-one-page-template-with-parallax-effect/#}
+<!-- first section - Home -->
+<div id="intro" class="parallax facility">
+  <div class="container text-vcenter">
+    <div class="row">
+      <div class="rounded-lg offset-md-2 col-md-8 col-sm-12 bg-primary">
+          <H1>For cryo-em facilities</H1>
+          <H3>Scipion will process your acquisition images on the fly and will provide you feedback to help you make decisions.</H3>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /first section -->
+<!-- second section -->
+<div id="facilitiesfeatures" class="pad-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-3">
+        <h2>Options,</h2>
+        <p>Most popular image processing packages like Relion 3,
+            motioncor2, ctffind4, crYOLO, Xmipp, and many more are integrated. Some of
+            their methods are ready to use in "streaming mode".
+        </p>
+        <a href="{% url 'packages' %}" class="btn btn-primary">See all integrated packages</a>
+      </div>
+      <div class="col-sm-12  col-md-3">
+        <h2>options,</h2>
+        <p>Most of the steps in SPA analysis in Scipion have several options and
+            is up to YOU what to use. All this without the need of any programming skills or scripting.
+        </p>
+        <a href="{% url 'protocolTypes' %}" class="btn btn-primary">See methods by steps.</a>
+      </div>
+      <div class="col-sm-12  col-md-3">
+        <h2>tomography,</h2>
+        <p>Tomography methods are already being developed, and maybe, by now they have been released already
+            and are at your hand (click) under the same environment as the SPA methods and modelling ones.
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-3">
+        <h2>more options.</h2>
+        <p>Designed to integrate and be integrated. All its functionality can be accessed
+            from any python code (in case you need it) and from version 2.0 it is a plugin-framework.
+            So, you will have what is integrated today, and what the "em developers community" will integrate tomorrow.
+        </p>
+        <a href="{% url 'developers' %}" class="btn btn-primary">See developers information.</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /second section -->
+<!-- third section -->
+<div id="facilitiesfeatures2" class="pad-section bg-primary">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-sm-12 col-md-6">
+        <i class="glyphicon fas fa-exclamation-triangle"></i>
+        <h4>Monitor</h4>
+        <p>Monitor your acquisition (alignment, gain, ctf
+            resolution, defocus) as well as your system (GPU's, memory, I/O, ..)
+            and define alerts when those values pass a threshold you define.</p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <i class="glyphicon fas fa-robot"> </i>
+        <h4>Automate</h4>
+        <p>You can automate all this with none, or a few clicks, so Scipion will not bother
+            you unless something goes wrong or you want to have a look at the
+            processing results</p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <i class="glyphicon fas fa-project-diagram"> </i>
+        <h4>Workflow templates</h4>
+        <p>You can define as many workflows as you wish and you can have them as templates.
+            When you kickoff Scipion, you just need to tell which workflow to use.</p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <i class="glyphicon fas fa-handshake"> </i>
+        <h4>Consensus </h4>
+        <p>You can apply consensus methods to alignments, CTFs and pickings
+           to prune the images providing your users with a "clean" dataset to start the reconstruction.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /third section -->
+<!-- fourth section -->
+<div id="summaryreport" class="parallax htmlreport">
+  <div class="container text-vcenter">
+    <div class="row">
+      <div class="offset-2 col-8 primary">
+          <H1>Live HTML acquisition report</H1>
+          <H3>You can chose to generate a detailed summary report (in HTML) ready to
+          sync to any public HTTP server, so your user can follow the progress from outside.</H3>
+          <a href="http://scipion.cnb.csic.es/scipionbox/lastHTMLReport/" class="btn btn-lg btn-primary">Sample report</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /fourth section -->
+<!-- fifth section -->
+<div id="facilitiesmap" class="pad-section bg-primary">
+
+  <div class="container text-center">
+    <h1>Which facilities are using Scipion?</h1>
+    <iframe src="https://www.google.com/maps/d/embed?mid=1MHEnnhBsUarOGJnlo0BapQrrGtA" frameborder="0" width="100%" height="480" allowfullscreen></iframe>
+  </div>
+
+</div>
+<script>
+    var elements =[]
+
+    {% for package in packages %}
+        var style = {
+            'label': '{{ package.name }}',
+            'text-valign': 'center'
+        }
+        {% if package.logo %}
+        style = {
+            'background-image': "/uploads/{{ package.logo.name }}",
+            'background-fit': "cover cover"
+            }
+        {% endif %}
+        elements.push({ data: {
+                            id: '{{ package.name }}',
+                            href: '{% url "packages" %}/#{{ package.name }}'
+                        },
+                        style: style
+                      })
+        {%  ifnotequal package.name "Scipion" %}
+            elements.push({
+                data: {
+                    id: '{{ package.id }}',
+                    source: '{{ package.name }}',
+                    target: 'Scipion'}
+            })
+        {%  endifnotequal %}
+    {%  endfor %}
+
+</script>
+<!-- /fifth section -->
+{% endblock %}
+

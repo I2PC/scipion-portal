@@ -3,42 +3,45 @@
 {% block title %}Scipion download form{% endblock %}
 {% load static %}
 
-{% block css %}
-    {{ block.super }}
-	<!--link href="{% static "css/messi.css" %}" rel="stylesheet" type="text/css" /-->
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-	<script type="text/javascript" src="{% static "js/download/utils.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/download/config.js" %}"></script>
-{% endblock %}
-
 {% block content %}
-    <h2 class="mt-4">Scipion downloads</h2>
-    <!-- Load non deprecated bundles -->
-    {% for bundle in downloadables %}
-        {% if not bundle.deprecated %}
-        <div class="mt-4">
-            <a class="btn bg-primary" role="button" href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
+<h2 class="mt-4">Scipion downloads</h2>
+    <div class="row">
+      <div class="col-lg-4 col-md-12 order-lg-2">
+        <i class="fas fa-download"></i>
+        <p class="lead text-justify">Have a look to our documentation about
+          <a href="https://scipion-em.github.io/docs/docs/scipion-modes/install-from-sources.html">how to install Scipion</a>.
+        </p>
+      </div>
+      <div class="col-lg-8 col-md-12 order-lg-1">
+        <!-- Load non deprecated bundles -->
+        {% for bundle in downloadables %}
+            {% if not bundle.deprecated %}
+            <div class="mt-4">
+                <span class="btn btn-outline-primary" nobothref="{% url 'download' %}?bundleId={{bundle.id}}">
+                    {{bundle.version}} - {{bundle.platform}}
+                </span> <span class="text-muted">({{bundle.size}} - {{ bundle.date }})</span><br/>
+            </div>
+            {% endif %}
+        {% endfor %}
+        <br/>
+        <!-- Load deprecated bundles -->
+        <h4 class="text-muted mt-4">Deprecated versions</h4>
+        {% for bundle in downloadables %}
+            {% if bundle.deprecated %}
+            <span class="btn btn-outline-dark" nobothref="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
                 {{bundle.version}} - {{bundle.platform}}
-            </a> <span class="text-muted">({{bundle.size}} - {{ bundle.date }})<br/>
-        </div>
-        {% endif %}
-    {% endfor %}
-    <br/>
+            </span> <span class="text-muted">({{bundle.size}} - {{ bundle.date }})</span><br/>
+            {% endif %}
+        {% endfor %}
 
-    <!-- Load deprecated bundles -->
-    <h4 class="mt-4">Deprecated versions</h4>
-    {% for bundle in downloadables %}
-        {% if bundle.deprecated %}
-        <a href="{{abs_url}}startdownload/?bundleId={{bundle.id}}">
-            {{bundle.version}} - {{bundle.platform}}
-        </a> ({{bundle.size}} - {{ bundle.date }})<br/>
-        {% endif %}
-    {% endfor %}
-    </br>
-    </br>
-    <p>Have a look to the <a href="downloadstats">download statistics page!</a></p>
-</div>
+      </div>
+    </div>
+<script>
+    $("[nobothref]").click(function(eventData, handler){
+        let downloadUrl = $(this).attr('nobothref');
+        window.location.href = downloadUrl;
+        return false;
+    });
+</script>
+
 {% endblock %}

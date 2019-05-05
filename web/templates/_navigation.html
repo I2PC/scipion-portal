@@ -1,6 +1,6 @@
 	{% load static %}
 
-     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+     <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
       <span class="navbar-brand mb-0 h1">
           <img src="{% static '/favicon-32x32.png'%}" width="24" height="24" alt="">
           Scipion</span>
@@ -12,6 +12,16 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              For ...
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'biologists' %}">Structural biologists</a>
+              <a class="dropdown-item" href="{%  url 'facilities' %}">Cryoem facilities</a>
+              <a class="dropdown-item" href="{% url 'developers' %}">Methods developers</a>
+            </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'download-page' %}">Download</a>
@@ -25,21 +35,32 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{% url 'download-stats' %}">Downloads</a>
-              <a class="dropdown-item" href="{%  url 'protocolTable' %}">Protocols ranking</a>
+              <a class="dropdown-item" href="{%  url 'protocolRanking' %}">Protocols ranking</a>
               <a class="dropdown-item" href="{% url 'scipionUsage' %}">Usage map</a>
             </div>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Features
+              Methods
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="{% url 'packages' %}">Packages</a>
-              <a class="dropdown-item" href="{% url 'protocolTypes' %}">Categories</a>
+              <a class="dropdown-item" href="{% url 'packages' %}">by plugin</a>
+              <a class="dropdown-item" href="{% url 'protocolTypes' %}">by category</a>
             </div>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="http://workflows.scipion.i2pc.es">Workflow repository</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Scipion ecosystem
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="http://workflows.scipion.i2pc.es" title="Download shared Scipion workflows">Workflow repository</a>
+              <a class="dropdown-item" href="http://scipion.cnb.csic.es/m/services/" title="Some of the Scipion framework methods available
+online to process your cryo electron microscopy data.">Scipion webtools</a>
+              <a class="dropdown-item" href="https://github.com/I2PC/EMadmin" title="Administrative tool to handle users and Scipion projects in facilities.">EM Admin</a>
+              <a class="dropdown-item" href="https://hub.docker.com/r/molecularmicroscopy/scipion">NIEHS/NIH docker image</a>
+              <a class="dropdown-item" href="https://hub.docker.com/r/epflbiophys/scipion">epflbiophys docker image</a>
+              <a class="dropdown-item" href="https://github.com/I2PC/scipion/wiki/ScipionCloud-on-Amazon-Web-Services-EC2">Scipion at Amazon cloud</a>
+            </div>
           </li>
         </ul>
       </div>

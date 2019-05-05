@@ -4,65 +4,64 @@
 {% block content %}
 
     <h2 class="mt-4">Packages integrated in Scipion</h2>
+    <p class="alert-warning">This is a dynamic list of methods grouped by package that are present
+    in Scipion. Some of them might come from a development environment
+    and soon will be released.</p>
 
     {% for package in packages %}
-    <div itemscope itemtype="http://schema.org/SoftwareApplication">
-        <div class="mt-4" id="{{package.name}}" class="row">
-            <br/><br/>
-            <div class="col text-center align-middle">
+    <div id="{{package.name}}" class="card mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
+        <h3 class="pt-5 card-header">
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
             {% endif %}
-            <h1><span itemprop="name">{{ package.name }}</span></h1>
+            <span itemprop="name">{{ package.name }}</span>
+        </h3>
+        <div class="card-body">
+            <div class="card-title">
+            {% if not package.description == "" %}
+                <p class="primary" itemprop="description">{{ package.description }}</p>
+            {% endif %}
+            {% if not package.url == "" %}
+                <p>Plugin url <a href="{{package.url}}" itemprop="downloadUrl">{{package.url}}.</a></p>
+            {% endif %}
+                <span class="text-muted">Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, Cryo-em</span></span>
             </div>
-        </div>
-        <div class="row">
-            <div class="col text-center align-middle">
-                {% if not package.description == "" %}
-                  <p><span itemprop="description">{{ package.description }}</span></p>
-                {% endif %}
-                {% if not package.url == "" %}
-                    <p>Web site at <a href="{{package.url}}" itemprop="downloadUrl">{{package.url}}.</a></p>
-                {% endif %}
-                Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, Cryo-em</span>
-            </div>
-        </div>
-
-        <br/><br/>
-        <h4>Available methods:</h4>
-        <br/>
-        <dl class="row">
-        {%  for prot in package.protocol_set.all %}
-            {% if prot.description %}
-                <dt class="col-sm-3" itemprop="featureList">
-                    <h5 id="{{ prot.name }}">
-                        {{ prot.friendlyName | default:prot.name }}
-                    {% if not prot.protocolType == None %}
-                        <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
+            <div class="card-text">
+                <h4 class="primary">Available methods:</h4>
+                <dl class="pt-4 row">
+                {%  for prot in package.protocol_set.all|dictsort:"friendlyName" %}
+                    {% if prot.description %}
+                        <dt class="col-sm-4" itemprop="featureList">
+                            <h5 id="{{ prot.name }}">
+                                {{ prot.friendlyName | default:prot.name }}
+                            {% if not prot.protocolType == None %}
+                                <a href="{%  url 'protocolTypes' %}#{{ prot.protocolType.name}}">
+                                    <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
+                                </a>
+                            {% endif %}
+                            </h5>
+                        </dt>
+                        <dd class="col-sm-8">{{ prot.description }}</dd>
                     {% endif %}
-                    </h5>
-                </dt>
-                <dd class="col-sm-9">{{ prot.description }}</dd>
-
-            {% endif %}
-        {% endfor %}
-        </dl>
-        <br/><br/>
-        <h4>Contributors:</h4>
-        <div class="row">
-        {%  for contibution in package.contribution_set.all %}
-            <div class="col-4 col-sm-3 col-md-2">
-            <img class="img-responsive center-block collaborator-img"
-                 src="{{ contibution.contributor.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
-            {% if contibution.contributor.url %}
-            <h6 itemprop="contributor"><a href="{{contibution.contributor.url}}">{{contibution.contributor.title}}</a></h6>
-            {% else %}
-            <h6 itemprop="contributor">{{contibution.contributor.title}}</h6>
-            {% endif %}
+                {% endfor %}
+            </dl>
+                <h4 class="primary">Contributors:</h4>
+                <div class="row">
+                {%  for contibution in package.contribution_set.all %}
+                    <div class="col-4 col-sm-3 col-md-2">
+                        <img class="img-responsive center-block collaborator-img"
+                             src="{{ contibution.contributor.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
+                        {% if contibution.contributor.url %}
+                        <h6 itemprop="contributor"><a href="{{contibution.contributor.url}}">{{contibution.contributor.title}}</a></h6>
+                        {% else %}
+                        <h6 itemprop="contributor">{{contibution.contributor.title}}</h6>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    Missing information!, but be sure someone has done it.
+                {% endfor %}
+                </div>
             </div>
-        {% empty %}
-            Missing information!, but be sure someone has done it.
-        {% endfor %}
         </div>
     </div>
 

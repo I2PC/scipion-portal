@@ -16,7 +16,6 @@ def get_geographical_information(ip):
     location_city = "N/A"
     # Automatically geolocate the connecting IP
     url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,'015c8dc22c593065dd51791ba674205c')
-    print "url", url
     try:
         with closing(urlopen(url)) as response:
             location = json.loads(response.read())

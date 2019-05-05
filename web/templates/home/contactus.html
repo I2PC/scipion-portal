@@ -1,0 +1,70 @@
+{% extends "layouts/contained.html" %}
+{% load static %}
+{% block content %}
+<h2 class="m-5">Contact Scipion core</h2>
+<dl class="row">
+    <dt class="col-sm-3">
+        <h5>Mailing list</h5>
+    </dt>
+    <dd class="col-sm-9">
+        The easiest way to reach us is by writing to our mailing list:
+        <strong>scipion-users@lists.sourceforge.net</strong>. You can also
+        <a href="https://lists.sourceforge.net/lists/listinfo/scipion-users">
+        subscribe</a> to the list here, to get all the notifications.
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-3">
+        <h5>Something more private?</h5>
+    </dt>
+    <dd class="col-sm-9">If your reason to contact us is <strong>private</strong>, then reach us at <a href="scipion@cnb.csic.es">scipion@cnb.csic.es</a>.
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-3">
+        <h5>Support for facilities</h5>
+    </dt>
+    <dd class="col-sm-9">We have a <strong>slack workspace</strong> for facilities where more
+        sensible or critical conversations can happen. We can help you to install
+        Scipion there and you will be able to chat with the developers. Request
+        access at <a href="scipion@cnb.csic.es">scipion@cnb.csic.es</a>.
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-3">
+        <h5>Support for developers</h5>
+    </dt>
+    <dd class="col-sm-9">As for facilities we can invite you to our <strong>slack workspace</strong>.
+        That way you will get almost immediate answers to your
+        "dev-doubts" Request access at <a href="scipion@cnb.csic.es">scipion@cnb.csic.es</a>.
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-3">
+        <h5>Creating issues in GitHub</h5>
+    </dt>
+    <dd class="col-sm-9">If you have GitHub account (It is very quick to create a new one),
+        you can <a href="https://github.com/I2PC/scipion/issues/new">Open a New Issue</a>
+        to report a bug or suggest a new feature.
+    </dd>
+</dl>
+
+
+
+<h2 class="m-5">Contact plugin developers</h2>
+
+{%  for package in packages %}
+{%  if not package.url == "" %}
+    <dl class="row">
+        <dt class="col-sm-3">
+            <h5>{{ package.name }}</h5>
+        </dt>
+        <dd class="col-sm-9">
+            <a href="{{ package.url }}">{{ package.url }}</a>
+        </dd>
+    </dl>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
+

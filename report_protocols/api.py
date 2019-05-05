@@ -260,7 +260,11 @@ class PackageResource(ModelResource):
         for package in packagesList:
 
             # If it exists
-            dbPackage, created = Package.objects.get_or_create(name=package["name"])
+            dbPackage = Package.objects.filter(name__iexact=package["name"]).first()
+
+            if not dbPackage:
+                dbPackage = Package.objects.create(name=package["name"])
+                
             dbPackage.url = package["url"]
             dbPackage.description = package["description"]
             dbPackage.save()
@@ -273,6 +277,7 @@ class PackageResource(ModelResource):
            Expected json format should be like:
            [
               {"package": "package1",
+               "packageurl": "http://sds"
                "githubName": "octouser1",
                "name": "John Smith",
                "url": "-->github user url"

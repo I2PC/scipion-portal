@@ -18,7 +18,6 @@ def protocolTypes(request):
     return render(request, 'report_protocols/protocolTypes.html', context_dict)
 
 def packages(request):
-    packages = Package.objects.all()
     context_dict = {}
-    context_dict['packages'] = packages.all().order_by("name")
+    context_dict['packages'] = Package.objects.all().order_by("name")
     return render(request, 'report_protocols/packages.html', context_dict)

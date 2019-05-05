@@ -6,9 +6,6 @@
 
 {% block js %}
     {{ block.super }}
-
-	<script type="text/javascript" src="{% static "js/download/utils.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/download/config.js" %}"></script>
 	<script src="http://code.highcharts.com/highcharts.js"></script>
 	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -18,18 +15,19 @@
 {% block content %}
 <div>
 	<h2 class="mt-4">Scipion downloads statistics</h2>
-	<div id="piebyversion"></div><br/>
+	<div id="byversionBars"></div><br/>
 	<div id="piebyplatform"></div><br/>
 	<div id="piebycountry"></div><br/>
 	<div id="downloadsovertime"></div><br/>
 	<div id="accumulatedDownloads"></div><br/>
+    <div id="downloadsByVersion"></div><br/>
 
 	<script>
-	var downloadData = {{downloadsJSON|safe}};
-	var downloadsAggregation = {};
-	var downloadsTimeSeries;
+	let downloadData = {{downloadsJSON|safe}};
+	let downloadsAggregation = {};
+	let downloadsTimeSeries;
 
-	$(function () {
+    $(function () {
 
 		$(document).ready(function () {
 			loadCharts();
@@ -44,42 +42,65 @@
 		loadPlatformChart();
 		loadCountryChart();
 		loadDownloadsTimeSeries();
-		loadDownloadsAccumulated();
+		//loadDownloadsAccumulated();
+		loadDownloadsByVersion()
 	}
 
 	function loadVersionChart(){
-		var data = propertyAggregationToPieChartData(
-		    downloadsAggregation['version'],
-			'downloads');
+        const data = propertyAggregationToPieChartData(
+            downloadsAggregation['version'],
+            'downloads');
 
-		loadPieChart('#piebyversion', 'Download by version', data);
+        loadBarChart('#byversionBars', 'Downloads by version', data);
 
-	};
+}
+    function loadPlatformChart(){
+        const data = propertyAggregationToPieChartData(downloadsAggregation['platform'], 'downloads');
 
-	function loadPlatformChart(){
-		var data = propertyAggregationToPieChartData(downloadsAggregation['platform'], 'downloads');
-
-		loadPieChart('#piebyplatform', 'Download by platform', data);
-	};
-
-	function loadCountryChart(){
-		var data = propertyAggregationToPieChartData(downloadsAggregation['country'], 'downloads', 2);
-		loadPieChart('#piebycountry', 'Downloads by country', data);
-	};
-
-	function loadDownloadsTimeSeries(){
-		downloadsTimeSeries = propertyAggregationToTimeSeries(downloadsAggregation['timeStamp'], 'Downloads');
+        loadPieChart('#piebyplatform', 'Downloads by platform', data);
+    }
+    function loadCountryChart(){
+        const data = propertyAggregationToPieChartData(downloadsAggregation['country'], 'downloads', 2);
+        loadPieChart('#piebycountry', 'Downloads by country', data);
+    }
+    function loadDownloadsTimeSeries(){
+		downloadsTimeSeries = propertyAggregationToTimeSeries(downloadsAggregation['timeStamp'], 'Downloads', "column");
 		loadZoomableTimeSeries('#downloadsovertime', 'Downloads per day', downloadsTimeSeries)
-	};
-
-	function loadDownloadsAccumulated(){
+    }
+    function loadDownloadsAccumulated(){
 
 		accumulateData(downloadsTimeSeries[0].data);
 
 		downloadsTimeSeries[0].type='area'
 
 		loadAreaChart('#accumulatedDownloads', 'Accumulated downloads', downloadsTimeSeries)
-	};
+    }
+    function loadDownloadsByVersion() {
+        let lines = createLines(downloadData, versionFromLine, monthFromTS)
+        let downloadsByVersion={}
+        aggregateAll(lines, downloadsByVersion);
+        accumulateData(downloadsTimeSeries[0].data);
+
+        let series = [];
+        // Format data into highcharts format
+        for (let key in downloadsByVersion){
+            propertyAggregationToTimeSeries(downloadsByVersion[key],key, "spline", series)
+        };
+
+        loadZoomableTimeSeries('#downloadsByVersion', 'Downloads per version along time', series)
+    }
+
+
+    function versionFromLine(line) {
+        return line.version;
+    }
+    function monthFromTS(line) {
+        let justDate= new Date(line.timeStamp);
+
+        justDate = new Date(justDate.getFullYear(),justDate.getMonth() , 1)
+        justDate = justDate.toISOString();
+        return justDate
+    }
 
 	function prepareData(){
 

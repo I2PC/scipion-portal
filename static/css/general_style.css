@@ -7,161 +7,16 @@
 	font-family: Helvetica;
 } /* Reset default margin and padding for all element */
 
-font {
-	font-family: Monospace;
-}
-
-header,section,footer,aside,nav,article,hgroup {
-	display: block;
-} /* For html5 unsupported browsers */
-
-
-#wrapMain {
-	min-height: calc(100vh - 192px);
-	padding-bottom: 20px;
-}
-
-#footer {
-  height: 140px;
-  clear: both;
-  padding-top: 48px;
-}
-
-
-/* .layout-outer {padding-bottom: 110px;} */
-
-/* body > #mainContainer { height: auto; min-height: 100%; } */
-/* section, aside { height: auto; min-height: 100%;} */
-a{
-	color:#000000;
-	text-decoration: underline;
-	border:none;
-}
-img{
-	border: none;
-}
-
-a:hover {
-	color: Firebrick;
-}
-
-.floatRight{
-	float: right;
-}
-.floatLeft{
-	float: left;
-}
-
-textarea {
-	padding: 4px;
-	resize: vertical;
-	background: #F2F2F2;
-	max-height: 30em;
-	width: 26em;
-	height: 20em;
-	font-size: 0.9em;
-}
-
-/* MAIN CONTAINER LINKS */
-
-.main-links .glyphicon {
-	margin-right: 8px;
-}
-
-.main-links a {
-	text-decoration: none;
-    border-bottom: 2px solid #333;
-}
-
-.main-links a:hover {
-	text-decoration: none;
-    border-bottom: 2px solid firebrick;
-}
-
-.timeline-Header {
-	display: none !important;
-}
-
-
-/* HEADER */
-header {
-	/* height: 100px; */
-	
-	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-  	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-  	display: -ms-flexbox;      /* TWEENER - IE 10 */
-	display: -moz-flex;
-	display: -webkit-flex;
-	display: -ms-flex;
-	display: -o-flex;
-	display: flex;
-	
-	-webkit-flex-flow: row;
-	-moz-flex-flow: row;
-	-ms-flex-flow: row;
-	-o-flex-flow: row;
-	flex-flow: row;
-	
-	-webkit-flex-wrap: wrap;
-	-moz-flex-wrap: wrap;
-	-ms-flex-wrap: wrap;
-	-o-flex-wrap: wrap;
-	flex-wrap: wrap;
-	
-	margin-bottom: 2px;
-}
-
-
 header .logo{
 	max-height:40px;
 	margin: 2px 10px 0px 20px;
 }
 
-
-/* FOOTER */
-footer{
- 	clear: both;
- 	position: relative;
- 	z-index: 10;
- 	height: 140px;
- 	text-align: center;
- 	font-size: 1em;
- 	/* This shoulb be uncommented if we want the footer to be displayed initially*/ 
- 	/* margin-top: -110px;  */
-}
-.footerStyle {
-	background: #eee;
-	text-align: center;
-}
-.footerText {
-	color: gray;
-}
-
-footer #footerText{
-	display: block;
-	color: #6e6e6e;
-}
-
-footer .footerLink{
-	text-decoration: none;
-	margin: 0px 15px;
-	/* color: #6F3232; */
-	color: firebrick;
-}
-footer .footerLink a {
-    color: gray;
-    text-decoration: underline;
-}
-footer .footerLink a:hover {
-    color: firebrick;
-}
-footer .logoLine {
-    float: none;
-    margin-top: 18px;
-}
-footer .logo{
-	max-height:38px;
-	margin-right:5px;
+footer {
+    position: fixed;
+    height: 50px;
+    bottom: 0;
+    width: 100%;
 }
 
 /**************** Table CSS *******************/
@@ -190,7 +45,7 @@ table#data th {
 }
 
 table#data th:first-child {
-	
+
 	text-align: left;
 	padding-left: 20px;
 }
@@ -225,149 +80,11 @@ table#data tr.selected:hover td {
 }
 table#data tr:nth-child(odd) {
 	background-color: #EAEBFF;
-}	
+}
 table#data tr:nth-child(even) {
 	background-color: #FFF;
 }
 
-
-/* COLORS */
-
-.primary {
-    color: firebrick
-}
-
-.primary_inv {
-    color: white;
-    background: firebrick;
-}
-
-
-.validation_inv {
-    color: white;
-    background: goldenRod;
-}
-
-.secondary {
-    color: #F2F2F2;
-
-}
-
-.secondary_inv {
-    color: black;
-    background: #F2F2F2;
-}
-
-
-
-/* TOOLBAR*/
-#toolbar{
-	font-size: 0.9em;
-	margin: 3px 0px 7px 5px ;
-}
-#toolbar a {
-	margin-right: 7px;
-}
-
-#toolbar a:hover {
-	color: FireBrick;
-}
-
-
-span #analyzeTool{
-	float: right;
-	margin: 0.25em 0.25em 0em 0.35em;
-	color:white;
-}
-
-span #downloadTool{
-	float: right;
-	margin: 0.25em 0.25em 0em 0.35em;
-	color:white;
-}
-
-span #externalTool{
-	float: right;
-	margin: 0em 0.5em 0em 0.35em;
-	color:black;
-}
-
-span #externalTool:hover{
-	color:Firebrick;
-}
-
-/* FOR The webtools entry pages */
-div#box {
-    padding: 2.2em;
-    margin-left: auto;
-    margin-right: auto;
-    height: auto;
-    background-color: #E8E8E8;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 1em ;
-    margin-bottom: 1em ;
-}
-
-div#minibox {
-    width:90%;
-    padding: 1em;
-    background-color: white;
-    border: 1px solid black;
-    border-radius: 5px;
-    display: inline-table;
-    margin: 1em ;
-}
-
-div#steps{
-    text-align:left;
-    width:100%;
-}
-div#lineOpt {
-    display:flex
-}
-
-#lineOpt p {
-    width:60%;
-    font-size: large;
-}
-
-
-/* Progress bar*/
-progress[value] {
-  /* Reset the default appearance */
-  -webkit-appearance: none;
-  appearance: none;
-  -moz-appearance: none;
-
-  border: none;
-
-  width: 250px;
-  height: 20px;
-  color: firebrick;
-}
-
-progress[value]::-webkit-progress-bar {
-  background-color: lightgray;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-}
-
-progress[value]::-moz-progress-bar {
-  background-image:
-    -moz-linear-gradient(left, firebrick, firebrick);
-
-  border-radius: 2px;
-  background-size: 35px 20px, 100% 100%, 100% 100%;
-}
-
-progress[value]::-webkit-progress-value {
- background-image:
-	   -webkit-linear-gradient(left, firebrick, firebrick);
- border-radius: 2px;
- background-size: 35px 20px, 100% 100%, 100% 100%;
- border-radius: 4px;
-}
 
 .prot-type-icon{
 	width:50px;
@@ -393,4 +110,22 @@ progress[value]::-webkit-progress-value {
 /* Bootstrap customization */
 nav .navbar-nav li a{
   text-shadow:none !important;
+}
+
+a:hover {
+	color: #ed5c5c;
+}
+a{
+	color: Firebrick;
+	text-decoration: underline;
+}
+a.bg-primary:hover {
+	background-color: #95999c !important;
+}
+
+/* External links*/
+a:not([href^='#']):not([href^='/']):after {
+    font-family: 'FontAwesome';
+	font-size: smaller;
+    content: " \f08e";
 }

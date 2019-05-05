@@ -16,5 +16,9 @@ urlpatterns = [
     url(r'^downloadstats', views_home.showDownloadStats, name='download-stats'),
     url(r'^getplugins', views_home.getPluginsJSON),
     url(r'^acknowledgements', views_home.acknowledgements, name='acknowledgements'),
+    url(r'^biologists', views_home.biologists, name='biologists'),
+    url(r'^facilities', views_home.facilities, name='facilities'),
+    url(r'^developers', views_home.developers, name='developers'),
+    url(r'^contact', views_home.contact, name='contact'),
     url(r'^api/', include(api.urls)),
 ]
