@@ -7,9 +7,12 @@
     <p class="alert-warning">This is a dynamic list of methods grouped by package that are present
     in Scipion. Some of them might come from a development environment
     and soon will be released.</p>
+    {% for package in packages %}
+    <a class="lead badge badge-primary" href="#{{ package.name }}">{{ package.name }}</a>
+    {%  endfor %}
 
     {% for package in packages %}
-    <div id="{{package.name}}" class="card mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
+    <div id="{{package.name}}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
         <h3 class="pt-5 card-header">
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
@@ -64,6 +67,5 @@
             </div>
         </div>
     </div>
-
     {% endfor %}
 {% endblock %}

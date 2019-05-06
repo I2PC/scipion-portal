@@ -9,7 +9,11 @@
     and soon will be released.</p>
 
     {% for type in types %}
-    <div id="{{ type.name }}" class="card mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
+    <a class="lead badge badge-primary" href="#{{ type.name }}">{{ type.name }}</a>
+    {%  endfor %}
+
+    {% for type in types %}
+    <div id="{{ type.name }}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
         <h3 class="pt-5 card-header">
             {% if type.icon %}
                 <img class="prot-type-icon img-thumbnail" src="/uploads/{{ type.icon.name }} " alt="icon for {{ type.name }}">

@@ -51,13 +51,21 @@
             { "title": "Name",
               "data" : "name",
               "render": function(data, type, row, meta){
-                    if(type === 'display'){
-                        data = '<a href="{% url 'packages' %}/#' + row.class + '">' + data + '</a>';
-                    }
-                    return data;
-               }},
+                            if(type === 'display'){
+                                data = '<a href="{% url 'packages' %}/#' + row.class + '">' + data + '</a>';
+                            }
+                            return data;
+                        }
+            },
             { "title": "Times used", "data" : "timesUsed" },
-            { "title": "Type", "data" : "type" }
+            { "title": "Category",
+              "data" : "type",
+              "render": function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = '<a href="{% url 'protocolTypes' %}/#' + data + '">' + data + '</a>';
+                            }
+                            return data;
+                        } }
         ];
 
     var protDataTable = {
