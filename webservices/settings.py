@@ -153,9 +153,9 @@ STATICFILES_DIRS = (
 
 # Uploading folders (for images or bundles that are uploaded)
 # All this paths will be under MEDIA folder
-MEDIA_ROOT = 'uploads'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
-PATH_PACKAGES = os.path.join(MEDIA_ROOT, "packages")
-PATH_BUNDLES = os.path.join(MEDIA_ROOT, "bundles")
-PATH_PROT_TYPES = os.path.join(MEDIA_ROOT, "prot-types")
+PATH_PACKAGES = "packages"
+PATH_BUNDLES = "bundles"
+PATH_PROT_TYPES = "prot-types"

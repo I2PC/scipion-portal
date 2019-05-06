@@ -15,7 +15,7 @@
     <div id="{{package.name}}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
         <h3 class="pt-5 card-header">
             {% if package.logo %}
-                <img class="package-icon img-thumbnail" src="/uploads/{{ package.logo.name }} " alt="icon for {{ package.name }}">
+                <img class="package-icon img-thumbnail" src="{{ package.logo.url }} " alt="icon for {{ package.name }}">
             {% endif %}
             <span itemprop="name">{{ package.name }}</span>
         </h3>
