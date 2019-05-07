@@ -171,7 +171,7 @@ def showDownloadStats(request):
 def getPluginsDict():
     result = {}
     for plugin in Package.objects.all():
-        pluginDict = model_to_dict(plugin)
+        pluginDict = model_to_dict(plugin, exclude=["logo", "description", "url"])
         if pluginDict['pipName'] != "":
             result[pluginDict['pipName']] = pluginDict
     return result
