@@ -32,7 +32,7 @@
                 'class': '{{ protocol.name }}',
                 'timesUsed': {{ protocol.timesUsed }},
                 'package': '{{ protocol.package.name }}',
-                'type': '{{ protocol.protocolType.name | default: "" }}'
+                'type': '{{ protocol.protocolType.name | default:"" }}'
             }
         {% endfor %}
     ];
