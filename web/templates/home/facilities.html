@@ -11,8 +11,9 @@
   <div class="container text-vcenter">
     <div class="row">
       <div class="rounded-lg offset-md-2 col-md-8 col-sm-12 bg-primary">
-          <H1>For cryo-em facilities</H1>
-          <H3>Scipion will process your acquisition images on the fly and will provide you feedback to help you make decisions.</H3>
+          <H1>For cryo em facilities</H1>
+          <H3>Scipion will process your acquired images on the fly and will provide feedback to
+              help you make decisions while the microscope is collecting data.</H3>
       </div>
     </div>
   </div>
@@ -22,27 +23,28 @@
 <div id="facilitiesfeatures" class="pad-section">
   <div class="container">
     <div class="row">
+      <div class="col-sm-12  col-md-3">
+        <h2>Streaming,</h2>
+        <p>
+        Multiple options are available to process your data on the fly such as running in batches or
+        multi-GPU jobs handling. Get the most out of your microscope by analyzing results as quick as possible!
+        </p>
+      </div>
       <div class="col-sm-12 col-md-3">
-        <h2>Integration,</h2>
+        <h2>integration,</h2>
         <p>Most popular image processing packages like Relion 3,
-            motioncor2, ctffind4, crYOLO, Xmipp, and many more are integrated. Some of
-            their methods are ready to use in "streaming mode".
+            motioncor2, ctffind4, crYOLO, Xmipp, and many more are now integrated.
+            And <strong>tomography</strong> packages are about to be published as plugins.
         </p>
         <a href="{% url 'packages' %}" class="btn btn-primary">See all integrated packages</a>
       </div>
       <div class="col-sm-12  col-md-3">
         <h2>options,</h2>
         <p>Most of the steps in SPA analysis in Scipion have several options and
-            is up to YOU what to use. All this without the need of any programming skills.
-            You can even use several and apply consensus methods.
+            is up to YOU to choose them. All this without the need of any programming skills.
+            You can even use several different methods and then apply consensus tools.
         </p>
         <a href="{% url 'protocolTypes' %}" class="btn btn-primary">See methods by steps.</a>
-      </div>
-      <div class="col-sm-12  col-md-3">
-        <h2>tomography,</h2>
-        <p>Tomography methods are already being developed, and maybe, by now they have been released already
-            and are at your hand (click) under the same environment as the SPA methods and modelling ones.
-        </p>
       </div>
       <div class="col-sm-12 col-md-3">
         <h2>programmable.</h2>
@@ -63,27 +65,27 @@
       <div class="col-sm-12 col-md-6">
         <i class="glyphicon fas fa-exclamation-triangle"></i>
         <h4>Monitor</h4>
-        <p>Monitor your acquisition (alignment, gain, ctf
-            resolution, defocus) as well as your system (GPU's, memory, I/O, ..)
+        <p>Monitor your acquisition (drift, gain, ctf resolution, defocus) as
+            well as your system (GPU's, memory, I/O, ..)
             and define alerts when those values pass a threshold you define.</p>
       </div>
       <div class="col-sm-12 col-md-6">
         <i class="glyphicon fas fa-robot"> </i>
         <h4>Automate</h4>
-        <p>You can automate all this with none, or a few clicks, so Scipion will not bother
+        <p>You can automate all this only a few clicks, so Scipion will not bother
             you unless something goes wrong or you want to have a look at the
-            processing results</p>
+            results</p>
       </div>
       <div class="col-sm-12 col-md-6">
         <i class="glyphicon fas fa-project-diagram"> </i>
         <h4>Workflow templates</h4>
-        <p>You can define as many workflows as you wish and you can have them as templates.
-            When you kickoff Scipion, you just need to tell which workflow to use.</p>
+        <p>You can define as many workflows as you wish and you can save them as templates.
+            When you kickoff Scipion, you just need to tell it which workflow to use.</p>
       </div>
       <div class="col-sm-12 col-md-6">
         <i class="glyphicon fas fa-handshake"> </i>
         <h4>Consensus </h4>
-        <p>You can apply consensus methods to alignments, CTFs and pickings
+        <p>You can apply consensus methods to compare alignments, CTFs and pickings
            to prune the images providing your users with a "clean" dataset to start the reconstruction.</p>
       </div>
     </div>
@@ -96,8 +98,9 @@
     <div class="row">
       <div class="offset-2 col-8 primary">
           <H1>Live HTML acquisition report</H1>
-          <H3>You can chose to generate a detailed summary report (in HTML) ready to
-          sync to any public HTTP server, so your user can follow the progress from outside.</H3>
+          <H3>You can choose to generate a detailed summary report (in HTML) ready to
+          sync to any public HTTP server, so your external users can follow the data collection
+          progress.</H3>
           <a href="http://scipion.cnb.csic.es/scipionbox/lastHTMLReport/" class="btn btn-lg btn-primary">Sample report</a>
       </div>
     </div>

@@ -3,8 +3,8 @@ from models import Download, Acknowledgement, Bundle
 
 
 class DownloadAdmin(admin.ModelAdmin):
-    list_display = ('country', 'version', 'platform', 'creation')
-    search_fields = ('country', 'platform', 'version', 'size', 'creation')
+    list_display = ('version', 'platform', 'creation', 'country', 'city', 'ip')
+    search_fields = ('country', 'platform', 'version', 'size', 'creation', 'city', 'ip')
     ordering = ("-creation",)
 
     def has_add_permission(self, request):

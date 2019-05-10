@@ -12,8 +12,14 @@ function drawScipionIntegrationGraph(id, elements) {
             {
                 selector: 'node',
                 style: {
-                    'background-color': '#bb797a',
-                    'font-size': 9
+                    'color': '#eee',
+                    'text-outline-color': '#555',
+                    'text-outline-width': 2,
+                    'background-opacity': 0,
+                    'font-size': 11,
+                    'label': 'data(label)',
+                    'text-valign': 'center',
+                    'text-halign': 'center'
                 }
             },
 
@@ -21,10 +27,10 @@ function drawScipionIntegrationGraph(id, elements) {
                 selector: 'edge',
                 style: {
                     'width': 1,
-                    'line-color': '#222',
+                    'line-color': '#bbb',
                     "line-style": "dotted",
                     'target-arrow-color': '#b22',
-                    'target-arrow-shape': 'triangle'
+                    'target-arrow-shape': 'none'
                 }
             }
         ],

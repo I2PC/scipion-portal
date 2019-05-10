@@ -90,6 +90,8 @@ table#data tr:nth-child(even) {
 }
 
 .collaborator-img{
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
 	border-radius: 50%;
 	height: 60px;
 	width: 60px;

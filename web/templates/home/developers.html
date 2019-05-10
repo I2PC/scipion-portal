@@ -14,9 +14,9 @@
 <!-- first section - into -->
 <div id="pluginframework" class="puzzle parallax">
   <div class="primary text-vcenter">
-    <h1>A fast way to reach cryo-em users.</h1>
+    <h1>A fast way to reach cryo em users.</h1>
     <h3>Scipion is a plugin framework ready to discover new EM image processing software
-        once you wrap your software as a scipion plugin.</h3>
+        once you wrap it as a plugin.</h3>
     <a href="https://scipion-em.github.io/docs/docs/developer/developers.html" class="btn btn-primary btn-outline-light">Developer docs</a>
   </div>
 </div>
@@ -25,18 +25,20 @@
 <div id="python" class="pad-section">
   <div class="container">
     <div class="row justify-content-around">
-      <div class="col-5 text-justify">
+      <div class="col-md-5 col-sm-12 text-justify">
         <h2>Written in python</h2>
-        <p class="lead">Scipion is written python and its plugins too. Python has nowadays gained
-            <a href="http://pypl.github.io/PYPL.html">popularity</a> being one of the most popular programming language.
+        <p class="lead">Scipion is written in python and its plugins too. Python has nowadays gained
+            <a href="http://pypl.github.io/PYPL.html">popularity</a> being one of the most widely
+            used programming language for scientific computing.
         </p>
         <img class="img-fluid" src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png">
       </div>
-      <div class="col-5 text-justify">
+      <div class="col-md-5 col-sm-12 text-justify">
         <h2>Using pypi</h2>
-        <p class="lead">We use <a href="https://pypi.org/">pypi.org</a> to deploy our plugins and you will be in control
-            of the integration at any time. If the documentation is enough, you might need to contact us to develop a full
-            functional plugin.
+        <p class="lead">We use <a href="https://pypi.org/">pypi.org</a> to deploy our plugins and you are in control
+            of your code at any time. If you are struggling to develop a fully functional plugin after
+            reading our <a href="https://scipion-em.github.io/docs/docs/developer/developers.html">documentation</a>,
+            you can always <a href="{% url 'contact' %}">contact us</a> for help.
         </p>
         <img class="img-fluid" src="https://pypi.org/static/images/logo-large.72ad8bf1.svg">
       </div>
@@ -58,7 +60,7 @@
       <div class="col-lg-4 col-md-12">
         <h4>Reach SB users fast</h4>
         <i class="glyphicon fas fa-rocket"> </i>
-        <p class="lead text-justify">Scipion is downloaded 2-3 a day. You can
+        <p class="lead text-justify">Scipion is downloaded 2-3 times a day. You can
             reach all Scipion users as soon as you publish your plugin.
             See the <a class="bg-primary" href="{%  url 'download-stats' %}">download statistics.</a>
         </p>
@@ -66,40 +68,41 @@
       <div class="col-lg-4 col-md-12">
         <h4>Automated testing</h4>
         <i class="glyphicon fas fa-clipboard-check"> </i>
-        <p class="lead text-justify">You code, even your binaries, can be
-            <a class="bg-primary" href="http://scipion-test.cnb.csic.es:9980">regularly tested</a>. Devel and production branches!
+        <p class="lead text-justify">Your code, even your binaries, can be
+            <a class="bg-primary" href="http://scipion-test.cnb.csic.es:9980">regularly tested</a>.
+            Both development and production branches!
         </p>
       </div>
       <div class="col-lg-4 col-md-12">
         <h4>Usage stats</h4>
         <i class="glyphicon fas fa-chart-line"> </i>
-          <p class="lead text-justify">We are collecting <a class="bg-primary" href="{%  url 'protocolRanking' %}">usage statistics</a>, with user consent,
-            and you will have feedback about the usage of your methods "out of the box".
+          <p class="lead text-justify">We are collecting <a class="bg-primary" href="{%  url 'protocolRanking' %}">usage statistics</a>,
+          with user consent, and you will have feedback about the usage of your methods "out of the box".
         </p>
       </div>
       <div class="col-lg-4 col-md-12">
         <h4>Just your method/s</h4>
         <i class="glyphicon fas fa-puzzle-piece"> </i>
-          <p class="lead text-justify">There is no need to wrap your software with
-              3rd party software to create another "full-stack software suite" to
+          <p class="lead text-justify">There is no need to pack your software with
+              a 3rd party software to create another "full-stack software suite" to
               cover the whole pipeline. We are doing it for you!
         </p>
       </div>
       <div class="col-lg-4 col-md-12">
-        <h4>File format convertions</h4>
+        <h4>File format conversions</h4>
         <i class="glyphicon fas fa-exchange-alt"> </i>
-          <p class="lead text-justify">Common file formats conversions are provided
-              (mrc, vol, hdf, dm4, mrc4bit, tiff, …). You can implement just one
-              and use Scipion/Xmipp file format conversion methods
+          <p class="lead text-justify">Support of common file formats conversions is provided
+              (mrc, vol, hdf, dm4, mrc4bit, tiff, …). Your software can implement just one
+              and let Scipion/Xmipp do the file format conversion.
         </p>
       </div>
       <div class="col-lg-4 col-md-12">
         <h4>Focus on the method</h4>
         <i class="glyphicon fas fa-compress-arrows-alt"> </i>
           <p class="lead text-justify">Scipion provides a uniform GUI. You just
-              need to focus on the method and, if apply, presenting your nice
-              results as charts, 3D volume rendering or wherever your
-              creativity takes you.
+          need to focus on your protocol implementation and, if desired,
+          create a results viewer. Have a look at the
+          <a class="bg-primary" href="https://scipion-em.github.io/docs/docs/developer/creating-a-plugin">documentation.</a>
         </p>
       </div>
 

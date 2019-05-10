@@ -19,8 +19,8 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{% url 'biologists' %}">Structural biologists</a>
-              <a class="dropdown-item" href="{%  url 'facilities' %}">Cryoem facilities</a>
-              <a class="dropdown-item" href="{% url 'developers' %}">Methods developers</a>
+              <a class="dropdown-item" href="{%  url 'facilities' %}">Cryo em facilities</a>
+              <a class="dropdown-item" href="{% url 'developers' %}">Software developers</a>
             </div>
           </li>
           <li class="nav-item">
@@ -30,20 +30,20 @@
             <a class="nav-link" href="https://scipion-em.github.io/docs/">Documentation</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarStatsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Statistics
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu" aria-labelledby="navbarStatsDropdown">
               <a class="dropdown-item" href="{% url 'download-stats' %}">Downloads</a>
               <a class="dropdown-item" href="{%  url 'protocolRanking' %}">Protocols ranking</a>
               <a class="dropdown-item" href="{% url 'scipionUsage' %}">Usage map</a>
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarMethodDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Methods
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu" aria-labelledby="navbarMethodsDropdown">
               <a class="dropdown-item" href="{% url 'packages' %}">by plugin</a>
               <a class="dropdown-item" href="{% url 'protocolTypes' %}">by category</a>
             </div>

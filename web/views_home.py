@@ -119,12 +119,19 @@ def startDownload(request):
         client_ip = get_client_ip(request)
         # Get the country...
         country, city = get_geographical_information(client_ip)
-        Download.objects.create(
+        newDownload = Download.objects.create(
             country=country,
             version=bundle.version,
             platform=bundle.platform,
-            size=bundle.size
+            size=bundle.size,
+            city= city
         )
+
+        try:
+            newDownload.ip = client_ip
+            newDownload.save()
+        except Exception as e:
+            print ('Failed to save download ip: %s' % client_ip)
 
         # Return a response with the scipion download file
         path = bundle.file.file.name

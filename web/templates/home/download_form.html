@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-lg-4 col-md-12 order-lg-2">
         <i class="fas fa-download"></i>
-        <p class="lead text-justify">Have a look to our documentation about
+        <p class="lead text-justify">Have a look at our documentation about
           <a href="https://scipion-em.github.io/docs/docs/scipion-modes/install-from-sources.html">how to install Scipion</a>.
         </p>
       </div>
@@ -25,7 +25,7 @@
         {% endfor %}
         <br/>
         <!-- Load deprecated bundles -->
-        <h4 class="text-muted mt-4">Deprecated versions</h4>
+        <h4 class="text-muted mt-4">Unsupported versions</h4>
         {% for bundle in downloadables %}
             {% if bundle.deprecated %}
             <span class="btn btn-outline-dark" nobothref="{{abs_url}}startdownload/?bundleId={{bundle.id}}">

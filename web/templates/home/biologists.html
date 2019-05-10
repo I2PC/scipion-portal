@@ -18,12 +18,12 @@
   <div class="container">
     <div class="row">
       <div class="mt-4 col-lg-4 col-md-12 text-justify">
-        <h2>Integration of Cryo em software</h2>
-        <p class="lead">Scipion integrates existing software allowing you to, smoothly,
-            switch form one software to another offering endless combinations.
-            It started with SPA methods but currently it reaches also atomic modelling
-            ones, and tomography is about to come.
-            The following graph is dynamic and clickable, <span class="text-success">play with it</span>
+        <h2>Integration of cryo em software</h2>
+        <p class="lead">Scipion integrates existing software allowing you to smoothly
+            switch from one package to another offering endless combinations.
+            We started with single particle analysis (SPA) methods but we are currently
+            expanding our toolset to include atomic modelling and tomography.
+            The following graph is dynamic and clickable, <span class="text-success">you can play with it!</span>
         </p>
         <a href="{% url 'packages' %}" class="btn btn-primary">See all plugins</a>
       </div>
@@ -40,8 +40,8 @@
       <div class="col-lg-4 col-md-12 order-lg-2">
           <h4>Traceability</h4>
           <i class="glyphicon fas fa-clipboard-list"> </i>
-        <p class="lead text-justify">One of Scipion’s main goals is to provide the entire track of the processing pipeline.
-            Each new method execution is stored, together with the parameters selected.
+        <p class="lead text-justify">One of Scipion’s main goals is to provide an entire track of the processing pipeline.
+            Each new method execution is stored, together with selected parameters.
             All output logs are also stored, allowing the expert user to inspect more deeply
             the underlying commands and their results. <strong> You will always know what have you done!.</strong></p>
       </div>
@@ -61,7 +61,7 @@
             <i class="glyphicon fas fa-users primary"> </i>
             <p class="lead text-justify">Users interact with Scipion through a collection of GUIs that
                 provides a uniform interface for a plethora of heterogeneous EM programs. Also, some
-                fields have “wizards”, special interfaces that allow the selection of parameter values
+                parameters have “wizards” - special interfaces that allow the adjustment of parameter values
                 while showing their effects in real time.</p>
         </div>
         <div class="col-lg-8 col-md-12">
@@ -79,8 +79,8 @@
           <h4>Plugin framework</h4>
           <i class="glyphicon fas fa-plug"> </i>
         <p class="lead text-justify">Scipion is now a plugin framework. This will speed up
-            the release of new packages or new updates through the plugin manager, without
-            the need of releasing a new version. Plugins are able to install the
+            the release of new packages or new updates through a plugin manager, without
+            the need of releasing a new Scipion version. Plugins can also install the
             actual image processing software "behind", if the license allows it.</p>
       </div>
       <div class="col-lg-8 col-md-12 order-lg-1">
@@ -94,30 +94,22 @@
     var elements =[]
 
     {% for package in packages %}
-        var style = {
-            'label': '{{ package.name }}',
-            'text-valign': 'center'
-        }
-        {% if package.logo %}
-        style = {
-            'background-image': "/uploads/{{ package.logo.name }}",
-            'background-fit': "cover cover"
-            }
-        {% endif %}
-        elements.push({ data: {
-                            id: '{{ package.name }}',
-                            href: '{% url "packages" %}/#{{ package.name }}'
-                        },
-                        style: style
-                      })
-        {%  ifnotequal package.name "Scipion" %}
-            elements.push({
-                data: {
-                    id: '{{ package.id }}',
-                    source: '{{ package.name }}',
-                    target: 'Scipion'}
-            })
-        {%  endifnotequal %}
+        {%  ifnotequal package.protocol_set.count 0 %}
+            elements.push({ data: {
+                                id: '{{ package.name }}',
+                                href: '{% url "packages" %}/#{{ package.name }}',
+                                label: "{{ package.name }}"
+                            }
+                          })
+            {%  ifnotequal package.name "Scipion" %}
+                elements.push({
+                    data: {
+                        id: '{{ package.id }}',
+                        source: '{{ package.name }}',
+                        target: 'Scipion'}
+                })
+            {%  endifnotequal %}
+        {% endifnotequal %}
     {%  endfor %}
 
     drawScipionIntegrationGraph("cy", elements);

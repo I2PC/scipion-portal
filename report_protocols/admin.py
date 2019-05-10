@@ -16,8 +16,12 @@ class WorkflowAdmin(admin.ModelAdmin):
 
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'pipName', 'description', 'url')
+    list_display = ('name', 'pipName', 'description', 'package_prot_count', 'url')
     ordering = ("name", 'pipName')
+
+    def package_prot_count(self, obj):
+        return obj.protocol_set.count()
+    package_prot_count.short_description = "Prot count"
 
 
 class ProtocolTypeAdmin(admin.ModelAdmin):
@@ -28,7 +32,7 @@ class ProtocolTypeAdmin(admin.ModelAdmin):
 class ProtocolAdmin(admin.ModelAdmin):
     list_display = ('name', 'timesUsed', 'friendlyName', 'description', 'package', 'protocolType')
     ordering = ('-timesUsed', "name")
-    search_fields = ('name', 'timesUsed', 'friendlyName', 'description', 'package', 'protocolType')
+    search_fields = ('name', 'timesUsed', 'friendlyName', 'description', 'package__name', 'protocolType__name')
 
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):

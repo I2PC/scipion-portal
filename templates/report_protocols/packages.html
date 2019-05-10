@@ -8,10 +8,13 @@
     in Scipion. Some of them might come from a development environment
     and soon will be released.</p>
     {% for package in packages %}
-    <a class="lead badge badge-primary" href="#{{ package.name }}">{{ package.name }}</a>
+    {%  ifnotequal package.protocol_set.count 0 %}
+        <a class="lead badge badge-primary" href="#{{ package.name }}">{{ package.name }}</a>
+    {% endifnotequal %}
     {%  endfor %}
 
     {% for package in packages %}
+    {%  ifnotequal package.protocol_set.count 0 %}
     <div id="{{package.name}}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
         <h3 class="pt-5 card-header">
             {% if package.logo %}
@@ -27,25 +30,23 @@
             {% if not package.url == "" %}
                 <p>Plugin url <a href="{{package.url}}" itemprop="downloadUrl">{{package.url}}.</a></p>
             {% endif %}
-                <span class="text-muted">Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, Cryo-em</span></span>
+                <span class="text-hide">Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, cryo em</span></span>
             </div>
             <div class="card-text">
                 <h4 class="primary">Available methods:</h4>
                 <dl class="pt-4 row">
                 {%  for prot in package.protocol_set.all|dictsort:"friendlyName" %}
-                    {% if prot.description %}
-                        <dt class="col-sm-4" itemprop="featureList">
-                            <h5 id="{{ prot.name }}">
-                                {{ prot.friendlyName | default:prot.name }}
-                            {% if not prot.protocolType == None %}
-                                <a href="{%  url 'protocolTypes' %}#{{ prot.protocolType.name}}">
-                                    <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
-                                </a>
-                            {% endif %}
-                            </h5>
-                        </dt>
-                        <dd class="col-sm-8">{{ prot.description }}</dd>
-                    {% endif %}
+                    <dt class="col-sm-4" itemprop="featureList">
+                        <h5 id="{{ prot.name }}">
+                            {{ prot.friendlyName | default:prot.name }}
+                        {% if not prot.protocolType == None %}
+                            <a href="{%  url 'protocolTypes' %}#{{ prot.protocolType.name}}">
+                                <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
+                            </a>
+                        {% endif %}
+                        </h5>
+                    </dt>
+                    <dd class="col-sm-8">{{ prot.description | default:"Description missing, might be a new development." }}</dd>
                 {% endfor %}
             </dl>
                 <h4 class="primary">Contributors:</h4>
@@ -67,5 +68,6 @@
             </div>
         </div>
     </div>
+    {% endifnotequal %}
     {% endfor %}
 {% endblock %}
