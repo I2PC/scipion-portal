@@ -14,16 +14,9 @@ $ virtualenv --python /usr/bin/python2 env
 $ env/bin/pip install -r requirements.txt
 ```
 
-### Configuration file: scipion.conf. Only used for the email configuration
-
-The default location for the configuration file is `$HOME/.config/scipion-portal/scipion.conf`.
-Use the environment variable `SCIPION_CONFIG` for a different path. See file `scipion.conf.template`
-in the repository for reference.
-
 ## Development server
 
 ```
-$ export SCIPION_CONFIG=path/to/scipion.conf
 $ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
 $ env/bin/python manage.py runserver
 ```
@@ -49,7 +42,6 @@ $ env/bin/python manage.py runserver
   WSGIProcessGroup scipion-portal
   WSGIScriptAlias / /home/ubuntu/scipion-portal/main/wsgi.py
 
-  SetEnv SCIPION_CONFIG /home/ubuntu/.config/scipion-portal/scipion.conf
   SetEnv DATABASE_URL postgres://scipion:j6rUtd8Y6qW@localhost:5432/scipion
 </VirtualHost>
 ```
