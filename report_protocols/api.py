@@ -23,9 +23,7 @@ class ProtocolResource(ModelResource):
         queryset = Protocol.objects.all()
         resource_name = 'protocol'
         filtering = {'name': ALL}
-        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
-        authentication = BasicAuthentication()
-        authorization = Authorization()
+        allowed_methods = ('get')
         # Add resource urls
 
     def prepend_urls(self):
