@@ -8,6 +8,7 @@ from api import WorkflowResource, ProtocolResource, PackageResource
 # Keep this paths to allow scipion reporting
 old_api = Api(api_name='workflow')
 old_api.register(WorkflowResource())
+old_api.register(ProtocolResource())
 
 new_api = Api(api_name="v2")
 new_api.register(ProtocolResource())
