@@ -1,7 +1,6 @@
 from django.db.models import Count
-from django.http import HttpResponse, HttpResponseNotFound, \
-    HttpResponseBadRequest
-from tastypie.authentication import BasicAuthentication, Authentication
+from django.http import HttpResponse, HttpResponseBadRequest
+from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
