@@ -28,6 +28,7 @@
 import os
 import json
 import calendar
+import socket
 from datetime import datetime, timedelta, tzinfo
 from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse, HttpResponseNotFound
@@ -119,19 +120,16 @@ def startDownload(request):
         client_ip = get_client_ip(request)
         # Get the country...
         country, city = get_geographical_information(client_ip)
+        client_address = socket.getfqdn(client_ip)
         newDownload = Download.objects.create(
             country=country,
             version=bundle.version,
             platform=bundle.platform,
             size=bundle.size,
-            city= city
+            city=city,
+            ip=client_ip,
+            client_address=client_address
         )
-
-        try:
-            newDownload.ip = client_ip
-            newDownload.save()
-        except Exception as e:
-            print ('Failed to save download ip: %s' % client_ip)
 
         # Return a response with the scipion download file
         path = bundle.file.file.name
