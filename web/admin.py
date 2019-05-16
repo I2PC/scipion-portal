@@ -3,7 +3,7 @@ from models import Download, Acknowledgement, Bundle
 
 
 class DownloadAdmin(admin.ModelAdmin):
-    list_display = ('version', 'platform', 'creation', 'country', 'city', 'ip')
+    list_display = ('version', 'platform', 'creation', 'country', 'city', 'client_address', 'ip')
     search_fields = ('country', 'platform', 'version', 'size', 'creation', 'city', 'ip')
     ordering = ("-creation",)
 

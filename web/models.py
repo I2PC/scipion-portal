@@ -16,6 +16,7 @@ class Download(models.Model):
     country = models.CharField(max_length=256, null=True)
     city = models.CharField(max_length=256, null=True)
     ip = models.GenericIPAddressField(null=True)
+    client_address = models.CharField(max_length=256, null=True)
     version = models.CharField(max_length=16)
     platform = models.CharField(max_length=256)
     size = models.CharField(max_length=256)
