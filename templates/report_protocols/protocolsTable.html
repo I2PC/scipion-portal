@@ -31,8 +31,8 @@
                 'name': '{{ protocol.friendlyName | default:protocol.name }}',
                 'class': '{{ protocol.name }}',
                 'timesUsed': {{ protocol.timesUsed }},
-                'package': '{{ protocol.package.name }}',
-                'type': '{{ protocol.protocolType.name | default:"" }}'
+                'package': '{%  if protocol.package is not None %}{{ protocol.package.name }}{% endif %}',
+                'type': '{%  if protocol.protocolType is not None %}{{ protocol.protocolType.name}}{% endif %}'
             }
         {% endfor %}
     ];
