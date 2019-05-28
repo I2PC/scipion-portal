@@ -87,7 +87,7 @@
             propertyAggregationToTimeSeries(downloadsByVersion[key],key, "spline", series)
         };
 
-        loadZoomableTimeSeries('#downloadsByVersion', 'Downloads per version over time', series)
+        loadZoomableTimeSeries('#downloadsByVersion', 'Downloads per version over time', series, '%b-%y')
     }
 
 
@@ -97,8 +97,8 @@
     function monthFromTS(line) {
         let justDate= new Date(line.timeStamp);
 
-        justDate = new Date(justDate.getFullYear(),justDate.getMonth() , 1)
-        justDate = justDate.toISOString();
+        justDate = new Date(justDate.getFullYear(),justDate.getMonth() , 2)
+        //justDate = justDate.toISOString();
         return justDate
     }
 

@@ -279,7 +279,7 @@ function loadAreaChart(container, title, data){
         series: data
     });
 }
-function loadZoomableTimeSeries(container, title, data){
+function loadZoomableTimeSeries(container, title, data, dateFormat){
 
     $(container).highcharts({
         chart: {
@@ -299,6 +299,9 @@ function loadZoomableTimeSeries(container, title, data){
             title: {
                 text: 'Downloads'
             }
+        },
+        tooltip: {
+            xDateFormat: dateFormat
         },
         legend: {
             enabled: true
