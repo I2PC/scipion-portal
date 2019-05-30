@@ -157,7 +157,7 @@ def getDownloadsStats(request):
 
 def getDownloadsStatsToJSON():
     result = []
-    for download in Download.objects.all():
+    for download in Download.objects.order_by('-version'):
         ddict = model_to_dict(download)
         ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
         result.append(ddict)
