@@ -86,7 +86,7 @@ def contact(request):
 
 
 def download_form(request):
-    bundles = list(Bundle.objects.all())
+    bundles = list(Bundle.objects.order_by('-version'))
 
     context = {
         "downloadables": bundles,
@@ -157,7 +157,7 @@ def getDownloadsStats(request):
 
 def getDownloadsStatsToJSON():
     result = []
-    for download in Download.objects.order_by('-version'):
+    for download in Download.objects.all():
         ddict = model_to_dict(download)
         ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
         result.append(ddict)
