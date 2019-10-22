@@ -90,6 +90,70 @@
   </div>
 </div>
 <!-- /fifth section -->
+<!-- sixth section - Consensus -->
+<div id="consensus" class="pad-section primary">
+  <div class="container">
+    <div class="row text-center">
+        <div class="col-lg-8 col-md-12">
+            <h4>Consensus</h4>
+            <i class="glyphicon fas fa-handshake primary"> </i>
+            <p class="lead text-justify">The coexistence of several software
+            packages in the same workflow engine allows the comparison of
+            different estimates of the parameters used for the reconstruction,
+            e.g., we can compute the consensus at the level of CTF, identified
+            particles, particle classification, angular assignment, etc. From
+            the consensus it is easier to identify biases in the parameter
+            estimates and reduce their variance.</p>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <br/>
+            <img class="img-fluid rounded shadow" src="{% static 'img/consensus.png' %}">
+        </div>
+    </div>
+  </div>
+</div>
+<!-- /sixth section -->
+<!-- seventh section Validation -->
+<div  class="pad-section bg-primary">
+  <div class="container">
+    <div class="row text-center">
+      <div id="HPC" class="col-lg-6 col-md-12">
+        <h4>HPC integration</h4>
+        <i class="glyphicon fas fa-server primary"> </i>
+        <p class="lead text-justify">Scipion is very well integrated with
+            High-Performance Computing environments (fat nodes, clusters, cloud,
+            ...). Jobs can be submitted to queues, monitored and stopped.
+            There are also configuration modes in which the amount of required
+            GPUs for the preprocessing steps can be minimized.</p>
+      </div>
+      <div id="validation" class="col-lg-6 col-md-12">
+        <h4>Validation</h4>
+        <i class="glyphicon fas fa-clipboard-check"> </i>
+        <p class="lead text-justify">Scipion is very rich in the amount of tools
+            available to verify the quality of the reconstructed volume (comparing
+            to experimental SAXS curves, to previous PDBs, comparing reprojections,
+            comparing different reconstructions among themselves, evaluating the
+            alignability of the particles used and the amount of overfitting, ...)</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /seventh section -->
+<!-- eigth section download -->
+<div  class="pad-section primary">
+  <a href="{% url 'download-page' %}">
+    <div class="container">
+      <div class="row text-center">
+        <div id="download" class="col-lg-12 col-md-12">
+          <h4>Download</h4>
+          <i class="glyphicon fas fa-download primary"> </i>
+          <p class="lead text-center">Download Scipion and start doing cryo-em and modelling processing </p>
+        </div>
+      </div>
+    </div>
+   </a>
+</div>
+
 <script>
     var elements =[]
 
