@@ -3,7 +3,7 @@
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-extensions==1.9.6
-django==1.11.20
+django==1.11.23
 psycopg2==2.8.1
 static3==0.7.0
 django-tastypie==0.14.2
