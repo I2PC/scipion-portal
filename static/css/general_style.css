@@ -121,7 +121,7 @@ a.bg-primary:hover {
 
 /* External links*/
 a:not([href^='#']):not([href^='/']):after {
-    font-family: 'FontAwesome';
-	font-size: smaller;
-    content: " \f08e";
+    font-family: 'Font Awesome 5 Free';
+	font-weight: 900;
+    content: " \f2f5";
 }

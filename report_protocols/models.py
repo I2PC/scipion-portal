@@ -55,7 +55,9 @@ class IpAddressBlackList(models.Model):
     def __str__(self):
         return str(self.client_ip)
 
+
 class Workflow(models.Model):
+
     project_uuid = models.CharField(max_length=44)
     project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
@@ -65,6 +67,22 @@ class Workflow(models.Model):
     client_country = models.CharField(max_length=256, null=True)
     client_city = models.CharField(max_length=256, null=True)
     timesModified = models.IntegerField(default=0)
+    prot_count = models.IntegerField(default=0)
+
+    def _countProtocols(self, workflow):
+
+        try:
+            if workflow == "[]":
+                return 0
+            else:
+                return len(workflow.split(","))
+        except Exception as e:
+            return 0
+
+    def save(self, *args, **kwargs):
+
+        self.prot_count = self._countProtocols(self.project_workflow)
+        super(Workflow, self).save()
 
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "workflow=%s, json=%s" % (self.project_uuid[:8], self.project_workflow)
+        return "address=%s, lmd=%s, prot_count=%s" % (self.client_address, self.lastModificationDate, self.prot_count)

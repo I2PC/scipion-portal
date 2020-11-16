@@ -103,6 +103,11 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('scipionByCountry'), name="scipionByCountry"),
             url(r"^(%s)/updateWorkflowsGeoInfo%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
+            url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('full'), name="full"),
+            url(r"^(%s)/refreshWorkflows%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('refreshWorkflows'), name="refreshWorkflows"),
+
         ]
 
     def isInBlackList(self,ip):
@@ -127,6 +132,23 @@ class WorkflowResource(ModelResource):
         scipion_by_country = Workflow.objects.filter(**filter)\
             .values('client_country')\
             .annotate(total=Count('client_country'))
+
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
+
+    def full(self, request, *args, **kwargs):
+        # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/full/
+        filterDict = dict(request.GET.iterlists())
+
+        filter = dict()
+        for key, value in filterDict.iteritems():
+            filter[key] = value[0]
+        print filter
+
+        scipion_by_country = Workflow.objects.filter(**filter).values(
+            "client_country", "timesModified", "date", "lastModificationDate", "prot_count"
+        )
 
         from django.core.serializers.json import DjangoJSONEncoder
         json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
@@ -183,13 +205,30 @@ class WorkflowResource(ModelResource):
         statsDict['error'] = False
         return self.create_response(request, statsDict)
 
+    def refreshWorkflows(self, request, *args, **kwargs):
+        """ Load and save all protocols to calculate prot_count and maybe future calculated values.
+        URL: report_protocols/api/workflow/workflow/refreshWorkflows/
+          """
+        statsDict = {}
+
+        # Get the workflows with missing geo info
+        for workflow in Workflow.objects.all():
+
+            # Save it
+            workflow.save()
+
+        statsDict['error'] = False
+
+        return self.create_response(request, statsDict)
+
+
     def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
         """ Query all workflows that does not have GEO info and tries to get it
           """
         statsDict = {}
 
         # Get the workflows with missing geo info
-        for workflow in Workflow.objects.filter(client_country="N/A"):
+        for workflow in Workflow.objects.filter(client_country="VA"):
 
             # Request GeoInfo
             workflow.client_country, workflow.client_city = \

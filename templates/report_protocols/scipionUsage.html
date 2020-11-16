@@ -1,103 +1,57 @@
 {% extends "layouts/contained.html" %}
 {% load staticfiles %}
-{% block title %}Scipion usage map{% endblock %}
+{% block title %}Scipion usage{% endblock %}
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-
-        google.charts.load('current', {'packages':['geochart'], mapsApiKey:"AIzaSyC3mj6BP5J1RspM4GTcVj0RVOnhLJdLzrs"});
-        google.charts.setOnLoadCallback(drawRegionsMap);
-
-        // Declare chartData
-        var chartData;
-
-        function drawRegionsMap() {
-          getScipionUsageRAW();
-
-        }
-
-        function getScipionUsage(rawData){
-
-          //rawData =  [{"client_country": "Netherlands", "total": 2}, {"client_country": "United Kingdom", "total": 9}, {"client_country": "Germany", "total": 5}, {"client_country": "United States", "total": 1}, {"client_country": "Sweden", "total": 9}, {"client_country": "Spain", "total": 549}, {"client_country": "Czechia", "total": 8}];
-
-
-            // Adapt to google chart data
-            var chartData = [['Country', 'Workflows']];
-            for (var i = 0; i < rawData.length; i++){
-              var countryStat = rawData[i];
-              var country = countryStat.client_country;
-              var workflows = countryStat.total;
-              var chartLine = [];
-              chartLine.push(country);
-              chartLine.push(workflows);
-              chartData.push(chartLine);
-
-            }
-
-            return chartData;
-        };
-
-        function getScipionUsageRAW(){
-            // From: http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/?
-            var scipionUsageDataURL = "/report_protocols/api/workflow/workflow/scipionByCountry/";
-            var filter = "?project_workflow__gt=[]";
-
-            if (window.location.search != ""){
-                filter = window.location.search;
-            };
-
-            scipionUsageDataURL = scipionUsageDataURL + filter;
-
-            $.getJSON( scipionUsageDataURL).done(function( data ) {
-                var scipionUsage = getScipionUsage(data);
-                chartData = google.visualization.arrayToDataTable(scipionUsage);
-
-                drawChart()
-            }).fail(function( jqxhr, textStatus, error ) {
-                var err = textStatus + ", " + error;
-                console.log( "Request Failed: " + err );
-            }).always(function() {
-                console.log( "complete" );
-            });
-        };
-
-        function drawChart(){
-            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-            var options = {
-                    colorAxis: {colors:[
-                        '#FEB5DA',
-                        '#490092',
-                        '#6DB6FF',
-                        '#6DB6FF',
-                        '#920000',
-                        '#920000',
-                        '#920000',
-                        '#DB6D00',
-                        '#DB6D00',
-                        '#DB6D00',
-                        '#DB6D00']}
-                };
-
-            chart.draw(chartData, options);
-        }
-
-        $(window).resize(function(){
-            drawChart();
-        });
-    </script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/broken-axis.js"></script>
+	<script src='{% static "js/highcharts.utils.js" %}'></script>
+    <script src='{% static "js/usage.js" %}'></script>
 {% endblock js %}
 {% block content %}
+    <h1>Project based charts</h1>
+    <p>We are excluding EMPTY projects and those updated only one (skipping tests projects). From Scipion 3,
+    all projects starting with "Tests" are not reported.</p>
     <div>
-        <h2 class="mt-4">Scipion usage map</h2>
-        <p>Map showing where Scipion is being used. The number refers to the
-          number of NON EMPTY Scipion projects updated more than once,
-          in a effort to report real use of Scipion and skipping test.</p>
-        <div class="alert alert-success" role="alert">A big, big "thank you" to
-            everyone that has allowed Scipion to send usage statistics.
-            You should see your country in the map!.</div>
+    <br>
         <div class="row">
-            <div class="chart" id="regions_div"></div>
+            <div class="chart" id="projByCountry"></div>
         </div>
-   </div>
+    </div>
+    <div>
+    <br>
+        <div class="row">
+            <div class="chart" id="projByProtCount"></div>
+        </div>
+    </div>
+    <div>
+    <br>
+        <div class="row">
+            <div class="chart" id="projOvertime"></div>
+        </div>
+    </div>
+    <div>
+    <br>
+        <div class="row">
+            <div class="chart" id="projLength"></div>
+        </div>
+    </div>
+
+{#    <h1>Installation based charts</h1>#}
+{#    <p>Find bellow some charts about our users</p>#}
+    <div>
+    <br>
+        <div class="row">
+            <div class="chart" id="usersByCountry"></div>
+        </div>
+    </div>
+    <div>
+    <br>
+        <div class="row">
+            <div class="chart" id="usersOvertime"></div>
+        </div>
+    </div>
+
 {% endblock %}

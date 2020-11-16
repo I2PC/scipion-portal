@@ -89,12 +89,24 @@ function getPropertyAggregation(prop, aggregatedSet){
     return getObjectAttribute(aggregatedSet, prop, {})
 }
 
+function objToArray(object){
+    // Turns an object {"prop1": value, ...}
+    // into ........... [["prop1", value], ...]
+
+    data = []
+    for (prop in object){
+        data.push([prop, object[prop]])
+    }
+
+    return data
+}
 
 function propertyAggregationToPieChartData(propertyAggregation, name, min) {
 
     let value;
     const series = [{
         name: name,
+        dataSorting: { enabled: true},
         data: []
     }];
 
@@ -233,10 +245,9 @@ function loadPieChart(container, title, data){
     });
 }
 
-function loadBarChart(container, title, data){
+function loadBarChart(container, title, data, tweakerCallback){
 
-    // Build the bar
-    $(container).highcharts({
+    let options = {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -253,9 +264,31 @@ function loadBarChart(container, title, data){
             pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
         },
         plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    rotation: -45,
+                    color: '#000000',
+                    align: 'left',
+                    format: '{point.y}', // one decimal
+                    y: -10, // 10 pixels down from the top
+                    x: 0, // 0 pixels
+                    style: {
+                        fontSize: '10px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            }
         },
         series: data
-    });
+    };
+
+    // If there is a "tweaker" callback
+    if (tweakerCallback !== undefined) {
+        tweakerCallback(options)
+    }
+    // Build the bar
+    $(container).highcharts(options);
 }
 function loadAreaChart(container, title, data){
 

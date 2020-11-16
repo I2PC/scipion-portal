@@ -11,9 +11,9 @@
   <div class="container text-vcenter">
     <div class="row">
       <div class="col-lg-4 offset-lg-1 col-md-12 bg-primary rounded-lg pb-3">
-        <h1>Scipion</h1>
+        <h1>Scipion 3 is OUT!</h1>
         <h3>Cryo em image processing framework. Integration, traceability and analysis.</h3>
-        <a href="{% url 'download-page' %}" class="btn btn-primary btn-outline-light">Download</a>
+        <a href="https://scipion-em.github.io/docs/docs/scipion-modes/how-to-install.html" class="btn btn-primary btn-outline-light">Install it</a>
       </div>
     </div>
   </div>
@@ -174,13 +174,12 @@ abstract = "In the past few years, 3D electron microscopy (3DEM) has undergone a
       </div>
       <div class="col-md-6 col-lg-4">
         <div class="card h-100">
-          <img class="card-img-top" src="{% static 'img/mcgill.jpg' %}" alt="McGill university building">
+          <img class="card-img-top" src="{% static 'img/locations.png' %}" alt="image representing all collaboration">
           <div class="card-body">
-            <h5 class="card-title">McGill - FEMR</h5>
-            <p class="card-text">A few people here at Montreal developed Scipion core and are still collaborating with us.</p>
-            <a href="https://www.mcgill.ca/femr/" class="card-text">
-                <small class="text-muted">https://www.mcgill.ca/femr/</small>
-            </a>
+            <h5 class="card-title">Other locations</h5>
+            <p class="card-text">Many more people are contributing to this project.  They have integrated their own software into Scipion,
+                or helped with beta-testing or funded this project. This is a growing list you can find at the acknowledgements page.</p>
+            <a href="{% url 'acknowledgements' %}" class="card-text"><small class="text-muted">{% url 'acknowledgements' %}</small></a>
           </div>
         </div>
       </div>
@@ -200,11 +199,9 @@ abstract = "In the past few years, 3D electron microscopy (3DEM) has undergone a
         <div class="card h-100">
           <img class="card-img-top" src="{% static 'img/integration.jpg' %}" alt="image representing all collaboration">
           <div class="card-body">
-            <h5 class="card-title">Many more</h5>
-            <p class="card-text">Many more people have contributed to the project and are still
-                collaborating with us. They helped to integrate their own software into Scipion,
-                or helped with beta-testing.</p>
-            <a href="{% url 'acknowledgements' %}" class="card-text"><small class="text-muted">{% url 'acknowledgements' %}</small></a>
+            <h5 class="card-title">... and more to come.</h5>
+              <p class="card-text">Hopefully, <a href="{% url 'developers' %}">cryoem software developers</a> will realize this is a nice way to offer their software
+                to our user base, and probably the best way to keep biologists focused on their research and not on installing/integrating software.</p>
           </div>
         </div>
       </div>
