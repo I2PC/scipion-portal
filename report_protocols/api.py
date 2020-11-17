@@ -1,3 +1,4 @@
+from django import utils
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication
@@ -185,7 +186,11 @@ class WorkflowResource(ModelResource):
             workflow.client_country, workflow.client_city = \
             get_geographical_information(workflow.client_ip)
             workflow.timesModified += 1
-            workflow.lastModificationDate = datetime.datetime.now()
+            workflow.lastModificationDate = utils.timezone.now()
+            # Guess the version
+            if "/3." in request.META.get('HTTP_USER_AGENT', ""):
+                workflow.scipion_version = "3.0"
+
             workflow.save()
 
             #if workflow already exists substract before adding

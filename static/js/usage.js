@@ -240,13 +240,15 @@ function drawProjByCountry(aggData) {
 }
 
 function projByCountryTweaker(options){
-    options.tooltip.pointFormat = '<b>{point.y}</b> projects.'
+    options.tooltip.pointFormat = '<b>{point.y}</b> projects.';
+    options.chart.zoomType='xy';
     options.yAxis ={title:{text:"Number of projects"}}
     options.plotOptions.series.events = {
         click: function (event) {
             window.location.href = window.location.href + "?client_country=" + event.point.name
         }
     }
+    options.subtitle = {text: "Zoomable!"}
 
 }
 

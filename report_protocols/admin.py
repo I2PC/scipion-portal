@@ -11,8 +11,9 @@ class WorkflowAdmin(admin.ModelAdmin):
                     'client_country',
                     'client_city',
                     'timesModified',
-                    'prot_count')
-    search_fields = ('project_workflow', 'date', 'client_country', 'client_city', 'timesModified')
+                    'prot_count',
+                    'scipion_version')
+    search_fields = ('project_workflow', 'date', 'client_country', 'client_city', 'timesModified', 'prot_count', 'scipion_version')
     ordering = ("-lastModificationDate",)
 
 

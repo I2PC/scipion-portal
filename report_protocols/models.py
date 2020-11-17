@@ -68,6 +68,7 @@ class Workflow(models.Model):
     client_city = models.CharField(max_length=256, null=True)
     timesModified = models.IntegerField(default=0)
     prot_count = models.IntegerField(default=0)
+    scipion_version = models.CharField(max_length=20, default="2.0")
 
     def _countProtocols(self, workflow):
 
