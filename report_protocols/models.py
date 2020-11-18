@@ -29,11 +29,14 @@ class ProtocolType(models.Model):
     def __str__(self):  # For Python 2, use __unicode__ too
         return self.name
 
+    @property
+    def sorted_protocol_set(self):
+        return self.protocol_set.order_by('friendlyName')
 
 class Protocol(models.Model):
 
     class Meta:
-        ordering = ['name']
+        ordering = ['friendlyName', 'name']
 
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=2048,

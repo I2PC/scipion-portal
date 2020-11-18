@@ -31,7 +31,7 @@
             <div class="card-text">
                 <h4 class="primary">Available methods:</h4>
                 <dl class="row">
-                {%  for prot in type.protocol_set.all %}
+                {%  for prot in type.sorted_protocol_set.all %}
                     {% if prot.description %}
                     <dt class="col-sm-4">
                         <h5 id="{{ prot.name }}">
