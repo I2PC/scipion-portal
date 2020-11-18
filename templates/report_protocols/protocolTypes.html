@@ -13,12 +13,14 @@
     {%  endfor %}
 
     {% for type in types %}
-    <div id="{{ type.name }}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
-        <h3 class="pt-5 card-header">
+    <span id="{{type.name}}"><br/></span>
+    <div class="card mt-2 mb-2" vocab="https://schema.org/" typeof="SoftwareApplication">
+        <h3 class="pt-5 card-header text-white bg-dark">
             {% if type.icon %}
                 <img class="prot-type-icon img-thumbnail" src="{{ type.icon.url }} " alt="icon for {{ type.name }}">
             {% endif %}
-            <span itemprop="name">{{ type.name }}</span>
+            <span property="name">{{ type.name }}</span>
+            <a href="#{{ type.name }}"><i class="glyphicon fas fa-link"></i></a>
         </h3>
         <div class="card-body">
             {% if not type.description %}
@@ -31,7 +33,7 @@
                 <dl class="row">
                 {%  for prot in type.protocol_set.all %}
                     {% if prot.description %}
-                    <dt class="col-sm-3">
+                    <dt class="col-sm-4">
                         <h5 id="{{ prot.name }}">
                             {{ prot.friendlyName | default:prot.name }}
                             {% if prot.package %}
@@ -41,7 +43,7 @@
                             {% endif %}
                         </h5>
                     </dt>
-                    <dd class="col-sm-9">{{ prot.description }}</dd>
+                    <dd class="col-sm-8">{{ prot.description }}</dd>
                     {% endif %}
                 {% endfor %}
                 </dl>
