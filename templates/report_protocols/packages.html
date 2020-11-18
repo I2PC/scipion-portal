@@ -15,33 +15,34 @@
 
     {% for package in packages %}
     {%  ifnotequal package.protocol_set.count 0 %}
-    <div id="{{package.name}}" class="card mt-2 mb-2" itemscope itemtype="http://schema.org/SoftwareApplication">
+    <div id="{{package.name}}" class="card mt-2 mb-2" vocab="https://schema.org/" typeof="SoftwareApplication">
         <h3 class="pt-5 card-header">
             {% if package.logo %}
                 <img class="package-icon img-thumbnail" src="{{ package.logo.url }} " alt="icon for {{ package.name }}">
             {% endif %}
-            <span itemprop="name">{{ package.name }}</span>
+            <span property="name">{{ package.name }}</span>
         </h3>
         <div class="card-body">
             <div class="card-title">
             {% if not package.description == "" %}
-                <p class="primary" itemprop="description">{{ package.description }}</p>
+                <p class="primary" property="description">{{ package.description }}</p>
             {% endif %}
             {% if not package.url == "" %}
-                <p>Plugin url <a href="{{package.url}}" itemprop="downloadUrl">{{package.url}}.</a></p>
+                <p>Plugin url <a href="{{package.url}}" property="downloadUrl">{{package.url}}.</a></p>
             {% endif %}
-                <span class="text-hide">Available in <span itemprop="operatingSystem">Linux</span>. <span itemprop="applicationCategory">Scientific software, Image processing, cryo em</span></span>
+                <span class="text-hide">Available in <span property="operatingSystem">Linux</span>.
+                <span property="applicationCategory">Scientific software, Image processing, cryo em</span></span>
             </div>
             <div class="card-text">
                 <h4 class="primary">Available methods:</h4>
                 <dl class="pt-4 row">
                 {%  for prot in package.protocol_set.all|dictsort:"friendlyName" %}
-                    <dt class="col-sm-4" itemprop="featureList">
+                    <dt class="col-sm-4" property="featureList">
                         <h5 id="{{ prot.name }}">
                             {{ prot.friendlyName | default:prot.name }}
                         {% if not prot.protocolType == None %}
                             <a href="{%  url 'protocolTypes' %}#{{ prot.protocolType.name}}">
-                                <small class="text-muted" itemprop="applicationCategory"> ({{ prot.protocolType.name}})</small>
+                                <small class="text-muted" property="applicationCategory"> ({{ prot.protocolType.name}})</small>
                             </a>
                         {% endif %}
                         </h5>
@@ -56,9 +57,9 @@
                         <img class="img-responsive center-block collaborator-img"
                              src="{{ contibution.contributor.image | default:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/201705_Scientist_bench_F.svg/200px-201705_Scientist_bench_F.svg.png"}}">
                         {% if contibution.contributor.url %}
-                        <h6 itemprop="contributor"><a href="{{contibution.contributor.url}}">{{contibution.contributor.title}}</a></h6>
+                        <h6 property="contributor"><a href="{{contibution.contributor.url}}">{{contibution.contributor.title}}</a></h6>
                         {% else %}
-                        <h6 itemprop="contributor">{{contibution.contributor.title}}</h6>
+                        <h6 property="contributor">{{contibution.contributor.title}}</h6>
                         {% endif %}
                     </div>
                 {% empty %}
