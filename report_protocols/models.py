@@ -31,6 +31,10 @@ class ProtocolType(models.Model):
 
 
 class Protocol(models.Model):
+
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=2048,
                                    blank=True,
