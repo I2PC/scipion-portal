@@ -7,10 +7,14 @@
     <p class="alert-warning">This is a dynamic list of methods grouped by categories that are present
     in Scipion. Some of them might come from a development environment
     and soon will be released.</p>
-
+    <br/>
+    <h3> Short cuts</h3>
     {% for type in types %}
-    <a class="lead badge badge-primary" href="#{{ type.name }}">{{ type.name }}</a>
+    <a class="lead badge badge-light" href="#{{ type.name }}">{{ type.name }}</a>
     {%  endfor %}
+
+    <br/><br/>
+    <h3>Categories</h3>
 
     {% for type in types %}
     <span id="{{type.name}}"><br/></span>
