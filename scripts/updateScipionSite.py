@@ -112,13 +112,13 @@ def getGithubCollaborations(githuburl):
 def sendJsonToScipionSite(url, data):
 
     # Prepare the request
-    import urllib2
+    from urllib.request import Request, urlopen
     siteUrl = os.environ.get("SCIPION_SITE_URL", "http://127.0.0.1:8000")
 
     reqUrl = "/".join([siteUrl, url])
 
     print ("Sending data to " + reqUrl)
-    req = urllib2.Request(reqUrl)
+    req = Request(reqUrl)
     req.add_header('Content-Type', 'application/json')
 
     # Authentication
@@ -133,8 +133,8 @@ def sendJsonToScipionSite(url, data):
 
     # Data to json
     dataJson = json.dumps(data)
-    response = urllib2.urlopen(req, dataJson)
-    print ("Data sent to: " + reqUrl)
+    response = urlopen(req, dataJson)
+    print("Data sent to: " + reqUrl)
 
 def updateCollaborators():
 

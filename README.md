@@ -97,3 +97,14 @@ You can find them here https://github.com/I2PC/scipion/wiki/Collecting-Usage-Sta
 $ curl http://scipion.i2pc.es/report_protocols/api/workflow/protocol/?name=ProtMonitorSystem
 $ curl http://scipion.i2pc.es/report_protocols/api/workflow/workflow/?project_uuid=b9a2d873-53d2-42fb-aa69-a5002f2f08e9
 ```
+
+## Migration to python 3 env
+
+Create the new environment:
+> python3 -m venv scipion-portal-py3
+
+Activate the environment:
+> source activate scipion-portal-py3/bin/activate
+
+Install requirements:
+> pip install 

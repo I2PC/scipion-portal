@@ -164,22 +164,22 @@
     });
 
     {% for package in packages %}
-        {%  ifnotequal package.protocol_set.count 0 %}
+        {%  if package.protocol_set.count != 0 %}
             elements.push({ data: {
                                 id: '{{ package.name }}',
                                 href: '{% url "packages" %}/#{{ package.name }}',
                                 label: "{{ package.name }}"
                             }
                           })
-            {%  ifnotequal package.name "Scipion" %}
+            {%  if package.name != "Scipion" %}
                 elements.push({
                     data: {
                         id: '{{ package.id }}',
                         source: '{{ package.name }}',
                         target: 'Scipion'}
                 })
-            {%  endifnotequal %}
-        {% endifnotequal %}
+            {%  endif %}
+        {% endif %}
     {%  endfor %}
 
     drawScipionIntegrationGraph("cy", elements);

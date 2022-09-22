@@ -1,8 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-
 from report_protocols.models import Package
 from webservices import settings
 
@@ -30,7 +28,6 @@ class Bundle(models.Model):
     deprecated = models.BooleanField(default=False)
 
 
-@python_2_unicode_compatible
 class Acknowledgement(models.Model):
 
     class Meta:

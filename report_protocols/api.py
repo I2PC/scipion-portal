@@ -1,19 +1,17 @@
 from django import utils
-from django.db.models import Count
 from django.http import HttpResponse, HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
-from django.conf.urls import url
+from django.urls import re_path as url
 from tastypie.utils import trailing_slash
 import json
 from collections import Counter
-import datetime
 import socket
 
 from ip_address import get_client_ip, get_geographical_information
-from models import Workflow, Protocol, IpAddressBlackList, Package
+from report_protocols.models import Workflow, Protocol, IpAddressBlackList, Package, Installation
 from web.models import Acknowledgement, Contribution
 
 
@@ -70,7 +68,6 @@ class ProtocolResource(ModelResource):
             dbProtocol.description = chooseValue(protocol["description"], dbProtocol.description)
             dbProtocol.friendlyName = chooseValue(protocol["friendlyName"], dbProtocol.friendlyName)
 
-
             # Try to get the package
             dbPackage = Package.objects.filter(name__iexact=packageName).first()
             if not dbPackage:
@@ -100,8 +97,6 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('addOrUpdateWorkflow'), name="api_add_useraddOrUpdateWorkflow"),
             url(r"^(%s)/reportProtocolUsage%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
-            url(r"^(%s)/scipionByCountry%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('scipionByCountry'), name="scipionByCountry"),
             url(r"^(%s)/updateWorkflowsGeoInfo%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
             url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
@@ -120,40 +115,23 @@ class WorkflowResource(ModelResource):
             return True
         return False
 
-    def scipionByCountry(self, request, *args, **kwargs):
-        # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
-        # curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/
-        filterDict = dict(request.GET.iterlists())
-
-        filter = dict()
-        for key, value in filterDict.iteritems():
-            filter[key] = value[0]
-        print filter
-
-        scipion_by_country = Workflow.objects.filter(**filter)\
-            .values('client_country')\
-            .annotate(total=Count('client_country'))
-
-        from django.core.serializers.json import DjangoJSONEncoder
-        json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
-        return HttpResponse(json_data, content_type='application/json')
-
     def full(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/full/
-        filterDict = dict(request.GET.iterlists())
+        filterDict = dict(request.GET.lists())
 
         filter = dict()
-        for key, value in filterDict.iteritems():
+        for key, value in filterDict.items():
             filter[key] = value[0]
-        print filter
+        print(filter)
 
         scipion_by_country = Workflow.objects.filter(**filter).values(
-            "client_country", "timesModified", "date", "lastModificationDate", "prot_count"
+            "installation__client_country", "timesModified", "date", "lastModificationDate", "prot_count"
         )
 
         from django.core.serializers.json import DjangoJSONEncoder
         json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
         return HttpResponse(json_data, content_type='application/json')
+
 
 
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
@@ -228,23 +206,30 @@ class WorkflowResource(ModelResource):
 
 
     def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
-        """ Query all workflows that does not have GEO info and tries to get it
+        """ Query all workflows that do not have GEO info and tries to get it
           """
         statsDict = {}
 
+        limit = request.POST.get("limit", 100)
+        count = 0
         # Get the workflows with missing geo info
-        for workflow in Workflow.objects.filter(client_country="VA"):
+        for installation in Installation.objects.filter(client_country="VA"):
 
             # Request GeoInfo
-            workflow.client_country, workflow.client_city = \
-                get_geographical_information(workflow.client_ip)
+            installation.client_country, installation.client_city = \
+                get_geographical_information(installation.client_ip)
 
             # Save it
-            workflow.save()
+            installation.save()
+
+            count += 1
+
+            if count >=limit:
+                break
 
             # Annotate stats
 
-
+        statsDict["msg"] = "%s workflows scanned." % count
         statsDict['error'] = False
 
         return self.create_response(request, statsDict)

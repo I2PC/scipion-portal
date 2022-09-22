@@ -141,14 +141,14 @@
                         },
                         style: style
                       })
-        {%  ifnotequal package.name "Scipion" %}
+        {%  if package.name != "Scipion" %}
             elements.push({
                 data: {
                     id: '{{ package.id }}',
                     source: '{{ package.name }}',
                     target: 'Scipion'}
             })
-        {%  endifnotequal %}
+        {%  endif %}
     {%  endfor %}
 
 </script>

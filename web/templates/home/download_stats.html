@@ -16,7 +16,7 @@
 <div>
 	<h2 class="mt-4">Scipion downloads statistics (Legacy)</h2>
     <p> With Scipion 3, installation does not require a download from this site, therefore this statistics page is a legacy from previous versions.
-    To get an idea of Scipion3 stats go to <a href="{% url 'scipionUsage' %}">usage</a> page</p>
+    To get an idea of Scipion3 stats go to <a href="{% url 'projectStats' %}">usage</a> page</p>
 	<div id="byversionBars"></div><br/>
 	<div id="piebyplatform"></div><br/>
 	<div id="piebycountry"></div><br/>
@@ -53,7 +53,7 @@
             downloadsAggregation['version'],
             'downloads');
 
-        loadBarChart('#byversionBars', 'Downloads by version', data);
+        loadBarChart('byversionBars', 'Downloads by version', data);
 
 }
     function loadPlatformChart(){

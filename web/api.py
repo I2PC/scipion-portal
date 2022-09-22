@@ -2,7 +2,7 @@ from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from tastypie.constants import ALL
-from models import Contribution
+from web.models import Contribution
 
 
 class ContributionResource(ModelResource):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Download, Acknowledgement, Bundle
+from web.models import Download, Acknowledgement, Bundle
 
 
 class DownloadAdmin(admin.ModelAdmin):

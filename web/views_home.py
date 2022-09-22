@@ -29,12 +29,9 @@ import os
 import json
 import calendar
 import socket
-from datetime import datetime, timedelta, tzinfo
-from django.shortcuts import render_to_response, redirect
+from datetime import datetime
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound
-from django.conf import settings
-from django.template.context_processors import csrf
-# Depending on DJANGO version (first is for DJANGO 1.9) second for 1.5.5
 from ip_address import get_geographical_information, get_client_ip
 
 try:
@@ -51,7 +48,7 @@ from report_protocols.models import Package
 # noinspection PyUnusedLocal
 def home(request):
     # Get the packages
-    return render_to_response('home/index.html')
+    return render(request,'home/index.html')
 
 
 # noinspection PyUnusedLocal
@@ -61,19 +58,19 @@ def biologists(request):
     # Get the packages
     packages = Package.objects.all()
     context['packages'] = packages
-    return render_to_response('home/biologists.html', context)
+    return render(request,'home/biologists.html', context)
 
 
 # noinspection PyUnusedLocal
 def facilities(request):
 
-    return render_to_response('home/facilities.html')
+    return render(request,'home/facilities.html')
 
 
 # noinspection PyUnusedLocal
 def developers(request):
 
-    return render_to_response('home/developers.html')
+    return render( request,'home/developers.html')
 
 def contact(request):
 
@@ -82,7 +79,7 @@ def contact(request):
     context = {
         "packages": packages,
     }
-    return render_to_response('home/contactus.html', context)
+    return render( request,'home/contactus.html', context)
 
 
 def download_form(request):
@@ -91,7 +88,7 @@ def download_form(request):
     context = {
         "downloadables": bundles,
     }
-    return render_to_response('home/download_form.html', context)
+    return render( request,'home/download_form.html', context)
 
 
 def utc_to_local(utc_dt):
@@ -170,7 +167,7 @@ def showDownloadStats(request):
     context = {
         "downloadsJSON": getDownloadsStatsToJSON(),
     }
-    return render_to_response('home/download_stats.html', context)
+    return render( request,'home/download_stats.html', context)
 
 
 def getPluginsDict():
@@ -191,4 +188,4 @@ def getPluginsJSON(request):
 def acknowledgements(request):
     acks = Acknowledgement.objects.all()
     context_dict = {'acknowledgements': acks}
-    return render_to_response('home/acknowledgements.html', context_dict)
+    return render( request,'home/acknowledgements.html', context_dict)

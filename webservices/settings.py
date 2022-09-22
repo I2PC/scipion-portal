@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Local settings
 try:
-    from local_settings import *
+    from webservices.local_settings import *
 except ImportError:
     print ("WARNING: local settings not found, using default values.")
     DEBUG = False

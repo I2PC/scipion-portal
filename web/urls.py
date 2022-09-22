@@ -1,8 +1,7 @@
-from django.conf.urls import url, include
-from django.views.generic import RedirectView
+from django.urls import re_path as url, include
 from web import views_home
 from tastypie.api import Api
-from api import ContributionResource
+from web.api import ContributionResource
 
 api = Api(api_name="v2")
 api.register(ContributionResource())

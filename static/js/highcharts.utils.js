@@ -288,7 +288,7 @@ function loadBarChart(container, title, data, tweakerCallback){
         tweakerCallback(options)
     }
     // Build the bar
-    $(container).highcharts(options);
+    return Highcharts.chart(container, options);
 }
 function loadAreaChart(container, title, data){
 

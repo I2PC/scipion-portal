@@ -25,7 +25,7 @@ function drawCharts(data){
     let aggregatedData = {}
     aggregateAll(data, aggregatedData)
 
-    drawProjByCountry(aggregatedData.client_country)
+    drawInstallationsByCountry(aggregatedData.installation__client_country)
     drawProjByProtCount(aggregatedData.prot_count)
     drawProjOverTime(data)
     drawProjLength(data)
@@ -231,18 +231,18 @@ function drawProjOverTime(data){
 
 }
 
-function drawProjByCountry(aggData) {
+function drawInstallationsByCountry(aggData) {
     const data = propertyAggregationToPieChartData(
-        aggData, 'Projects count');
+        aggData, 'Installations count');
 
-    loadBarChart('#projByCountry', 'Number of projects per country', data, projByCountryTweaker);
+    loadBarChart('installationsByCountry', 'Number of installations by country', data, installationsByCountryTweaker);
 
 }
 
-function projByCountryTweaker(options){
+function installationsByCountryTweaker(options){
     options.tooltip.pointFormat = '<b>{point.y}</b> projects.';
     options.chart.zoomType='xy';
-    options.yAxis ={title:{text:"Number of projects"}}
+    options.yAxis ={title:{text:"Number of installations"}}
     options.plotOptions.series.events = {
         click: function (event) {
             window.location.href = window.location.href + "?client_country=" + event.point.name
@@ -253,10 +253,13 @@ function projByCountryTweaker(options){
 }
 
 function drawProjByProtCount(aggData) {
-    const data = propertyAggregationToPieChartData(
-        aggData, 'Projects grouped by protocols count');
+    const data = propertyAggregationToPieChartData(aggData, 'Projects grouped by protocols count');
 
-        loadBarChart('#projByProtCount', 'Projects grouped by its number of protocols.', data, projByProtCountTweaker);
+    chart= loadBarChart('projByProtCount', 'Projects grouped by its number of protocols.', data, projByProtCountTweaker);
+
+    // Setting extremes  to start zoomed
+    chart.xAxis[0].setExtremes(0, 40);
+    chart.showResetZoom();
 
 }
 
@@ -267,7 +270,7 @@ function projByProtCountTweaker(options){
     options.xAxis.title = {text:"Number of protocols in the project"};
     options.chart.zoomType='xy';
     options.xAxis.zoomable = true;
-    options.subtitle = {text: "Zoomable!"}
+    options.subtitle = {text: "initially zoomed!"}
 }
 
 $(window).ready(function(){

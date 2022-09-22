@@ -1,0 +1,22 @@
+{% extends "layouts/contained.html" %}
+{% load static %}
+{% block title %}Scipion installation statistics{% endblock %}
+{% block js %}
+    {{ block.super }}
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/broken-axis.js"></script>
+	<script src='{% static "js/highcharts.utils.js" %}'></script>
+    <script src='{% static "js/installationStats.js" %}'></script>
+{% endblock js %}
+{% block content %}
+    <h1>Installation based charts</h1>
+    <p>Here you can find charts about Scipion installations. We are only able to show data form installations
+    that are allowed to report. We actually do not know the percentage of the installations reporting.</p>
+    <br>
+    <div class="row">
+        <div class="chart" id="installationsByCountry"></div>
+    </div>
+
+{% endblock %}
