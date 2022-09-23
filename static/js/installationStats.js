@@ -1,7 +1,7 @@
 function getDataAndDrawCharts(){
     // From: http://scipion.i2pc.es/report_protocols/api/workflow/workflow/full/?
-    var scipionUsageDataURL = "/report_protocols/api/workflow/workflow/full/";
-    var filter = "?project_workflow__gt=[]";
+    var scipionUsageDataURL = "api/v2/installations/";
+    var filter = "?limit=0"; //"?project_workflow__gt=[]";
 
     if (window.location.search != ""){
         filter = window.location.search;
@@ -9,9 +9,9 @@ function getDataAndDrawCharts(){
 
     scipionUsageDataURL = scipionUsageDataURL + filter;
 
-    $.getJSON( scipionUsageDataURL).done(function( data ) {
+    $.getJSON( scipionUsageDataURL).done(function( response ) {
 
-        drawCharts(data)
+        drawCharts(response.objects)
 
     }).fail(function( jqxhr, textStatus, error ) {
         var err = textStatus + ", " + error;
@@ -25,93 +25,11 @@ function drawCharts(data){
     let aggregatedData = {}
     aggregateAll(data, aggregatedData)
 
-    drawInstallationsByCountry(aggregatedData.installation__client_country)
-    drawProjByProtCount(aggregatedData.prot_count)
-    drawProjOverTime(data)
-    drawProjLength(data)
+    drawInstallationsByCountry(aggregatedData.client_country, data.length)
+    drawInstallationsByCity(aggregatedData.client_city, data.length)
+
 }
 
-function drawProjLength(data){
-    let yInterval= 500
-
-    let chartOptions = {
-          chart: {
-            type: 'column',
-            zoomType:'xy'
-          },
-          title: {
-            text: 'Project by duration'
-          },
-          subtitle: {
-            text: 'in days, zoomed by default'
-          },
-          xAxis:{
-              zoomable : true,
-              title: {
-                  text: 'Days'
-              }
-          },
-          yAxis: {
-            min: 0,
-            title: {
-              text: 'Number of projects'
-            },
-            tickInterval: yInterval
-          },
-          tooltip: {
-              pointFormat: "{point.y} projects {point.x} old",
-          },
-          plotOptions: {
-            column: {
-              pointPadding: 0,
-              borderWidth: 0,
-              groupPadding: 0,
-              shadow: false
-            }
-          }
-    };
-
-    fillProjLengthData(chartOptions, data)
-
-    // Break Y axis
-    let from =  chartOptions.series[0].data[2];
-    let to = chartOptions.series[0].data[1];
-    from = Math.ceil(from/yInterval)* yInterval + 200
-    to = Math.floor(to/yInterval)* yInterval
-    chartOptions.yAxis.breaks=[{
-          from: from,
-          to: to,
-          breakSize: 1
-        }]
-
-    chart = Highcharts.chart('projLength', chartOptions)
-
-    // Setting extremes  to start zoomed
-    chart.xAxis[0].setExtremes(1, 50);
-    chart.showResetZoom();
-}
-function  fillProjLengthData(chartOptions, data){
-
-    computed = {}
-
-    // calculate the length of each project and accumulate it in the right bin
-    data.forEach(function (workflow){
-        let start = new Date(workflow.date);
-        let end = new Date(workflow.lastModificationDate);
-        let length = dateDiffInDays(start, end);
-        if (computed[length] == undefined) {
-            computed[length] = 1;
-        } else {
-            computed[length] = computed[length] + 1
-        }
-    })
-
-    chartOptions.series = [{
-            name: 'Project age (days)',
-            data: Object.values(computed)
-          }];
-    chartOptions.xAxis.categories= Object.keys(computed)
-}
 
 const _MS_PER_DAY = 1000 * 60 * 60 * 24;
 const _MS_PER_WEEK = _MS_PER_DAY *7;
@@ -195,82 +113,35 @@ function data2ProjectOverTime(chartOptions,data){
 
 };
 
-function drawProjOverTime(data){
-    // Prepares the data and draws the evolution of projects over time
 
-    chartOptions = {
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Active projects over time'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-        },
-        yAxis: {
-            title: {
-                text: 'Number of projects'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-    };
-
-    data2ProjectOverTime(chartOptions, data)
-
-    Highcharts.chart('projOvertime', chartOptions);
-
-}
-
-function drawInstallationsByCountry(aggData) {
+function drawInstallationsByCountry(aggData, total) {
     const data = propertyAggregationToPieChartData(
         aggData, 'Installations count');
 
-    loadBarChart('installationsByCountry', 'Number of installations by country', data, installationsByCountryTweaker);
+    loadBarChart('installationsByCountry', 'Number of installations per country (' + total + ')', data, installationsByCountryTweaker);
 
 }
 
+function drawInstallationsByCity(aggData, total) {
+    const data = propertyAggregationToPieChartData(
+        aggData, 'Installations count');
+
+    loadBarChart('installationsByCity', 'Number of installations per city (' + total + ')', data, installationsByCountryTweaker);
+
+}
+
+
 function installationsByCountryTweaker(options){
-    options.tooltip.pointFormat = '<b>{point.y}</b> projects.';
+    options.tooltip.pointFormat = '<b>{point.y}</b> installations.';
     options.chart.zoomType='xy';
     options.yAxis ={title:{text:"Number of installations"}}
     options.plotOptions.series.events = {
         click: function (event) {
-            window.location.href = window.location.href + "?client_country=" + event.point.name
+            window.location.href = window.location.href + "?limit=0&client_country=" + event.point.name
         }
     }
     options.subtitle = {text: "Zoomable!"}
 
-}
-
-function drawProjByProtCount(aggData) {
-    const data = propertyAggregationToPieChartData(aggData, 'Projects grouped by protocols count');
-
-    chart= loadBarChart('projByProtCount', 'Projects grouped by its number of protocols.', data, projByProtCountTweaker);
-
-    // Setting extremes  to start zoomed
-    chart.xAxis[0].setExtremes(0, 40);
-    chart.showResetZoom();
-
-}
-
-function projByProtCountTweaker(options){
-    options.tooltip.headerFormat = '<b>{point.y}</b> projects with {point.key} protocols.';
-    options.tooltip.pointFormat = '';
-    options.yAxis ={title:{text:"Number of projects"}};
-    options.xAxis.title = {text:"Number of protocols in the project"};
-    options.chart.zoomType='xy';
-    options.xAxis.zoomable = true;
-    options.subtitle = {text: "initially zoomed!"}
 }
 
 $(window).ready(function(){

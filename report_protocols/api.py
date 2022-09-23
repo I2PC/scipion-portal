@@ -357,3 +357,49 @@ class PackageResource(ModelResource):
             contribution.save()
 
         return self.create_response(request, collaborators)
+    
+    
+class InstallationResource(ModelResource):
+    """allow search in installation table"""
+    class Meta:
+        max_limit = 0
+        queryset = Installation.objects.all()
+        resource_name = 'installations'
+        filtering = {
+            'creation_date': ALL,
+            'lastSeen': ALL,
+            'client_ip': ALL,
+            'client_address': ALL,
+            'client_country': ALL,
+            'client_city': ALL,
+            'scipion_version':ALL
+        }
+        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
+
+    # Add resource urls
+    def prepend_urls(self):
+        return [
+            url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('full'), name="full"),
+        ]
+
+
+    def full(self, request, *args, **kwargs):
+        # curl -i  http://localhost:8000/report_protocols/api/v2/installations/full/
+        filterDict = dict(request.GET.lists())
+
+        filter = dict()
+        for key, value in filterDict.items():
+            filter[key] = value[0]
+        print(filter)
+
+        installations = Installation.objects.filter(**filter).values(
+                        'creation_date', 'lastSeen', 'client_country', 'client_city', 'scipion_version'
+        )
+
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(list(installations), cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
+
+
+
