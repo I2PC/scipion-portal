@@ -24,6 +24,7 @@ try:
     from webservices.local_settings import *
 except ImportError:
     print ("WARNING: local settings not found, using default values.")
+    IPXAPI_TOKEN = "sdjchsduwe/(&(Gig7g9fe0ga8g"
     DEBUG = False
     DATABASE_URL = "sqlite:///tmp/scipion-site.sqlite"
     # SECURITY WARNING: keep the secret key used in production secret!
@@ -48,6 +49,8 @@ except ImportError:
             },
         },
     }
+
+
 ALLOWED_HOSTS = [u'scipion.i2pc.es', u'127.0.0.1', u'localhost',
                  u'scipion.localhost']
 
@@ -121,6 +124,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/

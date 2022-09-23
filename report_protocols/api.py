@@ -103,6 +103,8 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('full'), name="full"),
             url(r"^(%s)/refreshWorkflows%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('refreshWorkflows'), name="refreshWorkflows"),
+            url(r"^(%s)/testIpAPI%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('testIpAPI'), name="testIpAPI"),
 
         ]
 
@@ -205,6 +207,18 @@ class WorkflowResource(ModelResource):
         return self.create_response(request, statsDict)
 
 
+    def testIpAPI(self, request, *args, **kwargs):
+        """ test if ip to location service is working
+        URL: report_protocols/api/v2/workflow/testIpAPI/?ip=1.2.3.42.155.212.55
+        """
+
+        ip = request.GET.get("ip", None)
+
+        country, city = get_geographical_information (ip)
+
+        return self.create_response(request, {"msg": "ip: %s, country: %s, city: %s" % ( ip, country, city),
+                                       "error": "None"})
+
     def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
         """ Query all workflows that do not have GEO info and tries to get it
           """
@@ -234,15 +248,6 @@ class WorkflowResource(ModelResource):
 
         return self.create_response(request, statsDict)
 
-
-    def deleteObject(self, request):
-        project_uuid = request.POST['project_uuid']
-        workflows = Workflow.objects.all()
-        if workflows.exists():
-            workflows[0].delete()
-        statsDict = {}
-        statsDict['error'] = False
-        return self.create_response(request, statsDict)
 
     def reportProtocolUsage(self, request, * args, **kwargs):
         """ask for a protocol histogram"""

@@ -1,9 +1,12 @@
 
 import os
+
+from webservices.local_settings import IPXAPI_TOKEN
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webservices.settings')
 import django
 django.setup()
-from urllib.request import urlopen, Request
+from urllib.request import urlopen
 from contextlib import closing
 import json
 
@@ -26,7 +29,6 @@ def get_geographical_information_ipXapi(ip):
 
     location_country = "VA"
     location_city = "N/A"
-    token = '3845|krxctjXrltCY1UblNUROH4GmGg0afPclW5wabmyM'
 
     # Automatically geolocate the connecting IP
     url = 'https://ipxapi.com/api/ip?ip=%s' % ip
@@ -37,7 +39,7 @@ def get_geographical_information_ipXapi(ip):
     headers = {
         'Accept': "application/json",
         'Content-Type': "application/json",
-        'Authorization': "Bearer %s" % token,
+        'Authorization': "Bearer %s" % IPXAPI_TOKEN,
         'cache-control': "no-cache"
     }
 
