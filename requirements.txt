@@ -1,6 +1,6 @@
 dj-database-url #==0.3.0
 django-extensions #==1.9.6
-django=4.0 # tastypie does not support 4.1 yet. #==1.11.20
+django==4.0 # tastypie does not support 4.1 yet. #==1.11.20
 psycopg2-binary
 static3 #==0.7.0
 django-tastypie #==0.14.2
