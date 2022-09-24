@@ -1,5 +1,5 @@
 {% extends "layouts/contained.html" %}
-{% load staticfiles %}
+{% load static %}
 {% block title %}Scipion package list{% endblock %}
 {% block content %}
 
@@ -10,14 +10,14 @@
     <br/>
     <h3>Short-cuts</h3>
     {% for package in packages %}
-    {%  ifnotequal package.protocol_set.count 0 %}
-        <a class="lead badge badge-light" href="#{{ package.name }}">{{ package.name }}</a>
-    {% endifnotequal %}
+        {%  if package.protocol_set.count != 0 %}
+            <a class="lead badge badge-light" href="#{{ package.name }}">{{ package.name }}</a>
+        {% endif %}
     {%  endfor %}
     <br/><br/>
     <h3>Packages</h3>
     {% for package in packages %}
-    {%  ifnotequal package.protocol_set.count 0 %}
+        {%  if package.protocol_set.count != 0 %}
     <span id="{{package.name}}"><br/></span>
     <div class="card mt-2 mb-2" vocab="https://schema.org/" typeof="SoftwareApplication">
         <h3 class="pt-5 card-header text-white bg-dark">
@@ -76,6 +76,6 @@
             </div>
         </div>
     </div>
-    {% endifnotequal %}
+        {% endif %}
     {% endfor %}
 {% endblock %}

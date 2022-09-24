@@ -1,0 +1,34 @@
+{% extends "layouts/contained.html" %}
+{% load staticfiles %}
+{% block title %}Scipion usage{% endblock %}
+{% block js %}
+    {{ block.super }}
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/broken-axis.js"></script>
+	<script src='{% static "js/highcharts.utils.js" %}'></script>
+    <script src='{% static "js/projectStats.js" %}'></script>
+{% endblock js %}
+{% block content %}
+    <h1>Project based charts</h1>
+    <p>We are excluding EMPTY projects and those updated only one (skipping tests projects). From Scipion 3,
+    all projects starting with "Tests" are not reported.</p>
+    <br>
+    <div class="row">
+        <div class="chart" id="projByCountry"></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="chart" id="projByProtCount"></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="chart" id="projOvertime"></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="chart" id="projLength"></div>
+    </div>
+
+{% endblock %}

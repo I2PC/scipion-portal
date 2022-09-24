@@ -1,5 +1,4 @@
 from django import utils
-from django.db.models import Count
 from django.http import HttpResponse, HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication
 from tastypie.authorization import Authorization
@@ -9,11 +8,10 @@ from django.conf.urls import url
 from tastypie.utils import trailing_slash
 import json
 from collections import Counter
-import datetime
 import socket
 
 from ip_address import get_client_ip, get_geographical_information
-from models import Workflow, Protocol, IpAddressBlackList, Package
+from report_protocols.models import Workflow, Protocol, IpAddressBlackList, Package, Installation
 from web.models import Acknowledgement, Contribution
 
 
@@ -70,7 +68,6 @@ class ProtocolResource(ModelResource):
             dbProtocol.description = chooseValue(protocol["description"], dbProtocol.description)
             dbProtocol.friendlyName = chooseValue(protocol["friendlyName"], dbProtocol.friendlyName)
 
-
             # Try to get the package
             dbPackage = Package.objects.filter(name__iexact=packageName).first()
             if not dbPackage:
@@ -100,14 +97,14 @@ class WorkflowResource(ModelResource):
                 self.wrap_view('addOrUpdateWorkflow'), name="api_add_useraddOrUpdateWorkflow"),
             url(r"^(%s)/reportProtocolUsage%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
-            url(r"^(%s)/scipionByCountry%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('scipionByCountry'), name="scipionByCountry"),
             url(r"^(%s)/updateWorkflowsGeoInfo%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
             url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('full'), name="full"),
             url(r"^(%s)/refreshWorkflows%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('refreshWorkflows'), name="refreshWorkflows"),
+            url(r"^(%s)/testIpAPI%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('testIpAPI'), name="testIpAPI"),
 
         ]
 
@@ -120,24 +117,6 @@ class WorkflowResource(ModelResource):
             return True
         return False
 
-    def scipionByCountry(self, request, *args, **kwargs):
-        # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/scipionByCountry/
-        # curl -i  http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/scipionByCountry/
-        filterDict = dict(request.GET.iterlists())
-
-        filter = dict()
-        for key, value in filterDict.iteritems():
-            filter[key] = value[0]
-        print filter
-
-        scipion_by_country = Workflow.objects.filter(**filter)\
-            .values('client_country')\
-            .annotate(total=Count('client_country'))
-
-        from django.core.serializers.json import DjangoJSONEncoder
-        json_data = json.dumps(list(scipion_by_country), cls=DjangoJSONEncoder)
-        return HttpResponse(json_data, content_type='application/json')
-
     def full(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/full/
         filterDict = dict(request.GET.iterlists())
@@ -148,7 +127,7 @@ class WorkflowResource(ModelResource):
         print filter
 
         scipion_by_country = Workflow.objects.filter(**filter).values(
-            "client_country", "timesModified", "date", "lastModificationDate", "prot_count"
+            "installation__client_country", "timesModified", "date", "lastModificationDate", "prot_count"
         )
 
         from django.core.serializers.json import DjangoJSONEncoder
@@ -227,37 +206,47 @@ class WorkflowResource(ModelResource):
         return self.create_response(request, statsDict)
 
 
+    def testIpAPI(self, request, *args, **kwargs):
+        """ test if ip to location service is working
+        URL: report_protocols/api/v2/workflow/testIpAPI/?ip=1.2.3.42.155.212.55
+        """
+
+        ip = request.GET.get("ip", None)
+
+        country, city = get_geographical_information(ip)
+
+        return self.create_response(request, {"msg": "ip: %s, country: %s, city: %s" % ( ip, country, city),
+                                       "error": "None"})
+
     def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
-        """ Query all workflows that does not have GEO info and tries to get it
+        """ Query all workflows that do not have GEO info and tries to get it
           """
         statsDict = {}
 
+        limit = request.POST.get("limit", 100)
+        count = 0
         # Get the workflows with missing geo info
-        for workflow in Workflow.objects.filter(client_country="VA"):
+        for installation in Installation.objects.filter(client_country="VA"):
 
             # Request GeoInfo
-            workflow.client_country, workflow.client_city = \
-                get_geographical_information(workflow.client_ip)
+            installation.client_country, installation.client_city = \
+                get_geographical_information(installation.client_ip)
 
             # Save it
-            workflow.save()
+            installation.save()
+
+            count += 1
+
+            if count >=limit:
+                break
 
             # Annotate stats
 
-
+        statsDict["msg"] = "%s workflows scanned." % count
         statsDict['error'] = False
 
         return self.create_response(request, statsDict)
 
-
-    def deleteObject(self, request):
-        project_uuid = request.POST['project_uuid']
-        workflows = Workflow.objects.all()
-        if workflows.exists():
-            workflows[0].delete()
-        statsDict = {}
-        statsDict['error'] = False
-        return self.create_response(request, statsDict)
 
     def reportProtocolUsage(self, request, * args, **kwargs):
         """ask for a protocol histogram"""
@@ -372,3 +361,49 @@ class PackageResource(ModelResource):
             contribution.save()
 
         return self.create_response(request, collaborators)
+
+
+class InstallationResource(ModelResource):
+    """allow search in installation table"""
+    class Meta:
+        max_limit = 0
+        queryset = Installation.objects.all()
+        resource_name = 'installations'
+        filtering = {
+            'creation_date': ALL,
+            'lastSeen': ALL,
+            'client_ip': ALL,
+            'client_address': ALL,
+            'client_country': ALL,
+            'client_city': ALL,
+            'scipion_version':ALL
+        }
+        #allowed_methods = ('get', 'put', 'post', 'delete', 'patch')
+
+    # Add resource urls
+    def prepend_urls(self):
+        return [
+            url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('full'), name="full"),
+        ]
+
+
+    def full(self, request, *args, **kwargs):
+        # curl -i  http://localhost:8000/report_protocols/api/v2/installations/full/
+        filterDict = dict(request.GET.iterLists())
+
+        filter = dict()
+        for key, value in filterDict.iterItems():
+            filter[key] = value[0]
+        print(filter)
+
+        installations = Installation.objects.filter(**filter).values(
+                        'creation_date', 'lastSeen', 'client_country', 'client_city', 'scipion_version'
+        )
+
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(list(installations), cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
+
+
+

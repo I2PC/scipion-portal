@@ -63,19 +63,29 @@ class IpAddressBlackList(models.Model):
         return str(self.client_ip)
 
 
+class Installation(models.Model):
+    """ Class to hold information about Scipion installations"""
+    creation_date = models.DateTimeField(default=datetime.datetime.now)
+    lastSeen = models.DateTimeField(default=datetime.datetime.now)
+    client_ip = models.GenericIPAddressField(null=True)
+    client_address = models.CharField(max_length=256, null=True)
+    client_country = models.CharField(max_length=256, null=True)
+    client_city = models.CharField(max_length=256, null=True)
+    scipion_version = models.CharField(max_length=20, default="2.0")
+
+    def __str__(self):
+        return "%s (%s)" % (self.client_ip, self.client_country)
+
 class Workflow(models.Model):
 
     project_uuid = models.CharField(max_length=44)
     project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
     lastModificationDate = models.DateTimeField(default=datetime.datetime.now)
-    client_ip = models.GenericIPAddressField(null=True)
-    client_address = models.CharField(max_length=256, null=True)
-    client_country = models.CharField(max_length=256, null=True)
-    client_city = models.CharField(max_length=256, null=True)
     timesModified = models.IntegerField(default=0)
     prot_count = models.IntegerField(default=0)
     scipion_version = models.CharField(max_length=20, default="2.0")
+    installation = models.ForeignKey(Installation, null=True, on_delete=models.CASCADE)
 
     def _countProtocols(self, workflow):
 
@@ -93,4 +103,4 @@ class Workflow(models.Model):
         super(Workflow, self).save()
 
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "address=%s, lmd=%s, prot_count=%s" % (self.client_address, self.lastModificationDate, self.prot_count)
+        return "address=%s, lmd=%s, prot_count=%s" % (self.installation.client_address, self.lastModificationDate, self.prot_count)
