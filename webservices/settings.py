@@ -35,21 +35,23 @@ except ImportError:
         'version': 1,
         'disable_existing_loggers': False,
         'handlers': {
-            'file': {
-                'level': 'DEBUG',
-                'class': 'logging.FileHandler',
-                'filename': '/var/log/scipion/web.log',
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+            'rot_file_handler': {
+                "class": "logging.handlers.RotatingFileHandler",
+                "level": "INFO",
+                "filename": "scipion-site.log",
+                "maxBytes": 10485760,
+                "backupCount": 40,
+                "encoding": "utf8"
             },
         },
-        'loggers': {
-            'django': {
-                'handlers': ['file'],
-                'level': 'DEBUG',
-                'propagate': True,
-            },
+        'root': {
+            'handlers': ['rot_file_handler'],
+            'level': 'INFO'
         },
     }
-
 
 ALLOWED_HOSTS = [u'scipion.i2pc.es', u'127.0.0.1', u'localhost',
                  u'scipion.localhost']

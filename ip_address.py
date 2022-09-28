@@ -60,7 +60,7 @@ def get_geographical_information_ipstack(ip):
     location_country = "VA"
     location_city = "N/A"
     # Automatically geolocate the connecting IP
-    url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,'015c8dc22c593065dd51791ba674205c')
+    url = 'http://api.ipstack.com/%s?access_key=%s' % (ip,IPXAPI_TOKEN)
     try:
         with closing(urlopen(url)) as response:
             location = json.loads(response.read())
@@ -76,7 +76,7 @@ def get_client_ip(request):
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
     else:
-        ip = request.META.get('REMOTE_ADDR')
+        ip = request.POST.get('REMOTE_ADDR', request.META.get('REMOTE_ADDR'))
     return ip
 
 

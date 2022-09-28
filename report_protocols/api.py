@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 from django import utils
 from django.http import HttpResponse, HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication
@@ -147,36 +149,49 @@ class WorkflowResource(ModelResource):
            curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
                    """
         client_ip = get_client_ip(request)
-        if self.isInBlackList(client_ip):    
+        logger.info("Workflow received from %s" % client_ip)
+
+        if self.isInBlackList(client_ip):
             project_uuid = request.POST['project_uuid']
-            project_workflow = request.POST['project_workflow']
-            project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+            reported_workflow = request.POST['project_workflow']
 
-            workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
-            if not created:
-                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
-            else:
-                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+            # Guess the version
+            version = "3.0" if "/3." in request.META.get('HTTP_USER_AGENT', "") else "2.0"
 
-            workflow.project_workflow = project_workflow
+            # Get the installation or create it
+            installation, created = Installation.objects.get_or_create(client_ip=client_ip)
 
-            workflow.client_ip = client_ip
-            workflow.client_address = socket.getfqdn(workflow.client_ip)
-            workflow.client_country, workflow.client_city = \
-            get_geographical_information(workflow.client_ip)
+            if created:
+                installation.client_address = socket.getfqdn(client_ip)
+                installation.client_country, installation.client_city = get_geographical_information(client_ip)
+                logger.info("New installation created from %s" % client_ip)
+
+            installation.lastSeen = utils.timezone.now()
+            installation.scipion_version = version
+            installation.save()
+
+            # Get the workflow or create if
+            workflow, wcreated = Workflow.objects.get_or_create(project_uuid=project_uuid)
+
+            # If existed, we need to get the counter before loosing it
+            if not wcreated:
+                db_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
+
+            workflow.project_workflow = reported_workflow
             workflow.timesModified += 1
             workflow.lastModificationDate = utils.timezone.now()
-            # Guess the version
-            if "/3." in request.META.get('HTTP_USER_AGENT', ""):
-                workflow.scipion_version = "3.0"
+            workflow.scipion_version = version
+            workflow.installation = installation
 
             workflow.save()
 
-            #if workflow already exists substract before adding
-            if not created:
-                project_workflowDict =  project_workflowCounter - dabase_workflowCounter
+            # Deal with the counter.
+            reported_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(reported_workflow)])
+            # If workflow already exists substract before adding
+            if not wcreated:
+                project_workflowDict = reported_workflowCounter - db_workflowCounter
             else:
-                project_workflowDict =project_workflowCounter
+                project_workflowDict = reported_workflowCounter
 
             for protocolName, numberTimes in project_workflowDict.iteritems():
                 if Protocol.objects.filter(name=protocolName).exists():
@@ -185,7 +200,11 @@ class WorkflowResource(ModelResource):
                     protocolObj = Protocol(name=protocolName)
                 protocolObj.timesUsed += numberTimes
                 protocolObj.save()
+
         statsDict = {}
+        statsDict['msg'] = "Installation %s, Workflow %s for ip %s." % ("created" if created else "updated",
+                                                                        "created" if wcreated else "updated",
+                                                                        client_ip)
         statsDict['error'] = False
         return self.create_response(request, statsDict)
 

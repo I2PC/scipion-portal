@@ -1,10 +1,10 @@
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-extensions==1.9.6
-django==3.2.15
+django==1.11.29
 psycopg2==2.8.1
 static3==0.7.0
-django-tastypie==0.14.2
+django-tastypie #==0.14.2
 python-dateutil==2.6.0
 python-mimeparse==1.6.0
 Pillow==6.2.2
