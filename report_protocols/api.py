@@ -43,7 +43,7 @@ class ProtocolResource(ModelResource):
            ]
         """
         # Since prepended url do not handle authorization we need to do it here
-        self.method_check(request, allowed=['POST'])
+        #self.method_check(request, allowed=['post'])
         self.is_authenticated(request)
         self.throttle_check(request)
 
