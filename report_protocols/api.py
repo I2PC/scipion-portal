@@ -23,7 +23,7 @@ class ProtocolResource(ModelResource):
         queryset = Protocol.objects.all()
         resource_name = 'protocol'
         filtering = {'name': ALL}
-        allowed_methods = ('get', 'post')
+        allowed_methods = ('GET', 'POST')
         # Add resource urls
 
     def prepend_urls(self):
@@ -37,13 +37,13 @@ class ProtocolResource(ModelResource):
            store the dictionary in protocols table
            Expected json format should be like:
            [
-              {"name": "prot1", "description": "this protocol ....", "friendlyName": "nice name"},
-              {"name": "prot2", "description": "this protocol2 ....", "friendlyName": "nice name2"}
+              {"name": "prot1", "description": "this protocol ....", "friendlyName": "nice name", "package": "packagename"},
+              {"name": "prot2", "description": "this protocol2 ....", "friendlyName": "nice name2", "package": "packagename"}
               ...
            ]
         """
         # Since prepended url do not handle authorization we need to do it here
-        self.method_check(request, allowed=['post'])
+        self.method_check(request, allowed=['POST'])
         self.is_authenticated(request)
         self.throttle_check(request)
 
