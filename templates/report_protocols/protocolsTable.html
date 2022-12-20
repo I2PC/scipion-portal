@@ -85,11 +85,11 @@
 	function loadPackageChart(){
 		var data = propertyAggregationToPieChartData(protAggregation['package'], 'timesUsed');
 
-		loadPieChart('#piebypackage', 'Usage by EM package', data);
+		loadPieChart('piebypackage', 'Usage by EM package', data);
 	};
 
 	function loadPackageByType(){
-        loadStackedColumnChart('#packagebytype', "Package by type",
+        loadStackedColumnChart('packagebytype', "Package by type",
                 protRankData, "type", "package", "timesUsed", "Times used");
 	};
 
