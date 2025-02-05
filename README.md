@@ -10,15 +10,15 @@
 
 ```
 $ cd scipion-portal
-$ virtualenv --python /usr/bin/python2 env
-$ env/bin/pip install -r requirements.txt
+$ virtualenv --python /usr/bin/python3 env3
+$ env3/bin/pip install -r requirements.txt
 ```
 
 ## Development server
 
 ```
 $ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
-$ env/bin/python manage.py runserver
+$ env3/bin/python manage.py runserver
 ```
 
 ## Production server (Apache)
@@ -38,7 +38,7 @@ $ env/bin/python manage.py runserver
     </Files>
   </Directory>
 
-  WSGIDaemonProcess scipion-portal python-home=/home/ubuntu/scipion-portal/env python-path=/home/ubuntu/scipion-portal
+  WSGIDaemonProcess scipion-portal python-home=/home/ubuntu/scipion-portal/env3 python-path=/home/ubuntu/scipion-portal
   WSGIProcessGroup scipion-portal
   WSGIScriptAlias / /home/ubuntu/scipion-portal/main/wsgi.py
 
@@ -67,21 +67,6 @@ $ export DATABASE_URL=postgres://user:password@localhost:5432/scipion
 $ python manage.py migrate --fake-initial
 ```
 
-## Database: Convert old sqlite3 database to postgres
-
-Install the dependencies:
-
-```
-$ env/bin/pip install records
-```
-
-And execute the utilities script passing source and target database path/url. An example:
-
-```
-$ env/bin/python utilities/convert_db_sqlite_to_postgres.py \
-  downloads.sqlite3 \
-  postgres://user:password@localhost:5432/scipion
-```
 
 ## Admin interface (requires password)
 

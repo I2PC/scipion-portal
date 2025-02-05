@@ -1,3 +1,5 @@
+import logging
+logger = logging.getLogger(__name__)
 from django import utils
 from django.http import HttpResponse, HttpResponseBadRequest
 from tastypie.authentication import BasicAuthentication
@@ -114,8 +116,8 @@ class WorkflowResource(ModelResource):
         try:
             IpAddressBlackList.objects.get(client_ip=ip)
         except IpAddressBlackList.DoesNotExist:
-            return True
-        return False
+            return False
+        return True
 
     def full(self, request, *args, **kwargs):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/full/
@@ -148,7 +150,11 @@ class WorkflowResource(ModelResource):
            curl -i -d "project_uuid=hh&project_workflow=kk" http://calm-shelf-73264.herokuapp.com/report_protocols/api/workflow/workflow/addOrUpdateWorkflow/
                    """
         client_ip = get_client_ip(request)
-        if self.isInBlackList(client_ip):    
+        logger.info("Workflow received from %s" % client_ip)
+
+        if self.isInBlackList(client_ip):
+            self.create_response(request, {"msg":"IP (%s) blacklisted." % client_ip, "error":True})
+        else:
             project_uuid = request.POST['project_uuid']
             project_workflow = request.POST['project_workflow']
             project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
@@ -214,7 +220,7 @@ class WorkflowResource(ModelResource):
 
         ip = request.GET.get("ip", None)
 
-        country, city = get_geographical_information (ip)
+        country, city = get_geographical_information(ip)
 
         return self.create_response(request, {"msg": "ip: %s, country: %s, city: %s" % ( ip, country, city),
                                        "error": "None"})
@@ -362,8 +368,8 @@ class PackageResource(ModelResource):
             contribution.save()
 
         return self.create_response(request, collaborators)
-    
-    
+
+
 class InstallationResource(ModelResource):
     """allow search in installation table"""
     class Meta:
