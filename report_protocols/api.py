@@ -9,7 +9,6 @@ from tastypie.constants import ALL
 from django.urls import re_path as url
 from tastypie.utils import trailing_slash
 import json
-from collections import Counter
 import socket
 
 from ip_address import get_client_ip, get_geographical_information
@@ -29,7 +28,12 @@ class ProtocolResource(ModelResource):
     def prepend_urls(self):
         return [
             url(r"^(%s)/batchupdate%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('batchupdate'), name="protocol_batch_update")
+                self.wrap_view('batchupdate'), name="protocol_batch_update"),
+            url(r"^(%s)/resetcount%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('resetcount'), name="resetcount"),
+            url(r"^(%s)/recalculateCount%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view('recalculateCount'), name="recalculateCount")
+
             ]
 
     def batchupdate(self, request, * args, **kwargs):
@@ -37,8 +41,8 @@ class ProtocolResource(ModelResource):
            store the dictionary in protocols table
            Expected json format should be like:
            [
-              {"name": "prot1", "description": "this protocol ....", "friendlyName": "nice name"},
-              {"name": "prot2", "description": "this protocol2 ....", "friendlyName": "nice name2"}
+              {"name": "prot1", "description": "this protocol ....", "friendlyName": "nice name", "package": "packagename"},
+              {"name": "prot2", "description": "this protocol2 ....", "friendlyName": "nice name2", "package": "packagename"}
               ...
            ]
         """
@@ -70,6 +74,7 @@ class ProtocolResource(ModelResource):
             dbProtocol.description = chooseValue(protocol["description"], dbProtocol.description)
             dbProtocol.friendlyName = chooseValue(protocol["friendlyName"], dbProtocol.friendlyName)
 
+
             # Try to get the package
             dbPackage = Package.objects.filter(name__iexact=packageName).first()
             if not dbPackage:
@@ -80,7 +85,47 @@ class ProtocolResource(ModelResource):
 
         return self.create_response(request, protocolsList)
 
+    def resetcount(self, request, *args, **kwargs):
+        """ Reset all protocol's count
+        URL: report_protocols/api/workflow/protocol/resetcount/
+          """
+        # self.is_authenticated(request)
+        statsDict = {}
 
+        self.resetprotcount()
+
+        statsDict['error'] = False
+        statsDict['msg'] = "Protocols updated"
+
+        return self.create_response(request, statsDict)
+
+    def resetprotcount(self):
+        # Get the protocols
+        for prot in Protocol.objects.all():
+            # Save it
+            prot.timesUsed = 0
+            prot.save()
+
+    def recalculateCount(self, request, *args, **kwargs):
+        """ Recalculates the count of all protocol usage
+        URL: report_protocols/api/workflow/protocol/recalculateCount/
+          """
+        # self.is_authenticated(request)
+        statsDict = {}
+
+        # Reset the count
+        self.resetprotcount()
+
+        for workflow in Workflow.objects.all():
+            protCount = workflow.getProtocolsCountDif()
+
+            WorkflowResource.saveProtCount(protCount)
+
+
+        statsDict['error'] = False
+        statsDict['msg'] = "Protocols usage recalculated"
+
+        return self.create_response(request, statsDict)
 class WorkflowResource(ModelResource):
     """allow search in workflow table"""
     class Meta:
@@ -137,7 +182,6 @@ class WorkflowResource(ModelResource):
         return HttpResponse(json_data, content_type='application/json')
 
 
-
     def addOrUpdateWorkflow(self, request, * args, **kwargs):
         """receive a json dictionary with protocols
            store the dictionary in workflow table
@@ -156,45 +200,63 @@ class WorkflowResource(ModelResource):
             self.create_response(request, {"msg":"IP (%s) blacklisted." % client_ip, "error":True})
         else:
             project_uuid = request.POST['project_uuid']
-            project_workflow = request.POST['project_workflow']
-            project_workflowCounter = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+            reported_workflow = request.POST['project_workflow']
 
-            workflow, created = Workflow.objects.get_or_create(project_uuid=project_uuid)
-            if not created:
-                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(workflow.project_workflow)])
-            else:
-                dabase_workflowCounter  = Counter([x.encode('latin-1') for x in json.loads(project_workflow)])
+            # Guess the version
+            version = "3.0" if "/3." in request.META.get('HTTP_USER_AGENT', "") else "2.0"
 
-            workflow.project_workflow = project_workflow
+            # Get the installation or create it
+            installation, created = Installation.objects.get_or_create(client_ip=client_ip)
 
-            workflow.client_ip = client_ip
-            workflow.client_address = socket.getfqdn(workflow.client_ip)
-            workflow.client_country, workflow.client_city = \
-            get_geographical_information(workflow.client_ip)
+            if created:
+                installation.client_address = socket.getfqdn(client_ip)
+                installation.client_country, installation.client_city = get_geographical_information(client_ip)
+                logger.info("New installation created from %s" % client_ip)
+
+            installation.lastSeen = utils.timezone.now()
+            installation.scipion_version = version
+            installation.save()
+
+            # Get the workflow or create if
+            workflow, wcreated = Workflow.objects.get_or_create(project_uuid=project_uuid)
+
+            countDiff = None
+
+            # If existed, we need to get the counter before loosing it
+            if not wcreated:
+                countDiff = workflow.getProtocolsCountDif(reported_workflow)
+
+            workflow.project_workflow = reported_workflow
             workflow.timesModified += 1
             workflow.lastModificationDate = utils.timezone.now()
-            # Guess the version
-            if "/3." in request.META.get('HTTP_USER_AGENT', ""):
-                workflow.scipion_version = "3.0"
+            workflow.scipion_version = version
+            workflow.installation = installation
 
             workflow.save()
 
-            #if workflow already exists substract before adding
-            if not created:
-                project_workflowDict =  project_workflowCounter - dabase_workflowCounter
-            else:
-                project_workflowDict =project_workflowCounter
+            # if it was new, set the count
+            if wcreated:
+                countDiff = workflow.getProtCount(reported_workflow)
 
-            for protocolName, numberTimes in project_workflowDict.iteritems():
-                if Protocol.objects.filter(name=protocolName).exists():
-                    protocolObj = Protocol.objects.get(name=protocolName)
-                else:
-                    protocolObj = Protocol(name=protocolName)
-                protocolObj.timesUsed += numberTimes
-                protocolObj.save()
-        statsDict = {}
-        statsDict['error'] = False
-        return self.create_response(request, statsDict)
+            # Protocol countDiff
+            # logCounter("Prot count offset:", countDiff)
+            self.saveProtCount(countDiff)
+
+            statsDict = {'msg': "Installation %s, Workflow %s for ip %s." % ("created" if created else "updated",
+                                                                             "created" if wcreated else "updated",
+                                                                             client_ip),
+                         'error': False}
+            return self.create_response(request, statsDict)
+
+    @classmethod
+    def saveProtCount(cls, countDiff):
+        for protocolName, numberTimes in countDiff.items():
+            if Protocol.objects.filter(name=protocolName).exists():
+                protocolObj = Protocol.objects.get(name=protocolName)
+            else:
+                protocolObj = Protocol(name=protocolName)
+            protocolObj.timesUsed += numberTimes
+            protocolObj.save()
 
     def refreshWorkflows(self, request, *args, **kwargs):
         """ Load and save all protocols to calculate prot_count and maybe future calculated values.
@@ -209,6 +271,7 @@ class WorkflowResource(ModelResource):
             workflow.save()
 
         statsDict['error'] = False
+        statsDict['msg'] = "Workflows updated"
 
         return self.create_response(request, statsDict)
 
@@ -230,7 +293,7 @@ class WorkflowResource(ModelResource):
           """
         statsDict = {}
 
-        limit = request.POST.get("limit", 100)
+        limit = request.POST.get("limit", 5)
         count = 0
         # Get the workflows with missing geo info
         for installation in Installation.objects.filter(client_country="VA"):
@@ -249,7 +312,7 @@ class WorkflowResource(ModelResource):
 
             # Annotate stats
 
-        statsDict["msg"] = "%s workflows scanned." % count
+        statsDict["msg"] = "%s installation scanned." % count
         statsDict['error'] = False
 
         return self.create_response(request, statsDict)
@@ -411,6 +474,5 @@ class InstallationResource(ModelResource):
         from django.core.serializers.json import DjangoJSONEncoder
         json_data = json.dumps(list(installations), cls=DjangoJSONEncoder)
         return HttpResponse(json_data, content_type='application/json')
-
 
 

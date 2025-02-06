@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import json
+from collections import Counter
+
 from django.db import models
 import datetime
 
@@ -75,6 +78,7 @@ class Installation(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (self.client_ip, self.client_country)
+
 class Workflow(models.Model):
 
     project_uuid = models.CharField(max_length=44)
@@ -95,6 +99,34 @@ class Workflow(models.Model):
                 return len(workflow.split(","))
         except Exception as e:
             return 0
+
+    def getProtocolsCountDif(self, jsonList=None):
+        """ Returns the difference in protocol counts ina Counter dictionary:
+            {"Prot1":1, "Prot2":-3,...}
+        """
+
+        # Get its current json workflow
+        existingCount = self.getProtCount(self.project_workflow)
+
+        if not jsonList:
+
+            return  existingCount
+        # If json is passed we assume its an update, so we compute the difference
+        else:
+
+            newCount = self.getProtCount(jsonList)
+
+            # logCounter("New count: ", newCount)
+            # logCounter("Existing count: ", existingCount)
+
+            newCount.subtract(existingCount)
+
+            return newCount
+
+    def getProtCount(self, jsonList):
+        """ Returns a Counter (dict like) list with all the protocols and the amount of them in the workflow"""
+
+        return Counter([x.encode('latin-1') for x in json.loads(jsonList)])
 
     def save(self, *args, **kwargs):
 

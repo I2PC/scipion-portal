@@ -218,7 +218,7 @@ function createLines(data, seriesNameCallBack, valueCallBack ) {
 function loadPieChart(container, title, data){
 
     // Build the chart
-    $(container).highcharts({
+    Highcharts.chart(container,{
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -293,7 +293,7 @@ function loadBarChart(container, title, data, tweakerCallback){
 function loadAreaChart(container, title, data){
 
     // Build the chart
-    $(container).highcharts({
+    Highcharts.chart(container,{
         chart: {
 
             zoomType: 'x'
@@ -314,7 +314,7 @@ function loadAreaChart(container, title, data){
 }
 function loadZoomableTimeSeries(container, title, data, dateFormat){
 
-    $(container).highcharts({
+     Highcharts.chart(container,{
         chart: {
             zoomType: 'x'
         },
@@ -422,7 +422,7 @@ function loadStackedColumnChart(container, title, rawData,
         }
 
     }
-    $(container).highcharts({
+    Highcharts.chart(container,{
         chart: {
             type: 'column'
         },
