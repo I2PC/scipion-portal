@@ -1,7 +1,7 @@
 function getDataAndDrawCharts(){
     // From: http://scipion.i2pc.es/report_protocols/api/workflow/workflow/full/?
     var scipionUsageDataURL = "/report_protocols/api/workflow/workflow/full/";
-    var filter = "?project_workflow__gt=[]";
+    var filter = "?project_workflow__isnull=0";
 
     if (window.location.search != ""){
         filter = window.location.search;

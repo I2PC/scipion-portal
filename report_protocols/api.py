@@ -164,9 +164,18 @@ class WorkflowResource(ModelResource):
         # curl -i  http://localhost:8000/report_protocols/api/workflow/workflow/full/
         filterDict = dict(request.GET.lists())
 
+        def castValue(key, value):
+            """ Casts the value to a valid type base on the key"""
+
+            if key.endswith("null"):
+                logger.info("Casting value %s to boolean." % value)
+                return value.lower() not in ["false", "0"]
+            else:
+                return value
+
         filter = dict()
         for key, value in filterDict.items():
-            filter[key] = value[0]
+            filter[key] = castValue(key,value[0])
         logger.info("Getting workflows with this filter: %s" % filter)
 
         scipion_by_country = Workflow.objects.filter(**filter).values(
