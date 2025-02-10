@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+import logging
+logger = logging.getLogger(__name__)
 
 import json
 from collections import Counter
@@ -81,7 +83,7 @@ class Installation(models.Model):
 
 class Workflow(models.Model):
 
-    project_uuid = models.CharField(max_length=44)
+    project_uuid = models.CharField(max_length=44, null=True)
     project_workflow = models.TextField(null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
     lastModificationDate = models.DateTimeField(default=datetime.datetime.now)
@@ -93,10 +95,7 @@ class Workflow(models.Model):
     def _countProtocols(self, workflow):
 
         try:
-            if workflow == "[]":
-                return 0
-            else:
-                return len(workflow.split(","))
+            return len(workflow.split(","))
         except Exception as e:
             return 0
 
@@ -126,12 +125,22 @@ class Workflow(models.Model):
     def getProtCount(self, jsonList):
         """ Returns a Counter (dict like) list with all the protocols and the amount of them in the workflow"""
 
-        return Counter([x.encode('latin-1') for x in json.loads(jsonList)])
+        if jsonList is None or jsonList == "[]":
+            return Counter()
+        else:
+            logger.info("Getting prot count for %s" % jsonList)
+            return Counter([x.encode('latin-1') for x in json.loads(jsonList)])
 
     def save(self, *args, **kwargs):
 
-        self.prot_count = self._countProtocols(self.project_workflow)
+        # Normalize empty projects
+        if self.project_workflow == "[]" or self.project_workflow is None:
+            self.project_workflow = None
+            self.prot_count=0
+        else:
+            self.prot_count = self._countProtocols(self.project_workflow)
+
         super(Workflow, self).save()
 
     def __str__(self):  # For Python 2, use __unicode__ too
-        return "address=%s, lmd=%s, prot_count=%s" % (self.installation.client_address, self.lastModificationDate, self.prot_count)
+        return "uuid=%s, lmd=%s, prot_count=%s" % (self.project_uuid, self.lastModificationDate, self.prot_count)

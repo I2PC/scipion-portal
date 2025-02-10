@@ -141,13 +141,9 @@ class WorkflowResource(ModelResource):
     def prepend_urls(self):
         return [
             url(r"^(%s)/addOrUpdateWorkflow%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('addOrUpdateWorkflow'), name="api_add_useraddOrUpdateWorkflow"),
-            url(r"^(%s)/reportProtocolUsage%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('reportProtocolUsage'), name="reportProtocolUsage"),
-            url(r"^(%s)/updateWorkflowsGeoInfo%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('updateWorkflowsGeoInfo'), name="updateWorkflowsGeoInfo"),
+                self.wrap_view(self.addOrUpdateWorkflow.__name__), name="api_add_useraddOrUpdateWorkflow"),
             url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('full'), name="full"),
+                self.wrap_view(self.full.__name__), name="full"),
             url(r"^(%s)/refreshWorkflows%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('refreshWorkflows'), name="refreshWorkflows"),
             url(r"^(%s)/testIpAPI%s$" % (self._meta.resource_name, trailing_slash()),
@@ -171,7 +167,7 @@ class WorkflowResource(ModelResource):
         filter = dict()
         for key, value in filterDict.items():
             filter[key] = value[0]
-        print(filter)
+        logger.info("Getting workflows with this filter: %s" % filter)
 
         scipion_by_country = Workflow.objects.filter(**filter).values(
             "installation__client_country", "timesModified", "date", "lastModificationDate", "prot_count"
@@ -258,24 +254,6 @@ class WorkflowResource(ModelResource):
             protocolObj.timesUsed += numberTimes
             protocolObj.save()
 
-    def refreshWorkflows(self, request, *args, **kwargs):
-        """ Load and save all protocols to calculate prot_count and maybe future calculated values.
-        URL: report_protocols/api/workflow/workflow/refreshWorkflows/
-          """
-        statsDict = {}
-
-        # Get the workflows with missing geo info
-        for workflow in Workflow.objects.all():
-
-            # Save it
-            workflow.save()
-
-        statsDict['error'] = False
-        statsDict['msg'] = "Workflows updated"
-
-        return self.create_response(request, statsDict)
-
-
     def testIpAPI(self, request, *args, **kwargs):
         """ test if ip to location service is working
         URL: report_protocols/api/v2/workflow/testIpAPI/?ip=1.2.3.42.155.212.55
@@ -288,39 +266,6 @@ class WorkflowResource(ModelResource):
         return self.create_response(request, {"msg": "ip: %s, country: %s, city: %s" % ( ip, country, city),
                                        "error": "None"})
 
-    def updateWorkflowsGeoInfo(self, request, *args, **kwargs):
-        """ Query all workflows that do not have GEO info and tries to get it
-          """
-        statsDict = {}
-
-        limit = request.POST.get("limit", 5)
-        count = 0
-        # Get the workflows with missing geo info
-        for installation in Installation.objects.filter(client_country="VA"):
-
-            # Request GeoInfo
-            installation.client_country, installation.client_city = \
-                get_geographical_information(installation.client_ip)
-
-            # Save it
-            installation.save()
-
-            count += 1
-
-            if count >=limit:
-                break
-
-            # Annotate stats
-
-        statsDict["msg"] = "%s installation scanned." % count
-        statsDict['error'] = False
-
-        return self.create_response(request, statsDict)
-
-
-    def reportProtocolUsage(self, request, * args, **kwargs):
-        """ask for a protocol histogram"""
-        pass
 
 class PackageResource(ModelResource):
     """allow search in workflow table"""
