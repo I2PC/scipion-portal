@@ -85,47 +85,6 @@ class ProtocolResource(ModelResource):
 
         return self.create_response(request, protocolsList)
 
-    def resetcount(self, request, *args, **kwargs):
-        """ Reset all protocol's count
-        URL: report_protocols/api/workflow/protocol/resetcount/
-          """
-        # self.is_authenticated(request)
-        statsDict = {}
-
-        self.resetprotcount()
-
-        statsDict['error'] = False
-        statsDict['msg'] = "Protocols updated"
-
-        return self.create_response(request, statsDict)
-
-    def resetprotcount(self):
-        # Get the protocols
-        for prot in Protocol.objects.all():
-            # Save it
-            prot.timesUsed = 0
-            prot.save()
-
-    def recalculateCount(self, request, *args, **kwargs):
-        """ Recalculates the count of all protocol usage
-        URL: report_protocols/api/workflow/protocol/recalculateCount/
-          """
-        # self.is_authenticated(request)
-        statsDict = {}
-
-        # Reset the count
-        self.resetprotcount()
-
-        for workflow in Workflow.objects.all():
-            protCount = workflow.getProtocolsCountDif()
-
-            WorkflowResource.saveProtCount(protCount)
-
-
-        statsDict['error'] = False
-        statsDict['msg'] = "Protocols usage recalculated"
-
-        return self.create_response(request, statsDict)
 class WorkflowResource(ModelResource):
     """allow search in workflow table"""
     class Meta:
@@ -245,23 +204,13 @@ class WorkflowResource(ModelResource):
 
             # Protocol countDiff
             # logCounter("Prot count offset:", countDiff)
-            self.saveProtCount(countDiff)
+            workflow.saveProtCount(countDiff)
 
             statsDict = {'msg': "Installation %s, Workflow %s for ip %s." % ("created" if created else "updated",
                                                                              "created" if wcreated else "updated",
                                                                              client_ip),
                          'error': False}
             return self.create_response(request, statsDict)
-
-    @classmethod
-    def saveProtCount(cls, countDiff):
-        for protocolName, numberTimes in countDiff.items():
-            if Protocol.objects.filter(name=protocolName).exists():
-                protocolObj = Protocol.objects.get(name=protocolName)
-            else:
-                protocolObj = Protocol(name=protocolName)
-            protocolObj.timesUsed += numberTimes
-            protocolObj.save()
 
     def testIpAPI(self, request, *args, **kwargs):
         """ test if ip to location service is working

@@ -57,6 +57,13 @@ class Protocol(models.Model):
                                      blank=True,
                                      on_delete=models.CASCADE)
     friendlyName = models.CharField(max_length=256, blank=True, null=True)
+
+    @classmethod
+    def reset_prot_count(cls):
+
+        for prot in Protocol.objects.all():
+            prot.timesUsed = 0
+            prot.save()
     def __str__(self):  # For Python 2, use __unicode__ too
         return "%s (%s)" % (self.name, self.friendlyName)
 
@@ -109,7 +116,7 @@ class Workflow(models.Model):
 
         if not jsonList:
 
-            return  existingCount
+            return existingCount
         # If json is passed we assume its an update, so we compute the difference
         else:
 
@@ -129,7 +136,17 @@ class Workflow(models.Model):
             return Counter()
         else:
             logger.info("Getting prot count for %s" % jsonList)
-            return Counter([x.encode('latin-1') for x in json.loads(jsonList)])
+            return Counter([x for x in json.loads(jsonList)])
+
+    def saveProtCount(cls, countDiff):
+        for protocolName, numberTimes in countDiff.items():
+            if Protocol.objects.filter(name=protocolName).exists():
+                protocolObj = Protocol.objects.get(name=protocolName)
+            else:
+                protocolObj = Protocol(name=protocolName)
+            protocolObj.timesUsed += numberTimes
+            protocolObj.save()
+
 
     def save(self, *args, **kwargs):
 

@@ -1,16 +1,16 @@
 import logging
 logger = logging.getLogger(__name__)
 from django.contrib import admin,messages
-
+from django.db.models import Count
 import ip_address
 from ip_address import get_geographical_information
 from report_protocols.models import Protocol, Workflow, IpAddressBlackList, Package, ProtocolType, Installation
 from web.models import Contribution
 
 class InstallationAdmin(admin.ModelAdmin):
-    list_display = ('creation_date', 'lastSeen', 'client_address', 'client_country','scipion_version', 'client_ip')
-    search_fields = list_display
-    list_filter = search_fields
+    list_filter = ['creation_date', 'lastSeen', 'scipion_version', 'client_country']
+    search_fields = list_filter + ['client_city', 'client_address', 'client_ip']
+    list_display = search_fields + ["workflows_count"]
     actions =['updateInstallationGeoInfo']
     @admin.action(description="Update Geographical information: city, country.")
     def updateInstallationGeoInfo(self, request, queryset):
@@ -38,28 +38,46 @@ class InstallationAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+    def workflows_count(self, obj):
+        return obj.workflows_count
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(workflows_count=Count("workflow"))
+        return queryset
 class WorkflowAdmin(admin.ModelAdmin):
-    list_display = ('project_uuid',
-                    'date',
-                    'lastModificationDate',
-                    'get_country',
-                    'get_address',
-                    'timesModified',
-                    'prot_count',
-                    'scipion_version',
-                    'project_workflow')
-    search_fields = ('project_workflow', 'date', 'installation__client_country', 'installation__client_address',
-                     'timesModified', 'prot_count', 'scipion_version', 'project_workflow')
+    common = ['project_uuid',
+            'date',
+            'lastModificationDate',
+            'timesModified',
+            'prot_count',
+            'scipion_version',
+            'project_workflow']
+    list_display = common + ['get_country','get_address']
+    list_filter = ('date', 'installation__client_country', 'scipion_version')
 
-    list_filter = search_fields
+    search_fields = common +["installation__client_country", "installation__client_city", "installation__client_address"]
     ordering = ("-lastModificationDate",)
-    actions = ["updateWorkflows"]
+    actions = ["updateWorkflows", "recalculateCount" ]
 
     @admin.action(description="Count protocols and set empty workflows to None")
     def updateWorkflows(modeladmin, request, queryset):
         for workflow in queryset:
+            workflow
             workflow.save()
+
+    @admin.action(description="Recalculate the usage of the protocols")
+    def recalculateCount(modeladmin, request, queryset):
+        """ Recalculates the count of all protocol usage """
+        # self.is_authenticated(request)
+
+        # Reset the count
+        Protocol.reset_prot_count()
+
+        for workflow in Workflow.objects.all():
+            protCount = workflow.getProtocolsCountDif()
+
+            workflow.saveProtCount(protCount)
 
     def get_country(self, obj):
         return obj.installation.client_country
@@ -76,6 +94,7 @@ class PackageAdmin(admin.ModelAdmin):
 
     def package_prot_count(self, obj):
         return obj.protocol_set.count()
+
     package_prot_count.short_description = "Prot count"
 
 
