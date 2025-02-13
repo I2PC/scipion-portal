@@ -107,6 +107,29 @@ class ProtocolAdmin(admin.ModelAdmin):
     list_display = ('name', 'timesUsed', 'friendlyName', 'description', 'package', 'protocolType')
     ordering = ('-timesUsed', "name")
     search_fields = ('name', 'timesUsed', 'friendlyName', 'description', 'package__name', 'protocolType__name')
+    actions = ["prune_protocols"]
+
+    @admin.action(description="Prune protocols: empty ones(0 usage and no description) and duplicated ones")
+    def prune_protocols(self, request, queryset):
+
+        deleted = []
+        visited = []
+        duplicated = []
+        for protocol in queryset:
+            name = protocol.name
+
+            if name in visited:
+                duplicated.append(name)
+
+            if protocol.timesUsed == 0 and not protocol.friendlyName:
+                protocol.delete()
+                deleted.append(protocol.name)
+            visited.append(protocol.name)
+        self.message_user(
+            request,
+            "%d protocols deleted: %s. Duplicated protocols: %s" % (len(deleted), deleted, duplicated),
+            messages.SUCCESS,
+        )
 
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):
