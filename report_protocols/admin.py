@@ -10,10 +10,10 @@ from web.models import Contribution
 class InstallationAdmin(admin.ModelAdmin):
     list_filter = ['creation_date', 'lastSeen', 'scipion_version', 'client_country']
     search_fields = list_filter + ['client_city', 'client_address', 'client_ip']
-    list_display = search_fields + ["workflows_count"]
-    actions =['updateInstallationGeoInfo', 'prune_installations']
+    list_display = search_fields + ["workflows_count", "months_dead"]
+    actions =['update_installations_geo_info', 'prune_installations', 'prune_old_installations']
     @admin.action(description="Update Geographical information: city, country.")
-    def updateInstallationGeoInfo(self, request, queryset):
+    def update_installations_geo_info(self, request, queryset):
         """ Query all workflows that do not have GEO info and tries to get it """
 
         attempts = 0
@@ -52,6 +52,26 @@ class InstallationAdmin(admin.ModelAdmin):
 
                 installation.delete()
                 deleted +=1
+
+        self.message_user(
+            request,
+            "%d installations deleted." % deleted,
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Prune old installations. Not seen in the last 3 years.")
+    def prune_old_installations(self, request, queryset):
+        """ Prune installations without workflows """
+
+        deleted = 0
+
+        # Get the workflows selected
+        for installation in queryset:
+
+            # Get workflows count
+            if installation.months_dead >=36:
+                installation.delete()
+                deleted += 1
 
         self.message_user(
             request,

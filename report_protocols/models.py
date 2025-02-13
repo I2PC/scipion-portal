@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import logging
+
 logger = logging.getLogger(__name__)
 
 import json
@@ -7,6 +8,7 @@ from collections import Counter
 
 from django.db import models
 import datetime
+from django.utils import timezone
 
 # project assumes hash computed with hashlib.sha256()
 from webservices import settings
@@ -84,6 +86,14 @@ class Installation(models.Model):
     client_country = models.CharField(max_length=256, null=True)
     client_city = models.CharField(max_length=256, null=True)
     scipion_version = models.CharField(max_length=20, default="2.0")
+
+    @property
+    def months_dead(self):
+        """months since the installation hasn't reported anything"""
+        today = timezone.now().date()
+        diff = today - self.lastSeen.date()
+
+        return int(diff.days / 30.44)
 
     def __str__(self):
         return "%s (%s)" % (self.client_ip, self.client_country)
