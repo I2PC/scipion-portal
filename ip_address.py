@@ -50,7 +50,7 @@ def get_geographical_information_ip_api(ip):
         else:
             logger.warning("ip-api responded with a failed status. %s" % location["message"])
     except Exception as e:
-        logger.error("Location for %s could not be determined usign ip-api.com.", exc_info=e)
+        logger.error("Location for %s could not be determined using ip-api.com.", exc_info=e)
 
     return (location_country, location_city)
 
