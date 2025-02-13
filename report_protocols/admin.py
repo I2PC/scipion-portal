@@ -11,7 +11,7 @@ class InstallationAdmin(admin.ModelAdmin):
     list_filter = ['creation_date', 'lastSeen', 'scipion_version', 'client_country']
     search_fields = list_filter + ['client_city', 'client_address', 'client_ip']
     list_display = search_fields + ["workflows_count"]
-    actions =['updateInstallationGeoInfo']
+    actions =['updateInstallationGeoInfo', 'prune_installations']
     @admin.action(description="Update Geographical information: city, country.")
     def updateInstallationGeoInfo(self, request, queryset):
         """ Query all workflows that do not have GEO info and tries to get it """
@@ -35,6 +35,27 @@ class InstallationAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             "%d attempts done. %d failed." % (attempts, failed),
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Prune installations without workflows")
+    def prune_installations(self, request, queryset):
+        """ Prune installations without workflows """
+
+        deleted = 0
+
+        # Get the workflows selected
+        for installation in queryset:
+
+            # Get workflows count
+            if installation.workflows_count ==0:
+
+                installation.delete()
+                deleted +=1
+
+        self.message_user(
+            request,
+            "%d installations deleted." % deleted,
             messages.SUCCESS,
         )
 
