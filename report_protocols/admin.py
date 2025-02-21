@@ -4,7 +4,8 @@ from django.contrib import admin,messages
 from django.db.models import Count
 import ip_address
 from ip_address import get_geographical_information
-from report_protocols.models import Protocol, Workflow, IpAddressBlackList, Package, ProtocolType, Installation
+from report_protocols.models import Protocol, Workflow, IpAddressBlackList, Package, ProtocolType, Installation, \
+    NextProtocol
 from web.models import Contribution
 
 class InstallationAdmin(admin.ModelAdmin):
@@ -101,14 +102,28 @@ class WorkflowAdmin(admin.ModelAdmin):
     ordering = ("-lastModificationDate",)
     actions = ["updateWorkflows", "recalculateCount" ]
 
-    @admin.action(description="Count protocols and set empty workflows to None")
-    def updateWorkflows(modeladmin, request, queryset):
-        for workflow in queryset:
-            workflow
-            workflow.save()
+    @admin.action(description="Count protocols and delete empty workflows")
+    def updateWorkflows(self, request, queryset):
 
-    @admin.action(description="Recalculate the usage of the protocols")
-    def recalculateCount(modeladmin, request, queryset):
+        updated = 0
+        deleted = 0
+
+        for workflow in queryset:
+            if workflow.isEmpty():
+                workflow.delete()
+                deleted += 1
+            else:
+                workflow.save()
+                updated += 1
+
+        self.message_user(
+            request,
+            "%d workflows deleted. %d updated." % (deleted, updated),
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Recalculate the usage of the protocols (selection ignored))")
+    def recalculateCount(self, request, queryset):
         """ Recalculates the count of all protocol usage """
         # self.is_authenticated(request)
 
@@ -116,9 +131,10 @@ class WorkflowAdmin(admin.ModelAdmin):
         Protocol.reset_prot_count()
 
         for workflow in Workflow.objects.all():
-            protCount = workflow.getProtocolsCountDif()
+            protCount, nextProtCount = workflow.getProtocolsCountDiff()
 
             workflow.saveProtCount(protCount)
+            workflow.saveNextProtCount(nextProtCount)
 
     def get_country(self, obj):
         return obj.installation.client_country
@@ -172,6 +188,8 @@ class ProtocolAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+class NextProtocolAdmin(admin.ModelAdmin):
+    list_display = ('protocol', 'next_protocol', 'count')
 
 class IpAddressBlackListAdmin(admin.ModelAdmin):
     list_display = ('client_ip', 'note')
@@ -189,3 +207,5 @@ admin.site.register(Package, PackageAdmin)
 admin.site.register(ProtocolType, ProtocolTypeAdmin)
 admin.site.register(Contribution, ContributionAdmin)
 admin.site.register(Installation, InstallationAdmin)
+admin.site.register(NextProtocol, NextProtocolAdmin)
+

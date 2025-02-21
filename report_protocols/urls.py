@@ -3,7 +3,7 @@ from report_protocols import views
 from django.contrib import admin
 admin.autodiscover()
 from tastypie.api import Api
-from report_protocols.api import WorkflowResource, ProtocolResource, PackageResource, InstallationResource
+from report_protocols.api import WorkflowResource, ProtocolResource, PackageResource, InstallationResource, NextProtocolResource
 
 # Keep this paths to allow scipion reporting
 old_api = Api(api_name='workflow')
@@ -16,6 +16,7 @@ new_api.register(ProtocolResource())
 new_api.register(PackageResource())
 new_api.register(WorkflowResource())
 new_api.register(InstallationResource())
+new_api.register(NextProtocolResource())
 
 urlpatterns = [
     url(r'^api/', include(old_api.urls)),

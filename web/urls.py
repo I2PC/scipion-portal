@@ -9,10 +9,6 @@ api.register(ContributionResource())
 
 urlpatterns = [
     url(r'^$', views_home.home, name='home'),
-    url(r'^download_form', views_home.download_form, name='download-page'),
-    url(r'^startdownload/', views_home.startDownload, name='download'),
-    url(r'^getdownloadsdata', views_home.getDownloadsStats),
-    url(r'^downloadstats', views_home.showDownloadStats, name='download-stats'),
     url(r'^getplugins', views_home.getPluginsJSON),
     url(r'^acknowledgements', views_home.acknowledgements, name='acknowledgements'),
     url(r'^biologists', views_home.biologists, name='biologists'),

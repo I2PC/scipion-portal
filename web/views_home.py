@@ -41,7 +41,7 @@ except ImportError:
 
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
-from web.models import Download, Acknowledgement, Bundle
+from web.models import Acknowledgement
 from report_protocols.models import Package
 
 
@@ -82,92 +82,10 @@ def contact(request):
     return render( request,'home/contactus.html', context)
 
 
-def download_form(request):
-    bundles = list(Bundle.objects.order_by('-version'))
-
-    context = {
-        "downloadables": bundles,
-    }
-    return render( request,'home/download_form.html', context)
-
-
 def utc_to_local(utc_dt):
     timestamp = calendar.timegm(utc_dt.timetuple())
     local_dt = datetime.fromtimestamp(timestamp)
     return local_dt.replace(microsecond=utc_dt.microsecond)
-
-
-def startDownload(request):
-    bundleId = request.GET.get('bundleId')
-
-    errors = ""
-    bundle = None
-    if not len(bundleId) > 0:
-        errors += "File not specified.\n"
-    else:
-        # Get the bundle
-        bundle = Bundle.objects.get(id=bundleId)
-
-        if bundle is None:
-            errors += "File with %s id not found." % bundleId
-
-    if len(errors) == 0:
-
-        # Get the ip
-        client_ip = get_client_ip(request)
-        # Get the country...
-        country, city = get_geographical_information(client_ip)
-        client_address = socket.getfqdn(client_ip)
-        newDownload = Download.objects.create(
-            country=country,
-            version=bundle.version,
-            platform=bundle.platform,
-            size=bundle.size,
-            city=city,
-            ip=client_ip,
-            client_address=client_address
-        )
-
-        # Return a response with the scipion download file
-        path = bundle.file.file.name
-
-        if not os.path.exists(path):
-            return HttpResponseNotFound('Path not found: %s' % path)
-
-        with open(path, 'rb') as fh:
-            response = HttpResponse(fh.read(),
-                                    content_type="application/tar+gzip")
-            response['Content-Disposition'] = 'inline; filename=' \
-                                              + os.path.basename(path)
-            return response
-
-    else:
-        redirect(download_form)
-
-
-# noinspection PyUnusedLocal
-def getDownloadsStats(request):
-    jsonStr = getDownloadsStatsToJSON()
-
-    return HttpResponse(jsonStr, content_type='application/json')
-
-
-def getDownloadsStatsToJSON():
-    result = []
-    for download in Download.objects.all():
-        ddict = model_to_dict(download)
-        ddict['timeStamp'] = utc_to_local(download.creation).isoformat()
-        result.append(ddict)
-    jsonStr = json.dumps(result, ensure_ascii=False)
-    return jsonStr
-
-
-# noinspection PyUnusedLocal
-def showDownloadStats(request):
-    context = {
-        "downloadsJSON": getDownloadsStatsToJSON(),
-    }
-    return render( request,'home/download_stats.html', context)
 
 
 def getPluginsDict():

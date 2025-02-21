@@ -8,11 +8,12 @@ from tastypie.resources import ModelResource
 from tastypie.constants import ALL
 from django.urls import re_path as url
 from tastypie.utils import trailing_slash
+from tastypie import fields
 import json
 import socket
 
 from ip_address import get_client_ip, get_geographical_information
-from report_protocols.models import Workflow, Protocol, IpAddressBlackList, Package, Installation
+from report_protocols.models import Workflow, Protocol, IpAddressBlackList, Package, Installation, NextProtocol
 from web.models import Acknowledgement, Contribution
 
 
@@ -32,9 +33,9 @@ class ProtocolResource(ModelResource):
             url(r"^(%s)/resetcount%s$" % (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('resetcount'), name="resetcount"),
             url(r"^(%s)/recalculateCount%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('recalculateCount'), name="recalculateCount")
+                self.wrap_view('recalculateCount'), name="recalculateCount"),
 
-            ]
+        ]
 
     def batchupdate(self, request, * args, **kwargs):
         """receive a json dictionary with protocols info
@@ -163,6 +164,7 @@ class WorkflowResource(ModelResource):
         if self.isInBlackList(client_ip):
             self.create_response(request, {"msg":"IP (%s) blacklisted." % client_ip, "error":True})
         else:
+
             project_uuid = request.POST['project_uuid']
             reported_workflow = request.POST['project_workflow']
 
@@ -181,6 +183,8 @@ class WorkflowResource(ModelResource):
             installation.scipion_version = version
             installation.save()
 
+            msg = "Installation %s." % ("created" if created else "updated")
+
             # Get the workflow or create if
             workflow, wcreated = Workflow.objects.get_or_create(project_uuid=project_uuid)
 
@@ -188,27 +192,37 @@ class WorkflowResource(ModelResource):
 
             # If existed, we need to get the counter before loosing it
             if not wcreated:
-                countDiff = workflow.getProtocolsCountDif(reported_workflow)
+                countDiff, nextProtDiff = workflow.getProtocolsCountDiff(reported_workflow)
 
             workflow.project_workflow = reported_workflow
-            workflow.timesModified += 1
-            workflow.lastModificationDate = utils.timezone.now()
-            workflow.scipion_version = version
-            workflow.installation = installation
 
-            workflow.save()
+            if workflow.isEmpty():
+                if not wcreated:
+                    thisMsg = " Workflow %s lost all the protocols. Deleting it" % workflow.project_uuid
+                    workflow.delete()
+                else:
+                    thisMsg = " New EMPTY workflow detected. Not peristed."
+
+                msg += thisMsg
+            else:
+                workflow.timesModified += 1
+                workflow.lastModificationDate = utils.timezone.now()
+                workflow.scipion_version = version
+                workflow.installation = installation
+
+                workflow.save()
+
+                msg += "Workflow %s." % ("created" if wcreated else "updated")
 
             # if it was new, set the count
             if wcreated:
-                countDiff = workflow.getProtCount(reported_workflow)
+                countDiff, nextProtDiff = workflow.getProtCount(reported_workflow)
 
             # Protocol countDiff
-            # logCounter("Prot count offset:", countDiff)
             workflow.saveProtCount(countDiff)
+            workflow.saveNextProtCount(nextProtDiff)
 
-            statsDict = {'msg': "Installation %s, Workflow %s for ip %s." % ("created" if created else "updated",
-                                                                             "created" if wcreated else "updated",
-                                                                             client_ip),
+            statsDict = {'msg': "%s. From %s" % (msg, client_ip),
                          'error': False}
             return self.create_response(request, statsDict)
 
@@ -357,7 +371,7 @@ class InstallationResource(ModelResource):
     def prepend_urls(self):
         return [
             url(r"^(%s)/full%s$" % (self._meta.resource_name, trailing_slash()),
-                self.wrap_view('full'), name="full"),
+                self.wrap_view(self.full.__name__), name="full"),
         ]
 
 
@@ -368,7 +382,6 @@ class InstallationResource(ModelResource):
         filter = dict()
         for key, value in filterDict.items():
             filter[key] = value[0]
-        print(filter)
 
         installations = Installation.objects.filter(**filter).values(
                         'creation_date', 'lastSeen', 'client_country', 'client_city', 'scipion_version'
@@ -379,3 +392,37 @@ class InstallationResource(ModelResource):
         return HttpResponse(json_data, content_type='application/json')
 
 
+class NextProtocolResource(ModelResource):
+    """allow search in NexProtocol table"""
+    next_protocol = fields.ToOneField(ProtocolResource, 'next_protocol', full=True, related_name='next_protocol')
+    protocol = fields.ToOneField(ProtocolResource, 'protocol', full=True, related_name='main_protocol')
+    class Meta:
+        queryset = NextProtocol.objects.all()
+        resource_name = 'nextprotocol'
+        filtering = {'main_protocol': ALL,
+                     'next_protocol': ALL,
+                     'count': ALL}
+        allowed_methods = ('get')
+        # Add resource urls
+
+    def prepend_urls(self):
+        return [
+            url(r"^(%s)/suggestion/(?P<protName>\w*)%s$" % (self._meta.resource_name, trailing_slash()),
+                self.wrap_view(self.suggestion.__name__), name="suggestions"),
+        ]
+
+    def suggestion(self, request, api_name=None, protName=None):
+        # curl -i  http://localhost:8000/report_protocols/api/v2/nextprotocol/suggestion/<protName>
+        # Response is like:
+        #   [[ next_protocol__name , count ], ... ]
+
+        suggestions = NextProtocol.objects.filter(protocol__name=protName).values(
+            'next_protocol__name', 'count', 'next_protocol__friendlyName', 'next_protocol__package__pipName', 'next_protocol__description')
+
+        response = []
+
+        for suggestion in suggestions:
+            response.append(list(suggestion.values()))
+        from django.core.serializers.json import DjangoJSONEncoder
+        json_data = json.dumps(response, cls=DjangoJSONEncoder)
+        return HttpResponse(json_data, content_type='application/json')
