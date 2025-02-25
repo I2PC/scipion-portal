@@ -137,10 +137,16 @@ class WorkflowAdmin(admin.ModelAdmin):
             workflow.saveNextProtCount(nextProtCount)
 
     def get_country(self, obj):
-        return obj.installation.client_country
+        if obj.installation is None:
+            return "MISSING INSTALLATION"
+        else:
+            return obj.installation.client_country
 
     def get_address(self, obj):
-        return obj.installation.client_address
+        if obj.installation is None:
+            return "MISSING INSTALLATION"
+        else:
+            return obj.installation.client_address
 
     get_country.short_description = 'Country'
     get_country.admin_order_field = 'client_country'
