@@ -131,40 +131,6 @@ function  dateDiff(start, end, msPerGroup){
   return Math.ceil((end - start) / msPerGroup);
 }
 
-function sortDict(dict){
-
-    let keys = Object.keys(dict); // or loop over the object to get the array
-    // keys will be in any order
-    keys.sort(); // maybe use custom sort, to change direction use .reverse()
-    // keys now will be in wanted order
-
-    sorted = {}
-    for (var i=0; i<keys.length; i++) { // now lets iterate in sort order
-        var key = keys[i];
-        var value = dict[key];
-        sorted[key] = value
-    }
-    return sorted
-}
-function addDateRange(start, end, data){
-
-    let current = new Date(start); // date for the loop
-
-    do {
-        let category = current.getFullYear() + "-" + (current.getMonth()+1).toString().padStart(2,"0")
-        if (data[category] === undefined) {
-            data[category] = 1
-        }else{
-            data[category] = data[category] + 1
-        }
-
-        // Increment by 1 month
-        current.setMonth(current.getMonth() +1)
-
-    } while (current < end)
-
-
-}
 function data2ProjectOverTime(chartOptions,data){
 
     /* Data comes like :
@@ -174,12 +140,12 @@ function data2ProjectOverTime(chartOptions,data){
     ]
     We need to get categories: categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     And series:
-        [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        [7, 6, 9, 14, 18, 21, 25, 26, 23, 11, 13, 9]
     */
 
     series = {}
     data.forEach(function (workflow){
-        addDateRange(new Date(workflow.date), new Date(workflow.lastModificationDate), series)
+        addDateRange(new Date(workflow.date), undefined, series)
     });
 
     series = sortDict(series)
@@ -189,7 +155,7 @@ function data2ProjectOverTime(chartOptions,data){
     };
 
     chartOptions.series = [{
-                    name: 'Active projects per month',
+                    name: 'Projects creation',
                     data: Object.values(series)
                 }];
 
@@ -203,10 +169,10 @@ function drawProjOverTime(data){
             type: 'line'
         },
         title: {
-            text: 'Active projects over time'
+            text: 'Project creation'
         },
         subtitle: {
-            text: ''
+            text: 'Months when projects where created'
         },
         xAxis: {
         },

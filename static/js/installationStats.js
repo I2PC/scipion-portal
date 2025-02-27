@@ -27,6 +27,7 @@ function drawCharts(data){
 
     drawInstallationsByCountry(aggregatedData.client_country, data.length)
     drawInstallationsByCity(aggregatedData.client_city, data.length)
+    drawInstallationsOverTime(data)
 
 }
 
@@ -78,6 +79,71 @@ function installationsByCountryTweaker(options){
     options.subtitle = {text: "Zoomable!"}
 
 }
+function drawInstallationsOverTime(data){
+    // Prepares the data and draws the evolution of projects over time
+
+    chartOptions = {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Installations creation'
+        },
+        subtitle: {
+            text: 'Months when installations where first seen'
+        },
+        xAxis: {
+        },
+        yAxis: {
+            title: {
+                text: 'Number of installations'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+    };
+
+    data2InstallationOverTime(chartOptions, data)
+
+    Highcharts.chart('installationsOvertime', chartOptions);
+
+}
+function data2InstallationOverTime(chartOptions,data){
+
+    /* Data comes like :
+    [
+        {"client_country": "Spain", "date": "2017-04-12T08:47:26.801Z", "timesModified": 1, "lastModificationDate": "2017-04-12T08:47:27.093Z", "prot_count": 0}
+        ...
+    ]
+    We need to get categories: categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    And series:
+        [7, 6, 9, 14, 18, 21, 25, 26, 23, 11, 13, 9]
+    */
+
+    series = {}
+    data.forEach(function (installation){
+        addDateRange(new Date(installation.creation_date), undefined, series)
+    });
+
+    series = sortDict(series)
+
+    chartOptions.xAxis = {
+        categories: Object.keys(series)
+    };
+
+    chartOptions.series = [{
+                    name: 'Installations creation',
+                    data: Object.values(series)
+                }];
+
+};
+
 
 $(window).ready(function(){
     getDataAndDrawCharts();

@@ -468,3 +468,45 @@ function loadStackedColumnChart(container, title, rawData,
         series: series
     });
 }
+
+function addDateRange(start, end, data){
+    /*
+    For each start date and until end is reached reduce the date to the month it belongs
+    and accumulates the frequency for that month. Also it adds the category for the x axis.
+    */
+
+    let current = new Date(start); // date for the loop
+
+    if(end === undefined){
+        end = start
+    }
+    do {
+        let category = current.getFullYear() + "-" + (current.getMonth()+1).toString().padStart(2,"0")
+        if (data[category] === undefined) {
+            data[category] = 1
+        }else{
+            data[category] = data[category] + 1
+        }
+
+        // Increment by 1 month
+        current.setMonth(current.getMonth() +1)
+
+    } while (current < end)
+
+
+}
+function sortDict(dict){
+
+    let keys = Object.keys(dict); // or loop over the object to get the array
+    // keys will be in any order
+    keys.sort(); // maybe use custom sort, to change direction use .reverse()
+    // keys now will be in wanted order
+
+    sorted = {}
+    for (var i=0; i<keys.length; i++) { // now lets iterate in sort order
+        var key = keys[i];
+        var value = dict[key];
+        sorted[key] = value
+    }
+    return sorted
+}

@@ -199,10 +199,11 @@ class WorkflowResource(ModelResource):
             if workflow.isEmpty():
                 if not wcreated:
                     thisMsg = " Workflow %s lost all the protocols. Deleting it" % workflow.project_uuid
-                    workflow.delete()
                 else:
                     thisMsg = " New EMPTY workflow detected. Not peristed."
 
+                logger.info("Empty workflow (%s) reported from: %s" % (version, client_ip))
+                workflow.delete()
                 msg += thisMsg
             else:
                 workflow.timesModified += 1
@@ -416,7 +417,13 @@ class NextProtocolResource(ModelResource):
         # Response is like:
         #   [[ next_protocol__name , count ], ... ]
 
-        suggestions = NextProtocol.objects.filter(protocol__name=protName).values(
+        # Allow for None for suggestions as first protocols (imports,...)
+        if protName == str(None):
+            filter = {"protocol__isnull":True}
+        else:
+            filter = {"protocol__name":protName}
+
+        suggestions = NextProtocol.objects.filter(**filter).values(
             'next_protocol__name', 'count', 'next_protocol__friendlyName', 'next_protocol__package__pipName', 'next_protocol__description')
 
         response = []

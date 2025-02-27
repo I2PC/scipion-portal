@@ -145,7 +145,6 @@ class Workflow(models.Model):
         if self.isEmpty(jsonStr=jsonList):
             return Counter(), Counter()
         else:
-            logger.info("Getting prot count for %s" % jsonList)
             sw = ScipionWorkflow(jsonStr=jsonList)
             protCounter = Counter()
             nextProtCounter = Counter()
@@ -159,6 +158,8 @@ class Workflow(models.Model):
 
     def saveProtCount(self, countDiff):
         for protocolName, numberTimes in countDiff.items():
+            if protocolName == str(None):
+                continue
             if Protocol.objects.filter(name=protocolName).exists():
                 protocolObj = Protocol.objects.get(name=protocolName)
             else:
@@ -177,14 +178,17 @@ class Workflow(models.Model):
 
             mainProtName, nextProtName = self.getProtsFromNextProtKey(nextProtocolKey)
 
-            filter = {"protocol__name":mainProtName, "next_protocol__name":nextProtName}
+            if mainProtName == str(None):
+                filter = {"protocol__isnull": True, "next_protocol__name": nextProtName}
+            else:
+                filter = {"protocol__name":mainProtName, "next_protocol__name":nextProtName}
 
             try:
                 nextProts = NextProtocol.objects.get(**filter)
             except Exception as e:
 
                 # Populate with the protocols
-                prot = Protocol.objects.get(name=mainProtName)
+                prot = Protocol.objects.get(name=mainProtName) if mainProtName != str(None) else None
                 nextProt = Protocol.objects.get(name=nextProtName)
                 nextProts = NextProtocol.objects.create(protocol=prot, next_protocol=nextProt)
 
@@ -216,7 +220,7 @@ class Workflow(models.Model):
 
 class NextProtocol(models.Model):
 
-    protocol = models.ForeignKey(Protocol, null=False, on_delete=models.CASCADE, related_name="main_protocol")  # Main protocol
+    protocol = models.ForeignKey(Protocol, null=True, on_delete=models.CASCADE, related_name="main_protocol")  # Main protocol
     next_protocol = models.ForeignKey(Protocol, null=False, on_delete=models.CASCADE, related_name="next_protocol")  # Next protocol after main
     count = models.IntegerField(default=0)  # How many times"next_protocol is being used after protocol.
 

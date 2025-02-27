@@ -4,6 +4,7 @@
 {% block js %}
     {{ block.super }}
 	<script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 	<script src='{% static "js/highcharts.theme.colorblind.js" %}'></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/broken-axis.js"></script>
@@ -23,5 +24,8 @@
         <div class="chart" id="installationsByCity"></div>
     </div>
 
+    <div class="row">
+        <div class="chart" id="installationsOvertime"></div>
+    </div>
 
 {% endblock %}
