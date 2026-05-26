@@ -91,7 +91,7 @@ def utc_to_local(utc_dt):
 def getPluginsDict():
     result = {}
     for plugin in Package.objects.all():
-        pluginDict = model_to_dict(plugin, exclude=["logo", "description", "url"])
+        pluginDict = model_to_dict(plugin, exclude=["description", "url"])
         if pluginDict['pipName'] != "":
             result[pluginDict['pipName']] = pluginDict
     return result
